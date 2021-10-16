@@ -1,0 +1,16 @@
+Urovenj možet sostojatj iz sledujuscego:
+
+* Bazovyje platformy, po kotorym možno hoditj. Vozmožno, budet neskoljko raznovidnostej s raznym vnešnim vidom.
+* Lestniçy/rampy - po nim možno hoditj, podnimajasj i opuskajasj vverh bez neobhodimosti prygatj.
+* Lifty. Sami hodät vverh-vniz ili vpravo-vlevo.
+* Voda. Možno plavatj.
+* Lava - smertj.
+* Šipy - smertj.
+* Lestniçy, ctoby lazitj vverh-vniz.
+* Trampliny, podbrasyvajuscije vverh.
+* Dveri, trebujuscije klüca.
+* Dveri, otkryvajuscijesä sami po sebe, no blokirujuscije vzgläd, snarädy, vragov.
+* Smerteljnyje prepätstvija, kotoryje to vklüceny, to net - lazery, ubirajuscijesä šipy, tureli.
+
+
+Objekty so sväzämi - knopki, teleporty i t. d. budet neprosto sdelatj, imeja lišj ASCII-redaktor. Vozmožno, sväzi pridötsä zadavatj otdeljno ot neposredstvenno karty.
