@@ -1,0 +1,21 @@
+Sutj igry - dvuhmernyj platformer, gde nado peremescatjä po urovnü, otbivatjsä ot vragov, dostigatj konça urovnä.
+
+Na urovnäh jestj platformy, prepätstvija, voda/lava, šipy, lifty, teleporty.
+Jestj vragi (neskoljko tipov) i možet daže boss.
+Vozmožno nalicije zdorovja u igroka i aptecek dlä ih popolnenija.
+Vozmožno nalicije oružija i (verojatno) patronov k nemu.
+
+Vsego v igre dolžno bytj 3-4 urovnä i 1-2 bossa.
+Obäzateljnym javläjetsä nalicije sohranenij po trebovaniju igroka.
+
+Grafika predpolagajetsä minimalisticnoj - sostojascej iz prostyh figur - kvadratov, treugoljnikov, zvözd, mnogogrannikov, krugov.
+Vozmožno nalicije prozracnosti i animaçij.
+Tekstury budut lišnimi.
+
+Vozmožno nalicije zvukov, no predeljno prostyh - sgenerirovannyh iz prostyh voln raznoj formy s zatuhanijem.
+
+Tehniceski igru prosce vsego napisatj na C++ s ispoljzovanijem biblioteki "SDL2", ctoby srazu obespecitj krossplatformennostj.
+Risovatj vsü grafiku možno na proçessore, tak sdelatj prosce i bystreje, cem vozitjsä s "OpenGL" i "Vulkan" i cinitj ošibki, sväzannyje s nimi.
+Želateljno, ctoby vse resursy byli zažity v igru, ctoby ne nado bylo tänutj v zavisimostjäh zagruzciko raznyh formatov (zvukov, kartinok).
+
+Urovni možno sozdavatj cerez fajl s ASCII grafikoj, každym simvol - suscnostj - platforma, prepätstvije, vrag, predmet i t. d.
