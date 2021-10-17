@@ -223,12 +223,17 @@ InputState SystemWindow::GetInputState()
 	return result;
 }
 
+const SDL_Surface& SystemWindow::GetSurface() const
+{
+	return *surface_;
+}
+
 void SystemWindow::BeginFrame()
 {
 	if(SDL_MUSTLOCK(surface_))
 		SDL_LockSurface(surface_);
 
-	std::memset(surface_->pixels, 0x7F, size_t(surface_->pitch * surface_->h));
+	std::memset(surface_->pixels, 0, size_t(surface_->pitch * surface_->h));
 }
 
 void SystemWindow::EndFrame()

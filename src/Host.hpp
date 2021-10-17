@@ -1,5 +1,5 @@
 #pragma once
-#include "SystemWindow.hpp"
+#include "WorldView.hpp"
 #include <chrono>
 
 namespace Armed
@@ -17,6 +17,8 @@ private:
 	using Clock= std::chrono::steady_clock;
 
 	SystemWindow system_window_;
+	World world_;
+	WorldView world_view_;
 
 	const Clock::time_point init_time_;
 	Clock::time_point prev_tick_time_;

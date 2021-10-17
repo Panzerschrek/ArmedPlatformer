@@ -14,6 +14,8 @@ public:
 	SystemEvents ProcessEvents();
 	InputState GetInputState();
 
+	const SDL_Surface& GetSurface() const;
+
 	void BeginFrame();
 	void EndFrame();
 
