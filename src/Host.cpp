@@ -29,7 +29,7 @@ bool Host::Loop()
 			return true;
 	}
 
-	world_.Update(dt_s);
+	world_.Update(system_window_.GetInputState(), dt_s);
 
 	system_window_.BeginFrame();
 	world_view_.Draw();

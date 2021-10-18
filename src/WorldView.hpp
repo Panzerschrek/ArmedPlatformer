@@ -13,7 +13,15 @@ public:
 	void Draw();
 
 private:
-	void DrawTile(const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
+	struct CameraParams
+	{
+		int32_t pos[2];
+		int32_t tile_size;
+	};
+
+private:
+	CameraParams CalculateCameraParams();
+	void DrawTile(const CameraParams& camera, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
 
 private:
 	const World& world_;
