@@ -28,7 +28,7 @@ else()
 	find_package(SDL2 REQUIRED)
 endif()
 
-file(GLOB SOURCES "*.cpp" "*.hpp")
+file(GLOB_RECURSE SOURCES "*.cpp" "*.hpp")
 add_executable(ArmedPlatformer ${SOURCES})
 target_include_directories(ArmedPlatformer PUBLIC ${SDL2_INCLUDE_DIRS})
 target_link_libraries(ArmedPlatformer PUBLIC ${SDL2_LIBRARIES})
