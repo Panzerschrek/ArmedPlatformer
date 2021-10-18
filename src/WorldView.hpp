@@ -13,6 +13,9 @@ public:
 	void Draw();
 
 private:
+	void DrawTile(const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
+
+private:
 	const World& world_;
 	SystemWindow& system_window_;
 };

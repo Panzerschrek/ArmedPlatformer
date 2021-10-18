@@ -13,6 +13,8 @@ public:
 	void ProcessSystemEvent(const SystemEvent& event);
 	void Update(float dt_s);
 
+	const TilesMap& GetMap() const { return map_; }
+
 private:
 	TilesMap map_;
 };
