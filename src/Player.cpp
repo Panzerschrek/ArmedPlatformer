@@ -16,7 +16,7 @@ void Player::Tick(const InputState& input_state)
 	const auto key_up = KeyCode::W;
 	const auto key_down = KeyCode::S;
 
-	const fixed16_t speed= g_fixed16_one / 64;
+	const fixed16_t speed= g_fixed16_one / 4;
 
 	if(input_state.keyboard[size_t(key_left)])
 		pos_[0]+= speed;

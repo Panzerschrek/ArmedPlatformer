@@ -5,6 +5,19 @@
 namespace Armed
 {
 
+// new_x = x * scale + shift[0]
+// new_y = y * scale + shift[1]
+struct TransformMatrix
+{
+	fixed16_t shift[2];
+	fixed16_t scale;
+};
+
+TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r);
+fixed16_t TransformX(const TransformMatrix& mat, fixed16_t x);
+fixed16_t TransformY(const TransformMatrix& mat, fixed16_t y);
+
+
 class WorldView
 {
 public:
@@ -13,15 +26,8 @@ public:
 	void Draw();
 
 private:
-	struct CameraParams
-	{
-		int32_t pos[2];
-		int32_t tile_size;
-	};
-
-private:
-	CameraParams CalculateCameraParams();
-	void DrawTile(const CameraParams& camera, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
+	TransformMatrix CalculateViewTransformMatrix();
+	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
 
 private:
 	const World& world_;
