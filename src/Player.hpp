@@ -16,6 +16,7 @@ public:
 
 private:
 	fixed16vec2_t pos_;
+	fixed16vec2_t vel_;
 };
 
 } // namespace Armed

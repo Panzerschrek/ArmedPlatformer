@@ -31,4 +31,9 @@ inline fixed16_t Fixed16Mul(const  fixed16_t l, const  fixed16_t r)
 	return fixed16_t((int64_t(l) * int64_t(r)) >> g_fixed16_base);
 }
 
+inline fixed16_t Fixed16Div(const  fixed16_t l, const  fixed16_t r)
+{
+	return fixed16_t((int64_t(l) << g_fixed16_base) / int64_t(r));
+}
+
 } // namespace Armed
