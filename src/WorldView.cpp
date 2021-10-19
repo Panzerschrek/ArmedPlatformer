@@ -4,19 +4,12 @@
 namespace Armed
 {
 
-namespace
-{
-
-using pixel_t= uint32_t;
-
-} // namespace
-
 TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r)
 {
 	TransformMatrix res{};
 	res.scale = Fixed16Mul(l.scale, r.scale);
 	res.shift[0]= Fixed16Mul(l.shift[0], r.scale) + r.shift[0];
-	res.shift[1]= Fixed16Mul(l.shift[1], r.scale)+ r.shift[1];
+	res.shift[1]= Fixed16Mul(l.shift[1], r.scale) + r.shift[1];
 	return res;
 }
 
@@ -57,17 +50,24 @@ void WorldView::Draw()
 		if(tile != TileId::Air)
 			DrawTile(mat, surface, x, y, tile);
 	}
+
+	DrawPlayer(mat, surface);
 }
 
 TransformMatrix WorldView::CalculateViewTransformMatrix()
 {
 	const Player& player= world_.GetPlayer();
 
-	TransformMatrix res{};
-	res.scale = IntToFixed16(24);
-	res.shift[0]= -player.GetPos()[0];
-	res.shift[1]= -player.GetPos()[1];
-	return res;
+	TransformMatrix shift{}, scale;
+
+	shift.scale = g_fixed16_one;
+	shift.shift[0]= -player.GetPos()[0];
+	shift.shift[1]= -player.GetPos()[1];
+
+	scale.scale= IntToFixed16(24);
+	scale.shift[0]= scale.shift[1]= 0;
+
+	return MatrixMul(shift, scale);
 }
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)
@@ -91,22 +91,53 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
 	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
 
-	if(projected_min_x >= surface.w ||
-		projected_min_y >= surface.h ||
-		projected_max_x <= 0 ||
-		projected_max_y <= 0)
+	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0xFF00FF00);
+}
+
+void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface)
+{
+	const Player& player= world_.GetPlayer();
+
+	TransformMatrix player_mat;
+	player_mat.scale = g_fixed16_one;
+	player_mat.shift[0]= player.GetPos()[0];
+	player_mat.shift[1]= player.GetPos()[1];
+
+	const TransformMatrix result_mat= MatrixMul(player_mat, view_mat);
+
+	const fixed16_t width= g_fixed16_one / 2;
+	const fixed16_t height = g_fixed16_one * 3 / 4;
+	const fixed16_t min_x= (g_fixed16_one - width) / 2;
+	const fixed16_t max_x= (g_fixed16_one + width) / 2;
+	const fixed16_t min_y= (g_fixed16_one - height) / 2;
+	const fixed16_t max_y= (g_fixed16_one + height) / 2;
+
+	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
+	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
+	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
+	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
+
+	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0x00FF00FF);
+}
+
+void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, pixel_t color)
+{
+	if(min_x >= surface.w ||
+		min_y >= surface.h ||
+		max_x <= 0 ||
+		max_y <= 0)
 		return;
 
-	const int32_t min_x_clamped= std::max(0, projected_min_x);
-	const int32_t min_y_clamped= std::max(0, projected_min_y);
-	const int32_t max_x_clamped= std::min(projected_max_x, surface.w);
-	const int32_t max_y_clamped= std::min(projected_max_y, surface.h);
+	const int32_t min_x_clamped= std::max(0, min_x);
+	const int32_t min_y_clamped= std::max(0, min_y);
+	const int32_t max_x_clamped= std::min(max_x, surface.w);
+	const int32_t max_y_clamped= std::min(max_y, surface.h);
 
 	for(int32_t y= min_y_clamped; y < max_y_clamped; ++y)
 	for(int32_t x= min_x_clamped; x < max_x_clamped; ++x)
 	{
 		auto& dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
-		dst= 0xFF00FF00;
+		dst= color;
 	}
 }
 
