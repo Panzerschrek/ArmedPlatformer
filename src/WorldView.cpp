@@ -40,7 +40,7 @@ void WorldView::Draw()
 	}
 
 	const TilesMap& tiles_map= world_.GetMap();
-	const TransformMatrix mat= CalculateViewTransformMatrix();
+	const TransformMatrix mat= CalculateViewTransformMatrix(surface);
 
 	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
 	for(uint32_t x= 0; x < tiles_map.GetSizeX(); ++x)
@@ -54,20 +54,24 @@ void WorldView::Draw()
 	DrawPlayer(mat, surface);
 }
 
-TransformMatrix WorldView::CalculateViewTransformMatrix()
+TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surface)
 {
 	const Player& player= world_.GetPlayer();
 
-	TransformMatrix shift{}, scale;
+	TransformMatrix cam_shift{}, scale{}, screen_shift{};
 
-	shift.scale = g_fixed16_one;
-	shift.shift[0]= -player.GetPos()[0];
-	shift.shift[1]= -player.GetPos()[1];
+	cam_shift.scale = g_fixed16_one;
+	cam_shift.shift[0]= -player.GetPos()[0];
+	cam_shift.shift[1]= -player.GetPos()[1];
 
 	scale.scale= IntToFixed16(24);
 	scale.shift[0]= scale.shift[1]= 0;
 
-	return MatrixMul(shift, scale);
+	screen_shift.scale= g_fixed16_one;
+	screen_shift.shift[0]= IntToFixed16(surface.w) / 2;
+	screen_shift.shift[1]= IntToFixed16(surface.h) / 2;
+
+	return MatrixMul(MatrixMul(cam_shift, scale), screen_shift);
 }
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)

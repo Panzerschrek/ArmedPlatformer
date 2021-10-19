@@ -27,7 +27,7 @@ public:
 	void Draw();
 
 private:
-	TransformMatrix CalculateViewTransformMatrix();
+	TransformMatrix CalculateViewTransformMatrix(const SDL_Surface& surface);
 	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
 	void DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface);
 	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, pixel_t color);
