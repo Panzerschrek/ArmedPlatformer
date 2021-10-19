@@ -10,10 +10,8 @@ World::World(const char* tiles_map_data)
 {
 }
 
-void World::Update(const InputState& input_state, float dt_s)
+void World::Tick(const InputState& input_state)
 {
-	ARMED_UNUSED(dt_s); // TODO - use fixed updates frequency regardless of FPS.
-
 	player_.Tick(input_state);
 }
 

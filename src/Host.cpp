@@ -11,16 +11,13 @@ Host::Host()
 	, world_(Maps::Test::map_data)
 	, world_view_(world_, system_window_)
 	, init_time_(Clock::now())
-	, prev_tick_time_(init_time_)
+	, prev_tick_time_(GetCurrentTime())
 {
 }
 
 bool Host::Loop()
 {
-	const Clock::time_point tick_start_time= Clock::now();
-	const auto dt= tick_start_time - prev_tick_time_;
-	prev_tick_time_ = tick_start_time;
-	const float dt_s= float(std::chrono::duration_cast<std::chrono::milliseconds>(dt).count()) / 1000.0f;
+	const auto tick_start_time= GetCurrentTime();
 
 	const SystemEvents system_events= system_window_.ProcessEvents();
 	for(const SystemEvent& system_event : system_events)
@@ -29,24 +26,44 @@ bool Host::Loop()
 			return true;
 	}
 
-	world_.Update(system_window_.GetInputState(), dt_s);
+	// Perform some ticks. Possible 0, 1 or many. But do not perform more than 5 ticks once.
+	for (
+		uint64_t
+			physics_start_tick = prev_tick_time_ * World::c_update_frequency / c_time_point_resolution,
+			physics_end_tick = tick_start_time * World::c_update_frequency / c_time_point_resolution,
+			t= physics_start_tick,
+			iterations= 0;
+		t < physics_end_tick && iterations < 5;
+		++t, ++iterations)
+	{
+		world_.Tick(system_window_.GetInputState());
+	}
 
 	system_window_.BeginFrame();
 	world_view_.Draw();
 	system_window_.EndFrame();
 
-	const Clock::time_point tick_end_time= Clock::now();
+	const TimePoint tick_end_time= GetCurrentTime();
 	const auto frame_dt= tick_end_time - tick_start_time;
 
-	const float max_fps= 200.0f;
-
-	const std::chrono::milliseconds min_frame_duration(uint32_t(1000.0f / max_fps));
+	const uint64_t max_fps= 120;
+	const auto min_frame_duration = c_time_point_resolution / max_fps;
 	if(frame_dt <= min_frame_duration)
 	{
-		std::this_thread::sleep_for(min_frame_duration - frame_dt);
+		std::this_thread::sleep_for(ChronoDuration(min_frame_duration - frame_dt));
 	}
 
+	prev_tick_time_= tick_start_time;
+
 	return false;
+}
+
+Host::TimePoint Host::GetCurrentTime()
+{
+	const Clock::time_point now= Clock::now();
+	const auto dt= now - init_time_;
+
+	return TimePoint(std::chrono::duration_cast<ChronoDuration>(dt).count());
 }
 
 } // namespace Armed

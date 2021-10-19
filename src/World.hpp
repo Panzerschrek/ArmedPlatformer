@@ -8,10 +8,13 @@ namespace Armed
 class World
 {
 public:
+	static constexpr const uint64_t c_update_frequency= 120;
+
+public:
 	explicit World(const char* tiles_map_data);
 
-	void ProcessSystemEvent(const SystemEvent& event);
-	void Update(const InputState& input_state, float dt_s);
+	// Update world (single fixed period step).
+	void Tick(const InputState& input_state);
 
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
