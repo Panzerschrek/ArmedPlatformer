@@ -58,12 +58,23 @@ void Player::Tick(const InputState& input_state)
 		pos_[i]+= vel_[i];
 }
 
-void Player::Push(const fixed16vec2_t& dir)
+void Player::Push(const fixed16vec2_t& push_vec)
 {
-	pos_[0]+= dir[0];
-	pos_[1]+= dir[1];
+	pos_[0]+= push_vec[0];
+	pos_[1]+= push_vec[1];
 
-	// TODO - clamp speed
+	const fixed16_t vel_dir_dot = Fixed16Mul(push_vec[0], vel_[0]) + Fixed16Mul(push_vec[1], vel_[1]);
+	if(vel_dir_dot < 0)
+	{
+		// Clamp velosity in case of opposing push.
+		const fixed16_t push_vec_square_len= Fixed16Mul(push_vec[0], push_vec[0]) + Fixed16Mul(push_vec[1], push_vec[1]);
+		if(push_vec_square_len > 0)
+		{
+			const fixed16_t dot_corrected= Fixed16Div(vel_dir_dot, push_vec_square_len);
+			vel_[0]-= Fixed16Mul(push_vec[0], dot_corrected);
+			vel_[1]-= Fixed16Mul(push_vec[1], dot_corrected);
+		}
+	}
 }
 
 } // namespace Armed

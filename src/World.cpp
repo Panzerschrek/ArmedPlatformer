@@ -61,28 +61,33 @@ void World::Tick(const InputState& input_state)
 					const fixed16_t push_negative_x_abs = Fixed16Abs(push_negative_x);
 					const fixed16_t push_negative_y_abs = Fixed16Abs(push_negative_y);
 
-					// Search for smallest push distance.
+					// Search for smallest push distance. Check first Y pushes.
 					fixed16vec2_t push_vec{0, 0};
-					if( push_positive_x_abs <= push_positive_y_abs &&
-						push_positive_x_abs <= push_negative_x_abs &&
-						push_positive_x_abs <= push_negative_y_abs)
-					{
-						push_vec[0]= push_positive_x;
-					}else
 					if( push_positive_y_abs <= push_positive_x_abs &&
 						push_positive_y_abs <= push_negative_x_abs &&
 						push_positive_y_abs <= push_negative_y_abs)
 					{
 						push_vec[1]= push_positive_y;
-					}else
+					} else
+					if( push_negative_y_abs <= push_positive_x_abs &&
+						push_negative_y_abs <= push_positive_y_abs &&
+						push_negative_y_abs <= push_negative_x_abs)
+					{
+						push_vec[1]= push_negative_y;
+					} else
+					if( push_positive_x_abs <= push_positive_y_abs &&
+						push_positive_x_abs <= push_negative_x_abs &&
+						push_positive_x_abs <= push_negative_y_abs)
+					{
+						push_vec[0]= push_positive_x;
+					} else
+					/*
 					if( push_negative_x_abs <= push_positive_x_abs &&
 						push_negative_x_abs <= push_positive_y_abs &&
 						push_negative_x_abs <= push_negative_y_abs)
+					*/
 					{
 						push_vec[0]= push_negative_x;
-					} else
-					{
-						push_vec[1]= push_negative_y;
 					}
 
 					player_.Push(push_vec);
