@@ -14,6 +14,8 @@ public:
 
 	const fixed16vec2_t& GetPos() const { return pos_; }
 
+	void Push(const fixed16vec2_t& dir);
+
 private:
 	fixed16vec2_t pos_;
 	fixed16vec2_t vel_;

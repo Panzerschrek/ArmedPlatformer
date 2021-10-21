@@ -58,4 +58,12 @@ void Player::Tick(const InputState& input_state)
 		pos_[i]+= vel_[i];
 }
 
+void Player::Push(const fixed16vec2_t& dir)
+{
+	pos_[0]+= dir[0];
+	pos_[1]+= dir[1];
+
+	// TODO - clamp speed
+}
+
 } // namespace Armed

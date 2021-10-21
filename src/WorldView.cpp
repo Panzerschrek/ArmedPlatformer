@@ -111,10 +111,10 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 
 	const fixed16_t width= g_fixed16_one / 2;
 	const fixed16_t height = g_fixed16_one * 3 / 4;
-	const fixed16_t min_x= (g_fixed16_one - width) / 2;
-	const fixed16_t max_x= (g_fixed16_one + width) / 2;
-	const fixed16_t min_y= (g_fixed16_one - height) / 2;
-	const fixed16_t max_y= (g_fixed16_one + height) / 2;
+	const fixed16_t min_x= -  width / 2;
+	const fixed16_t max_x= +  width / 2;
+	const fixed16_t min_y= - height / 2;
+	const fixed16_t max_y= + height / 2;
 
 	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
 	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
