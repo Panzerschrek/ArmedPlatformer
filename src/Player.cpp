@@ -48,8 +48,13 @@ void Player::Tick(const InputState& input_state)
 	{
 		// Apply acceleration.
 		const fixed16_t cur_friction= std::min(vel_modulo, friction);
+		const fixed16vec2_t prev_vel{vel_[0], vel_[1]};
 		for(uint32_t i= 0; i < 2; ++i)
 			vel_[i]-= Fixed16Div(Fixed16Mul(vel_[i], cur_friction), vel_modulo);
+
+		// Fix calculation errors - make velosity zero in case of new velosity points in another direction.
+		if(Fixed16Mul(vel_[0], prev_vel[0]) + Fixed16Mul(vel_[1], prev_vel[1]) < 0)
+			vel_[0]= vel_[1]= 0;
 	}
 	else
 		vel_[0]= vel_[1]= 0; // Zero small speed value.
@@ -63,7 +68,7 @@ void Player::Push(const fixed16vec2_t& push_vec)
 	pos_[0]+= push_vec[0];
 	pos_[1]+= push_vec[1];
 
-	const fixed16_t vel_dir_dot = Fixed16Mul(push_vec[0], vel_[0]) + Fixed16Mul(push_vec[1], vel_[1]);
+	const fixed16_t vel_dir_dot= Fixed16Mul(push_vec[0], vel_[0]) + Fixed16Mul(push_vec[1], vel_[1]);
 	if(vel_dir_dot < 0)
 	{
 		// Clamp velosity in case of opposing push.
