@@ -8,7 +8,7 @@ namespace Armed
 
 Host::Host()
 	: system_window_()
-	, world_(Maps::Test::map_data)
+	, world_(Maps::Test::description)
 	, world_view_(world_, system_window_)
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())

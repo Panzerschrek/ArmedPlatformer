@@ -4,9 +4,9 @@
 namespace Armed
 {
 
-World::World(const char* tiles_map_data)
-	: map_(tiles_map_data)
-	, player_(0, 0)
+World::World(const MapDescription& map_description)
+	: map_(map_description.tiles_map_data)
+	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
 {
 }
 
