@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath> // For sqrt.
 
 namespace Armed
 {
@@ -44,6 +45,22 @@ inline fixed16_t Fixed16Div(const  fixed16_t l, const  fixed16_t r)
 inline fixed16_t Fixed16Abs(const fixed16_t x)
 {
 	return x >= 0 ? x : -x;
+}
+
+inline fixed16_t Fixed16VecDot(const fixed16vec2_t& v0, const fixed16vec2_t& v1)
+{
+	return fixed16_t((int64_t(v0[0]) * int64_t(v1[0]) + int64_t(v0[1]) * int64_t(v1[1])) >> g_fixed16_base);
+}
+
+inline fixed16_t Fixed16VecSquareLen(const fixed16vec2_t& v)
+{
+	return Fixed16VecDot(v, v);
+}
+
+inline fixed16_t Fixed16Sqrt(const fixed16_t x)
+{
+	// TODO - avoid usage of "float".
+	return fixed16_t(std::sqrt(float(x)) * float(1 << (g_fixed16_base - g_fixed16_base / 2)));
 }
 
 } // namespace Armed
