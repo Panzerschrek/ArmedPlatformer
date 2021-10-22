@@ -57,6 +57,12 @@ inline fixed16_t Fixed16VecSquareLen(const fixed16vec2_t& v)
 	return Fixed16VecDot(v, v);
 }
 
+inline fixed16_t Fixed16VecLen(const fixed16vec2_t& v)
+{
+	// TODO - avoid usage of "float".
+	return fixed16_t(std::sqrt(float(int64_t(v[0]) * int64_t(v[0]) + int64_t(v[1]) * int64_t(v[1]))));
+}
+
 inline fixed16_t Fixed16Sqrt(const fixed16_t x)
 {
 	// TODO - avoid usage of "float".

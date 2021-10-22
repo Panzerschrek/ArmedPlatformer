@@ -13,6 +13,7 @@ World::World(const MapDescription& map_description)
 void World::Tick(const InputState& input_state)
 {
 	player_.Tick(input_state);
+	player_.SetOnGround(false);
 
 	// Check for collision against some geometry, correct player position, continue.
 	for(uint32_t collision_number= 0; collision_number < 8; ++collision_number)
@@ -73,6 +74,7 @@ void World::Tick(const InputState& input_state)
 						push_negative_y_abs <= push_positive_y_abs &&
 						push_negative_y_abs <= push_negative_x_abs)
 					{
+						player_.SetOnGround(true);
 						push_vec[1]= push_negative_y;
 					} else
 					if( push_positive_x_abs <= push_positive_y_abs &&

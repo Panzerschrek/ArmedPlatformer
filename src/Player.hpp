@@ -15,10 +15,12 @@ public:
 	const fixed16vec2_t& GetPos() const { return pos_; }
 
 	void Push(const fixed16vec2_t& push_vec);
+	void SetOnGround(const bool on_ground){ on_ground_= on_ground; }
 
 private:
 	fixed16vec2_t pos_;
 	fixed16vec2_t vel_;
+	bool on_ground_= false;
 };
 
 } // namespace Armed
