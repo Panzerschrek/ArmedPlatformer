@@ -1,7 +1,7 @@
 * Vrag, kotoryj hodit tuda-obratno i umejet toljko atakovatj vrukopašnuju
 * Vrag, kotoryj streläjet snarädami
 * Vrag, kotoryj prygajet i možet s napryga nanositj uron
-* Letajuscij brag, bombäscij igroka sverhu
+* Letajuscij vrag, bombäscij igroka sverhu
 * Ryba, kotoraja kusajetsä v vode
 * Vrag-kamikadže
 * Boljšoj boss s siljnymi atakami i boljšim zdorovjem

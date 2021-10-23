@@ -8,6 +8,7 @@ World::World(const MapDescription& map_description)
 	: map_(map_description.tiles_map_data)
 	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
 {
+	const MapObjectsData map_objects= ExtractMapObjects(map_description.tiles_map_data);
 }
 
 void World::Tick(const InputState& input_state)

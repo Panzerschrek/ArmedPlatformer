@@ -29,4 +29,38 @@ private:
 	const std::vector<TileId> data_;
 };
 
+// Map parsing.
+
+// Do not set values of these enums manually! Add new values at end!
+
+enum class MonsterId
+{
+	Biter,
+};
+
+enum class PowerUpId
+{
+	SmallHealth,
+};
+
+struct MonsterInfo
+{
+	MonsterId id{};
+	uint32_t pos[2]{};
+};
+
+struct PowerUpInfo
+{
+	PowerUpId id{};
+	uint32_t pos[2]{};
+};
+
+struct MapObjectsData
+{
+	std::vector<MonsterInfo> monsters;
+	std::vector<PowerUpInfo> power_ups;
+};
+
+MapObjectsData ExtractMapObjects(const char* map_data);
+
 } // namespace Armed

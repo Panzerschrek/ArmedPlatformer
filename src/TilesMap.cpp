@@ -73,4 +73,41 @@ TilesMap::TilesMap(const char* const data)
 	: size_{ MapParser::CalculateSizeX(data), MapParser::CalculateSizeY(data) }, data_(MapParser::ParseData(data))
 {}
 
+MapObjectsData ExtractMapObjects(const char* const map_data)
+{
+	MapObjectsData map_objects;
+
+	uint32_t x= 0, y= 0;
+	for(const char* c= map_data; *c != '\0'; ++c)
+	{
+		if(*c == '\n')
+		{
+			++y;
+			x= 0;
+			continue;
+		}
+
+		if(*c >= 'm' && *c <= 'z')
+		{
+			MonsterInfo monster;
+			monster.pos[0]= x;
+			monster.pos[1]= y;
+			monster.id= MonsterId((uint32_t(*c) - uint32_t('m')));
+			map_objects.monsters.push_back(monster);
+		}
+		if(*c >= '0' && *c < '9')
+		{
+			PowerUpInfo powr_up;
+			powr_up.pos[0]= x;
+			powr_up.pos[1]= y;
+			powr_up.id= PowerUpId((uint32_t(*c) - uint32_t('m')));
+			map_objects.power_ups.push_back(powr_up);
+		}
+
+		++x;
+	}
+
+	return map_objects;
+}
+
 } // namespace Armed

@@ -12,9 +12,9 @@ namespace Test
 
 const char map_data[]=
 "          ######    \n"
-"         ##         \n"
+"      0  ##         \n"
 "      ###           \n"
-"     #              \n"
+"    m#              \n"
 " ####               \n";
 
 const MapDescription description
