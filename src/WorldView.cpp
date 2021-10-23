@@ -52,6 +52,9 @@ void WorldView::Draw()
 	}
 
 	DrawPlayer(mat, surface);
+
+	for(const World::Monster& monster : world_.GetMonsters())
+		DrawMonster(mat, surface, monster);
 }
 
 TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surface)
@@ -122,6 +125,30 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
 
 	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0x00FF00FF);
+}
+
+void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster)
+{
+	TransformMatrix monster_mat;
+	monster_mat.scale = g_fixed16_one;
+	monster_mat.shift[0]= monster.pos[0];
+	monster_mat.shift[1]= monster.pos[1];
+
+	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
+
+	const fixed16_t width= g_fixed16_one * 5 / 8;
+	const fixed16_t height = g_fixed16_one * 6 / 8;
+	const fixed16_t min_x= -  width / 2;
+	const fixed16_t max_x= +  width / 2;
+	const fixed16_t min_y= - height / 2;
+	const fixed16_t max_y= + height / 2;
+
+	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
+	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
+	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
+	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
+
+	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0x0000FFFF);
 }
 
 void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, pixel_t color)

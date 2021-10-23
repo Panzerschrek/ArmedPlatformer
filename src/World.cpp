@@ -9,6 +9,15 @@ World::World(const MapDescription& map_description)
 	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
 {
 	const MapObjectsData map_objects= ExtractMapObjects(map_description.tiles_map_data);
+
+	monsters_.reserve(map_objects.monsters.size());
+	for(const MonsterInfo& monster_info : map_objects.monsters)
+	{
+		Monster monster;
+		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + (g_fixed16_one >> 1);
+		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + (g_fixed16_one >> 1);
+		monsters_.push_back(monster);
+	}
 }
 
 void World::Tick(const InputState& input_state)
