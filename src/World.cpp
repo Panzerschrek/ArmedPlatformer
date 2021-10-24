@@ -10,6 +10,8 @@ namespace
 const fixed16_t c_player_width= g_fixed16_one / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
 
+const int32_t c_monster_max_distance_to_spawn= 6;
+
 } // namespace
 
 World::World(const MapDescription& map_description)
@@ -198,6 +200,12 @@ void World::MoveMonster(Monster& monster)
 
 			// TODO - continue to move in case o meelee attack.
 		}
+	}
+
+	{ // Check for distance from spawn point.
+		const int32_t signed_distance_to_spawn= Fixed16RoundToInt(new_pos[0]) - int32_t(monster.spawn_tile_pos[0]);
+		if(std::abs(signed_distance_to_spawn) > c_monster_max_distance_to_spawn)
+			can_move= false;
 	}
 
 	if(!can_move)
