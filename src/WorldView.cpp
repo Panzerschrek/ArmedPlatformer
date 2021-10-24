@@ -8,20 +8,21 @@ namespace Armed
 TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r)
 {
 	TransformMatrix res{};
-	res.scale = Fixed16Mul(l.scale, r.scale);
-	res.shift[0]= Fixed16Mul(l.shift[0], r.scale) + r.shift[0];
-	res.shift[1]= Fixed16Mul(l.shift[1], r.scale) + r.shift[1];
+	res.scale[0] = Fixed16Mul(l.scale[0], r.scale[0]);
+	res.scale[1] = Fixed16Mul(l.scale[1], r.scale[1]);
+	res.shift[0]= Fixed16Mul(l.shift[0], r.scale[0]) + r.shift[0];
+	res.shift[1]= Fixed16Mul(l.shift[1], r.scale[1]) + r.shift[1];
 	return res;
 }
 
 fixed16_t TransformX(const TransformMatrix& mat, const fixed16_t x)
 {
-	return Fixed16Mul(mat.scale, x) + mat.shift[0];
+	return Fixed16Mul(mat.scale[0], x) + mat.shift[0];
 }
 
 fixed16_t TransformY(const TransformMatrix& mat, const fixed16_t y)
 {
-	return Fixed16Mul(mat.scale, y) + mat.shift[1];
+	return Fixed16Mul(mat.scale[1], y) + mat.shift[1];
 }
 
 WorldView::WorldView(const World& world, SystemWindow& system_window)
@@ -64,14 +65,14 @@ TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surfa
 
 	TransformMatrix cam_shift{}, scale{}, screen_shift{};
 
-	cam_shift.scale = g_fixed16_one;
+	cam_shift.scale[0]= cam_shift.scale[1] = g_fixed16_one;
 	cam_shift.shift[0]= -player.GetPos()[0];
 	cam_shift.shift[1]= -player.GetPos()[1];
 
-	scale.scale= IntToFixed16(24);
+	scale.scale[0]= scale.scale[1]= IntToFixed16(24);
 	scale.shift[0]= scale.shift[1]= 0;
 
-	screen_shift.scale= g_fixed16_one;
+	screen_shift.scale[0]= screen_shift.scale[1]= g_fixed16_one;
 	screen_shift.shift[0]= IntToFixed16(surface.w) / 2;
 	screen_shift.shift[1]= IntToFixed16(surface.h) / 2;
 
@@ -83,7 +84,7 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	ARMED_UNUSED(tile);
 
 	TransformMatrix tile_mat;
-	tile_mat.scale = g_fixed16_one;
+	tile_mat.scale[0]= tile_mat.scale[1] = g_fixed16_one;
 	tile_mat.shift[0]= IntToFixed16(int32_t(tile_x));
 	tile_mat.shift[1]= IntToFixed16(int32_t(tile_y));
 
@@ -107,7 +108,7 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 	const Player& player= world_.GetPlayer();
 
 	TransformMatrix player_mat;
-	player_mat.scale = g_fixed16_one;
+	player_mat.scale[0]= player_mat.scale[1] = g_fixed16_one;
 	player_mat.shift[0]= player.GetPos()[0];
 	player_mat.shift[1]= player.GetPos()[1];
 
@@ -119,7 +120,7 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster)
 {
 	TransformMatrix monster_mat;
-	monster_mat.scale = g_fixed16_one;
+	monster_mat.scale[0]= monster_mat.scale[1] = g_fixed16_one;
 	monster_mat.shift[0]= monster.pos[0];
 	monster_mat.shift[1]= monster.pos[1];
 

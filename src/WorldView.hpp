@@ -6,12 +6,12 @@
 namespace Armed
 {
 
-// new_x = x * scale + shift[0]
-// new_y = y * scale + shift[1]
+// new_x = x * scale[0] + shift[0]
+// new_y = y * scale[1] + shift[1]
 struct TransformMatrix
 {
 	fixed16_t shift[2];
-	fixed16_t scale;
+	fixed16_t scale[2];
 };
 
 TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r);
