@@ -35,7 +35,7 @@ const Model monster_biter
 	{
 		{
 			{ -g_fixed16_one * 3 / 4, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
-			{ -g_fixed16_one / 2, { -g_fixed16_one / 5, +g_fixed16_one / 5 } },
+			{ -g_fixed16_one / 2, { -g_fixed16_one / 3, +g_fixed16_one / 5 } },
 		},
 		ColorRGB(32, 32, 128),
 	},

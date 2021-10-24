@@ -124,6 +124,9 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 	monster_mat.shift[0]= monster.pos[0];
 	monster_mat.shift[1]= monster.pos[1];
 
+	if(monster.move_dir <0)
+		monster_mat.scale[0]*= -1;
+
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
 	DrawModel(result_mat, surface, Models::monster_biter);
@@ -133,12 +136,20 @@ void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface
 {
 	for(const ModelTrapezoid& trapeziod : model)
 	{
-		const fixed16_t y_start= TransformY(mat, trapeziod.sides[0].y);
-		const fixed16_t y_end= TransformY(mat, trapeziod.sides[1].y);
-		const fixed16_t x_start_0= TransformX(mat, trapeziod.sides[0].x[0]);
-		const fixed16_t x_start_1= TransformX(mat, trapeziod.sides[0].x[1]);
-		const fixed16_t x_end_0= TransformX(mat, trapeziod.sides[1].x[0]);
-		const fixed16_t x_end_1= TransformX(mat, trapeziod.sides[1].x[1]);
+		fixed16_t y_start= TransformY(mat, trapeziod.sides[0].y);
+		fixed16_t y_end= TransformY(mat, trapeziod.sides[1].y);
+		fixed16_t x_start_0= TransformX(mat, trapeziod.sides[0].x[0]);
+		fixed16_t x_start_1= TransformX(mat, trapeziod.sides[0].x[1]);
+		fixed16_t x_end_0= TransformX(mat, trapeziod.sides[1].x[0]);
+		fixed16_t x_end_1= TransformX(mat, trapeziod.sides[1].x[1]);
+		if(mat.scale[0] < 0)
+		{
+			std::swap(x_start_0, x_start_1);
+			std::swap(x_end_0, x_end_1);
+		}
+		if(mat.scale[1] < 0)
+			std::swap(y_start, y_end);
+
 		FillTrapezoid(
 			surface,
 			y_start, y_end,
