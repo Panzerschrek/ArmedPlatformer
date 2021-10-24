@@ -14,13 +14,22 @@ World::World(const MapDescription& map_description)
 	for(const MonsterInfo& monster_info : map_objects.monsters)
 	{
 		Monster monster;
+		monster.spawn_tile_pos[0]= monster_info.pos[0];
+		monster.spawn_tile_pos[1]= monster_info.pos[1];
 		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + (g_fixed16_one >> 1);
 		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + (g_fixed16_one >> 1);
+		monster.move_dir= (monsters_.size() & 1) == 0 ? (+1) : (-1);
 		monsters_.push_back(monster);
 	}
 }
 
 void World::Tick(const InputState& input_state)
+{
+	ProcessPlayerPhysics(input_state);
+	MoveMonsters();
+}
+
+void World::ProcessPlayerPhysics(const InputState& input_state)
 {
 	player_.Tick(input_state);
 	player_.SetOnGround(false);
@@ -115,5 +124,41 @@ void World::Tick(const InputState& input_state)
 	}
 }
 
+void World::MoveMonsters()
+{
+	for(Monster& monster : monsters_)
+		MoveMonster(monster);
+}
+
+void World::MoveMonster(Monster& monster)
+{
+	const fixed16_t c_speed= g_fixed16_one / 64;
+	const fixed16_t c_width= g_fixed16_one * 5 / 8;
+
+	fixed16vec2_t new_pos{ monster.pos[0], monster.pos[1] };
+	new_pos[0]+= monster.move_dir * c_speed;
+
+	const int32_t min_x= Fixed16FloorToInt(new_pos[0] - c_width / 2);
+	const int32_t max_x= Fixed16FloorToInt(new_pos[0] + c_width / 2);
+	const int32_t y= Fixed16FloorToInt(new_pos[1]);
+	bool can_move= true;
+	for(int32_t x= std::max(0, min_x); x <= std::min(max_x, int32_t(map_.GetSizeX()) - 1); ++x)
+	{
+		if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
+			can_move= false;
+		if(map_.GetTile(uint32_t(x), uint32_t(std::min(y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
+			can_move= false;
+	}
+
+	// TODO - check for collisions agains other monsters and player.
+
+	if(!can_move)
+		monster.move_dir= -monster.move_dir;
+	else
+	{
+		monster.pos[0]= new_pos[0];
+		monster.pos[1]= new_pos[1];
+	}
+}
 
 } // namespace Armed

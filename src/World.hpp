@@ -18,7 +18,9 @@ public:
 
 	struct Monster
 	{
+		uint32_t spawn_tile_pos[2]{};
 		fixed16vec2_t pos{};
+		int32_t move_dir= 0; // -1, 0, +1
 	};
 
 public:
@@ -30,6 +32,11 @@ public:
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
 	const std::vector<Monster>& GetMonsters() const { return monsters_; }
+
+private:
+	void ProcessPlayerPhysics(const InputState& input_state);
+	void MoveMonsters();
+	void MoveMonster(Monster& monster);
 
 private:
 	TilesMap map_;

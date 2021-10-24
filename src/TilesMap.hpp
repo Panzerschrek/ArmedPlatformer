@@ -1,4 +1,5 @@
 #pragma once
+#include "Assert.hpp"
 #include <cstdint>
 #include <vector>
 
@@ -21,6 +22,8 @@ public:
 
 	TileId GetTile(const uint32_t x, const uint32_t y) const
 	{
+		ARMED_ASSERT(x < size_[0]);
+		ARMED_ASSERT(y < size_[1]);
 		return data_[x + y * size_[0]];
 	}
 
