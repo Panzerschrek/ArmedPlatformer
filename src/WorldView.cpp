@@ -1,5 +1,6 @@
 #include "WorldView.hpp"
 #include "Assert.hpp"
+#include "Models/Models.hpp"
 
 namespace Armed
 {
@@ -112,19 +113,7 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 
 	const TransformMatrix result_mat= MatrixMul(player_mat, view_mat);
 
-	const fixed16_t width= g_fixed16_one / 2;
-	const fixed16_t height = g_fixed16_one * 3 / 4;
-	const fixed16_t min_x= -  width / 2;
-	const fixed16_t max_x= +  width / 2;
-	const fixed16_t min_y= - height / 2;
-	const fixed16_t max_y= + height / 2;
-
-	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
-	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
-	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
-	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
-
-	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0x00FF00FF);
+	DrawModel(result_mat, surface, Models::player);
 }
 
 void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster)
@@ -136,22 +125,25 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
-	const fixed16_t height = g_fixed16_one * 6 / 8;
-	const fixed16_t min_width= g_fixed16_one * 5 / 8;
-	const fixed16_t max_width= g_fixed16_one * 7 / 8;
+	DrawModel(result_mat, surface, Models::monster_biter);
+}
 
-	const fixed16_t y_start= TransformY(result_mat, - height / 2);
-	const fixed16_t y_end= TransformY(result_mat, + height / 2);
-	const fixed16_t x_start_0= TransformX(result_mat, -min_width / 2);
-	const fixed16_t x_start_1= TransformX(result_mat, +min_width / 2);
-	const fixed16_t x_end_0= TransformX(result_mat, -max_width * 3 / 4);
-	const fixed16_t x_end_1= TransformX(result_mat, +max_width * 1 / 4);
-
-	FillTrapezoid(
-		surface,
-		y_start, y_end,
-		x_start_0, x_start_1,
-		x_end_0, x_end_1, 0x0000FFFF);
+void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model)
+{
+	for(const ModelTrapezoid& trapeziod : model)
+	{
+		const fixed16_t y_start= TransformY(mat, trapeziod.sides[0].y);
+		const fixed16_t y_end= TransformY(mat, trapeziod.sides[1].y);
+		const fixed16_t x_start_0= TransformX(mat, trapeziod.sides[0].x[0]);
+		const fixed16_t x_start_1= TransformX(mat, trapeziod.sides[0].x[1]);
+		const fixed16_t x_end_0= TransformX(mat, trapeziod.sides[1].x[0]);
+		const fixed16_t x_end_1= TransformX(mat, trapeziod.sides[1].x[1]);
+		FillTrapezoid(
+			surface,
+			y_start, y_end,
+			x_start_0, x_start_1,
+			x_end_0, x_end_1, trapeziod.color);
+	}
 }
 
 void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, pixel_t color)
