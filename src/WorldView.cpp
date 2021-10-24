@@ -136,19 +136,22 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
-	const fixed16_t width= g_fixed16_one * 5 / 8;
 	const fixed16_t height = g_fixed16_one * 6 / 8;
-	const fixed16_t min_x= -  width / 2;
-	const fixed16_t max_x= +  width / 2;
-	const fixed16_t min_y= - height / 2;
-	const fixed16_t max_y= + height / 2;
+	const fixed16_t min_width= g_fixed16_one * 5 / 8;
+	const fixed16_t max_width= g_fixed16_one * 7 / 8;
 
-	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
-	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
-	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
-	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
+	const fixed16_t y_start= TransformY(result_mat, - height / 2);
+	const fixed16_t y_end= TransformY(result_mat, + height / 2);
+	const fixed16_t x_start_0= TransformX(result_mat, -min_width / 2);
+	const fixed16_t x_start_1= TransformX(result_mat, +min_width / 2);
+	const fixed16_t x_end_0= TransformX(result_mat, -max_width * 3 / 4);
+	const fixed16_t x_end_1= TransformX(result_mat, +max_width * 1 / 4);
 
-	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0x0000FFFF);
+	FillTrapezoid(
+		surface,
+		y_start, y_end,
+		x_start_0, x_start_1,
+		x_end_0, x_end_1, 0x0000FFFF);
 }
 
 void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, pixel_t color)
@@ -169,6 +172,50 @@ void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, c
 	{
 		auto& dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
 		dst= color;
+	}
+}
+
+void WorldView::FillTrapezoid(
+	const SDL_Surface& surface,
+	const fixed16_t y_start, const fixed16_t y_end,
+	const fixed16_t x_start_0, const fixed16_t x_start_1,
+	const fixed16_t x_end_0, const fixed16_t x_end_1,
+	const pixel_t color)
+{
+	const int32_t surface_width= surface.w;
+	const int32_t surface_height= surface.h;
+
+	const fixed16_t dy= y_end - y_start;
+	if( dy < g_fixed16_one)
+	{
+		// Do not calculate dx/dy for small "dy" to avoid problems with precision.
+		const int32_t row= std::max(0, Fixed16RoundToInt(y_start));
+		const int32_t row_end= std::min(Fixed16RoundToInt(y_end), surface_height);
+		if(row < row_end)
+		{
+			const fixed16_t y_change= IntToFixed16(row) + (g_fixed16_one/2) - y_start;
+			const fixed16_t x0= x_start_0 + Fixed16MulDiv(x_end_0 - x_start_0, y_change, dy);
+			const fixed16_t x1= x_start_1 + Fixed16MulDiv(x_end_1 - x_start_1, y_change, dy);
+
+			auto dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
+			for(int32_t column= std::max(0, Fixed16RoundToInt(x0)), column_end= std::min(Fixed16RoundToInt(x1), surface_width); column < column_end; ++column)
+				dst[column]= color;
+		}
+	}
+	else
+	{
+		const fixed16_t d_x0= Fixed16Div(x_end_0 - x_start_0, dy);
+		const fixed16_t d_x1= Fixed16Div(x_end_1 - x_start_1, dy);
+		for(int32_t row= std::max(0, Fixed16RoundToInt(y_start)), row_end= std::min(Fixed16RoundToInt(y_end), surface_height); row < row_end; ++row)
+		{
+			const fixed16_t y_change= IntToFixed16(row) + (g_fixed16_one/2) - y_start;
+			const fixed16_t x0= x_start_0 + Fixed16Mul(y_change, d_x0);
+			const fixed16_t x1= x_start_1 + Fixed16Mul(y_change, d_x1);
+
+			auto dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
+			for(int32_t column= std::max(0, Fixed16RoundToInt(x0)), column_end= std::min(Fixed16RoundToInt(x1), surface_width); column < column_end; ++column)
+				dst[column]= color;
+		}
 	}
 }
 

@@ -32,12 +32,12 @@ inline fixed16_t IntToFixed16(const int32_t i)
 	return i << g_fixed16_base;
 }
 
-inline fixed16_t Fixed16Mul(const  fixed16_t l, const  fixed16_t r)
+inline fixed16_t Fixed16Mul(const fixed16_t l, const fixed16_t r)
 {
 	return fixed16_t((int64_t(l) * int64_t(r)) >> g_fixed16_base);
 }
 
-inline fixed16_t Fixed16Div(const  fixed16_t l, const  fixed16_t r)
+inline fixed16_t Fixed16Div(const fixed16_t l, const fixed16_t r)
 {
 	return fixed16_t((int64_t(l) << g_fixed16_base) / int64_t(r));
 }
@@ -45,6 +45,13 @@ inline fixed16_t Fixed16Div(const  fixed16_t l, const  fixed16_t r)
 inline fixed16_t Fixed16Abs(const fixed16_t x)
 {
 	return x >= 0 ? x : -x;
+}
+
+// result= x * y / z
+// It is more precise than Fixed16Div(Fixed16Mul(x, y), z).
+inline fixed16_t Fixed16MulDiv(const fixed16_t x, const fixed16_t y, const fixed16_t z)
+{
+	return fixed16_t(int64_t(x) * int64_t(y) / int64_t(z));
 }
 
 inline fixed16_t Fixed16VecDot(const fixed16vec2_t& v0, const fixed16vec2_t& v1)
