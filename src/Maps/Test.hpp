@@ -11,12 +11,12 @@ namespace Test
 {
 
 const char map_data[]=
-"            m             \n"
-"          ############    \n"
-"      0  ##               \n"
-"      ###                 \n"
-"     #      #     m #     \n"
-" ####       #########     \n";
+"            m                                       \n"
+"          ############                              \n"
+"      0  ##           #                             \n"
+"      ###              #######   m     m            \n"
+"     #      #     m #           ##########          \n"
+" ####       #########                               \n";
 
 const MapDescription description
 {

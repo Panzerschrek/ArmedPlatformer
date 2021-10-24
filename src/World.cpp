@@ -4,6 +4,14 @@
 namespace Armed
 {
 
+namespace
+{
+
+const fixed16_t c_player_width= g_fixed16_one / 2;
+const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
+
+} // namespace
+
 World::World(const MapDescription& map_description)
 	: map_(map_description.tiles_map_data)
 	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
@@ -39,10 +47,8 @@ void World::ProcessPlayerPhysics(const InputState& input_state)
 	{
 		const fixed16vec2_t player_pos{ player_.GetPos()[0], player_.GetPos()[1] };
 
-		const fixed16vec2_t player_bbox{ g_fixed16_one / 2, g_fixed16_one * 3 / 4 };
-
-		const fixed16vec2_t bbox_min{ -player_bbox[0] / 2, -player_bbox[1] / 2 };
-		const fixed16vec2_t bbox_max{ +player_bbox[0] / 2, +player_bbox[1] / 2 };
+		const fixed16vec2_t bbox_min{ -c_player_width / 2, -c_player_heigth / 2 };
+		const fixed16vec2_t bbox_max{ +c_player_width / 2, +c_player_heigth / 2 };
 
 		const fixed16vec2_t bbox_transformed_min{ bbox_min[0] + player_pos[0], bbox_min[1] + player_pos[1] };
 		const fixed16vec2_t bbox_transformed_max{ bbox_max[0] + player_pos[0], bbox_max[1] + player_pos[1] };
@@ -134,23 +140,65 @@ void World::MoveMonster(Monster& monster)
 {
 	const fixed16_t c_speed= g_fixed16_one / 64;
 	const fixed16_t c_width= g_fixed16_one * 5 / 8;
+	const fixed16_t c_height= g_fixed16_one * 6 / 8;
 
 	fixed16vec2_t new_pos{ monster.pos[0], monster.pos[1] };
 	new_pos[0]+= monster.move_dir * c_speed;
 
-	const int32_t min_x= Fixed16FloorToInt(new_pos[0] - c_width / 2);
-	const int32_t max_x= Fixed16FloorToInt(new_pos[0] + c_width / 2);
-	const int32_t y= Fixed16FloorToInt(new_pos[1]);
+	const fixed16vec2_t bb_min{new_pos[0] - c_width / 2, new_pos[1] - c_height / 2};
+	const fixed16vec2_t bb_max{new_pos[0] + c_width / 2, new_pos[1] + c_height / 2};
+
 	bool can_move= true;
-	for(int32_t x= std::max(0, min_x); x <= std::min(max_x, int32_t(map_.GetSizeX()) - 1); ++x)
+
+	// Check for possibility to move.
 	{
-		if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
-			can_move= false;
-		if(map_.GetTile(uint32_t(x), uint32_t(std::min(y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
-			can_move= false;
+		const int32_t min_x= Fixed16FloorToInt(bb_min[0]);
+		const int32_t max_x= Fixed16FloorToInt(bb_max[0]);
+		const int32_t y= Fixed16FloorToInt(new_pos[1]);
+
+		for(int32_t x= std::max(0, min_x); x <= std::min(max_x, int32_t(map_.GetSizeX()) - 1); ++x)
+		{
+			if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
+				can_move= false;
+			if(map_.GetTile(uint32_t(x), uint32_t(std::min(y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
+				can_move= false;
+		}
 	}
 
-	// TODO - check for collisions agains other monsters and player.
+	// Check collisions agains other monsters.
+	for(const Monster& other_monster : monsters_)
+	{
+		if(&other_monster == &monster)
+			continue;
+
+		const fixed16vec2_t other_bb_min{other_monster.pos[0] - c_width / 2, other_monster.pos[1] - c_height / 2};
+		const fixed16vec2_t other_bb_max{other_monster.pos[0] + c_width / 2, other_monster.pos[1] + c_height / 2};
+
+		if( other_bb_min[0] >= bb_max[0] ||
+			other_bb_min[1] >= bb_max[1] ||
+			other_bb_max[0] <= bb_min[0] ||
+			other_bb_max[1] <= bb_min[1])
+			continue; // NO collision.
+
+		can_move= false;
+	}
+
+	{ // Check collision with player.
+		const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
+		const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
+
+		if( player_bb_min[0] >= bb_max[0] ||
+			player_bb_min[1] >= bb_max[1] ||
+			player_bb_max[0] <= bb_min[0] ||
+			player_bb_max[1] <= bb_min[1])
+		{} // No collision.
+		else
+		{
+			can_move= false;
+
+			// TODO - continue to move in case o meelee attack.
+		}
+	}
 
 	if(!can_move)
 		monster.move_dir= -monster.move_dir;
