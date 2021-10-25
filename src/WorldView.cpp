@@ -37,7 +37,7 @@ void WorldView::Draw()
 	for(uint32_t y= 0; y < uint32_t(surface.h); ++y)
 	for(uint32_t x= 0; x < uint32_t(surface.w); ++x)
 	{
-		auto& dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + uint32_t(surface.pitch) * y)[x];
+		auto& dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + uint32_t(surface.pitch) * y)[x];
 		dst= uint32_t(x) * 255u / uint32_t(surface.w) + ((uint32_t(y) * 255u / uint32_t(surface.h)) << 8);
 	}
 
@@ -158,7 +158,7 @@ void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface
 	}
 }
 
-void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, pixel_t color)
+void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, color_t color)
 {
 	if(min_x >= surface.w ||
 		min_y >= surface.h ||
@@ -174,7 +174,7 @@ void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, c
 	for(int32_t y= min_y_clamped; y < max_y_clamped; ++y)
 	for(int32_t x= min_x_clamped; x < max_x_clamped; ++x)
 	{
-		auto& dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
+		auto& dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
 		dst= color;
 	}
 }
@@ -184,7 +184,7 @@ void WorldView::FillTrapezoid(
 	const fixed16_t y_start, const fixed16_t y_end,
 	const fixed16_t x_start_0, const fixed16_t x_start_1,
 	const fixed16_t x_end_0, const fixed16_t x_end_1,
-	const pixel_t color)
+	const color_t color)
 {
 	const int32_t surface_width= surface.w;
 	const int32_t surface_height= surface.h;
@@ -201,7 +201,7 @@ void WorldView::FillTrapezoid(
 			const fixed16_t x0= x_start_0 + Fixed16MulDiv(x_end_0 - x_start_0, y_change, dy);
 			const fixed16_t x1= x_start_1 + Fixed16MulDiv(x_end_1 - x_start_1, y_change, dy);
 
-			auto dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
+			auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
 			for(int32_t column= std::max(0, Fixed16RoundToInt(x0)), column_end= std::min(Fixed16RoundToInt(x1), surface_width); column < column_end; ++column)
 				dst[column]= color;
 		}
@@ -216,7 +216,7 @@ void WorldView::FillTrapezoid(
 			const fixed16_t x0= x_start_0 + Fixed16Mul(y_change, d_x0);
 			const fixed16_t x1= x_start_1 + Fixed16Mul(y_change, d_x1);
 
-			auto dst= reinterpret_cast<pixel_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
+			auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * row);
 			for(int32_t column= std::max(0, Fixed16RoundToInt(x0)), column_end= std::min(Fixed16RoundToInt(x1), surface_width); column < column_end; ++column)
 				dst[column]= color;
 		}

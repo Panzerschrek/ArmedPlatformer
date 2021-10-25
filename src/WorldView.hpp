@@ -32,14 +32,14 @@ private:
 	void DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface);
 	void DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster);
 	void DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model);
-	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, pixel_t color);
+	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
 
 	void FillTrapezoid(
 		const SDL_Surface& surface,
 		fixed16_t y_start, fixed16_t y_end, // y_end >= y_start
 		fixed16_t x_start_0, fixed16_t x_start_1,
 		fixed16_t x_end_0, fixed16_t x_end_1,
-		pixel_t color);
+		color_t color);
 
 private:
 	const World& world_;

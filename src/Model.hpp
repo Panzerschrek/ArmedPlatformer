@@ -1,11 +1,10 @@
 #pragma once
+#include "Color.hpp"
 #include "Fixed.hpp"
 #include <vector>
 
 namespace Armed
 {
-
-using pixel_t= uint32_t;
 
 struct ModelTrapezoidSide
 {
@@ -16,7 +15,7 @@ struct ModelTrapezoidSide
 struct ModelTrapezoid
 {
 	ModelTrapezoidSide sides[2];
-	pixel_t color;
+	color_t color;
 };
 
 using Model= std::vector<ModelTrapezoid>;

@@ -4,9 +4,9 @@
 namespace Armed
 {
 
-inline constexpr pixel_t ColorRGB(const uint8_t r, const uint8_t g, const uint8_t b)
+inline constexpr color_t ColorRGB(const uint8_t r, const uint8_t g, const uint8_t b)
 {
-	return pixel_t((b << 0u) | (g << 8u) | (r << 16u));
+	return color_t((b << 0u) | (g << 8u) | (r << 16u));
 }
 
 namespace Models

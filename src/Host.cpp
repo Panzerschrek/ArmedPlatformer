@@ -10,6 +10,7 @@ Host::Host()
 	: system_window_()
 	, world_(Maps::Test::description)
 	, world_view_(world_, system_window_)
+	, hud_(world_, system_window_)
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
 {
@@ -41,6 +42,7 @@ bool Host::Loop()
 
 	system_window_.BeginFrame();
 	world_view_.Draw();
+	hud_.Draw();
 	system_window_.EndFrame();
 
 	const TimePoint tick_end_time= GetCurrentTime();

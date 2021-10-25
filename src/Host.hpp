@@ -1,4 +1,5 @@
 #pragma once
+#include "Hud.hpp"
 #include "WorldView.hpp"
 #include <chrono>
 
@@ -25,6 +26,7 @@ private:
 	SystemWindow system_window_;
 	World world_;
 	WorldView world_view_;
+	Hud hud_;
 
 	const Clock::time_point init_time_;
 	TimePoint prev_tick_time_;
