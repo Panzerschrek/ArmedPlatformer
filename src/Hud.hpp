@@ -21,6 +21,15 @@ private:
 		color_t color,
 		fixed16_t value);
 
+	void DrawAmmoIndicator(
+		const SDL_Surface& surface,
+		int32_t start_x, int32_t start_y,
+		int32_t bar_size_x, int32_t bar_size_y,
+		int32_t bar_margin_x, int32_t bar_margin_y,
+		uint32_t row_length,
+		uint32_t count,
+		color_t color);
+
 private:
 	const World& world_;
 	SystemWindow& system_window_;

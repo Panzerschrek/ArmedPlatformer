@@ -46,6 +46,30 @@ void Hud::Draw()
 		c_health_circle_outer_radius, c_health_circle_outer_extra_radius,
 		ColorRGB(180, 180, 180),
 		g_fixed16_one);
+
+	const int32_t c_max_ammo= 48;
+	const uint32_t c_ammo_count[]{47, 37, 19};
+	const color_t c_ammo_colors[]{ColorRGB(32, 32, 128), ColorRGB(128, 32, 128), ColorRGB(128, 32, 32)};
+	for(int32_t i= 0; i < 3; ++i)
+	{
+		const int32_t c_ammo_bar_width= 4;
+		const int32_t c_ammo_bar_height= 8;
+		const int32_t c_ammo_bar_margin= 2;
+		const int32_t c_ammo_bar_row_length= 16;
+
+		const int32_t ammo_bar_x= surface_width - ((c_ammo_bar_width + c_ammo_bar_margin) * c_ammo_bar_row_length + c_ammo_bar_margin * 2) * (i + 1);
+		const int32_t ammo_bar_y= surface_height - c_ammo_bar_margin - (c_ammo_bar_height + c_ammo_bar_margin) * (c_max_ammo / c_ammo_bar_row_length);
+
+		DrawAmmoIndicator(
+			surface,
+			ammo_bar_x,
+			ammo_bar_y,
+			c_ammo_bar_width, c_ammo_bar_height,
+			c_ammo_bar_margin, c_ammo_bar_margin,
+			c_ammo_bar_row_length,
+			c_ammo_count[i],
+			c_ammo_colors[i]);
+	}
 }
 
 void Hud::DrawRoundIndicator(
@@ -97,6 +121,32 @@ void Hud::DrawRoundIndicator(
 				if(draw)
 					dst[x]= color;
 			}
+		}
+	}
+}
+
+void Hud::DrawAmmoIndicator(
+	const SDL_Surface& surface,
+	const int32_t start_x, const int32_t start_y,
+	const int32_t bar_size_x, const int32_t bar_size_y,
+	const int32_t bar_margin_x, const int32_t bar_margin_y,
+	const uint32_t row_length,
+	const uint32_t count,
+	const color_t color)
+{
+	for(uint32_t i= 0; i < count; ++i)
+	{
+		const uint32_t row= i / row_length;
+		const uint32_t column= i % row_length;
+
+		const int32_t current_x= start_x + (bar_size_x + bar_margin_x) * int32_t(column);
+		const int32_t current_y= start_y + (bar_size_y + bar_margin_y) * int32_t(row);
+
+		for(int32_t y= current_y; y < current_y + bar_size_y; ++y)
+		{
+			auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+			for(int32_t x= current_x; x < current_x + bar_size_x; ++x)
+				dst[x]= color;
 		}
 	}
 }
