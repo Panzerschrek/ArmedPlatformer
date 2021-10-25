@@ -1,5 +1,4 @@
 #include "Hud.hpp"
-#include "Color.hpp"
 
 namespace Armed
 {
@@ -14,6 +13,11 @@ void Hud::Draw()
 	ARMED_UNUSED(world_);
 
 	const int32_t c_hud_heigth= 64;
+	const int32_t c_health_circle_offset_x= 32;
+	const int32_t c_health_circle_offset_y= 32;
+	const int32_t c_health_circle_inner_radius= 10;
+	const int32_t c_health_circle_outer_radius= 24;
+	const int32_t c_health_circle_outer_extra_radius= 25;
 
 	const SDL_Surface& surface= system_window_.GetSurface();
 	const int32_t surface_width= surface.w;
@@ -25,6 +29,75 @@ void Hud::Draw()
 		auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
 		for(int32_t x= 0; x < surface_width; ++x)
 			dst[x]= (dst[x] & 0xFEFEFEFE) >> 1;
+	}
+
+	DrawRoundIndicator(
+		surface,
+		c_health_circle_offset_x,
+		surface_height - c_health_circle_offset_y,
+		c_health_circle_inner_radius, c_health_circle_outer_radius,
+		ColorRGB(220, 32, 32),
+		(world_.GetPlayer().GetPos()[0] / 8) & 65535);
+
+	DrawRoundIndicator(
+		surface,
+		c_health_circle_offset_x,
+		surface_height - c_health_circle_offset_y,
+		c_health_circle_outer_radius, c_health_circle_outer_extra_radius,
+		ColorRGB(180, 180, 180),
+		g_fixed16_one);
+}
+
+void Hud::DrawRoundIndicator(
+	const SDL_Surface& surface,
+	const int32_t center_x,
+	const int32_t center_y,
+	const int32_t inner_radius, const int32_t outer_radius,
+	color_t color,
+	const fixed16_t value)
+{
+	const int32_t square_inner_radius= inner_radius * inner_radius;
+	const int32_t square_outer_radius= outer_radius * outer_radius;
+
+	const float value_angle= float(value) / float(g_fixed16_one) * (2.0f * 3.1415926535f);
+	const fixed16_t value_cos= fixed16_t(std::cos(value_angle) * float(g_fixed16_one));
+	const fixed16_t square_cos= Fixed16Mul(value_cos, value_cos);
+
+	const int32_t y_end= value >= (g_fixed16_one / 4) ? (center_y + outer_radius) : center_y;
+	for(int32_t y= center_y - outer_radius; y <= y_end; ++y)
+	{
+		const int32_t dy = y - center_y;
+		const int32_t dy2= dy * dy;
+		auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+		const int32_t x_end= value >= (g_fixed16_one / 2) ? (center_x + outer_radius) : center_x;
+		for(int32_t x= center_x - outer_radius; x <= x_end; ++x)
+		{
+			const int32_t dx= x - center_x;
+			const int32_t dx2= dx * dx;
+			const int32_t square_dist= dx2 + dy2;
+			if(square_dist >= square_inner_radius && square_dist < square_outer_radius)
+			{
+				const fixed16_t angle_cos2= IntToFixed16(dy2) / square_dist;
+				bool draw= dx < 0;
+				if(value >= g_fixed16_one / 2)
+				{
+					if(value >= g_fixed16_one * 3 / 4)
+						draw|= dy > 0 || angle_cos2 <= square_cos;
+					else
+						draw|= dy > 0 && angle_cos2 > square_cos;
+				}
+				else
+				{
+					if(value >= g_fixed16_one / 4)
+						draw&= dy <= 0 || angle_cos2 <= square_cos;
+					else
+						draw&= dy <= 0 && angle_cos2 > square_cos;
+				}
+
+				if(draw)
+					dst[x]= color;
+			}
+		}
 	}
 }
 
