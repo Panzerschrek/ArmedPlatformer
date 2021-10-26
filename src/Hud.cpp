@@ -55,7 +55,7 @@ void Hud::Draw()
 		g_fixed16_one);
 
 	const int32_t c_max_ammo= 48;
-	const uint32_t c_ammo_count[]{47, 37, 19};
+	const uint32_t c_ammo_count[]{47, 37, player.GetAmmo()};
 	const color_t c_ammo_colors[]{ColorRGB(32, 32, 128), ColorRGB(128, 32, 128), ColorRGB(128, 32, 32)};
 	for(int32_t i= 0; i < 3; ++i)
 	{

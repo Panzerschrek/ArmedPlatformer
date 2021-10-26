@@ -13,6 +13,37 @@ Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
 
 void Player::Tick(const InputState& input_state)
 {
+	Move(input_state);
+	Shoot(input_state);
+	++current_tick_;
+}
+
+void Player::Push(const fixed16vec2_t& push_vec)
+{
+	pos_[0]+= push_vec[0];
+	pos_[1]+= push_vec[1];
+
+	const fixed16_t vel_dir_dot= Fixed16VecDot(push_vec, vel_);
+	if(vel_dir_dot < 0)
+	{
+		// Clamp velosity in case of opposing push.
+		const fixed16_t push_vec_square_len= Fixed16VecSquareLen(push_vec);
+		if(push_vec_square_len > 0)
+		{
+			const fixed16_t dot_corrected= Fixed16Div(vel_dir_dot, push_vec_square_len);
+			vel_[0]-= Fixed16Mul(push_vec[0], dot_corrected);
+			vel_[1]-= Fixed16Mul(push_vec[1], dot_corrected);
+		}
+	}
+}
+
+void Player::Hit(const int32_t damage)
+{
+	health_-= damage;
+}
+
+void Player::Move(const InputState& input_state)
+{
 	using KeyCode= SystemEventTypes::KeyCode;
 	const auto key_left = KeyCode::D;
 	const auto key_right = KeyCode::A;
@@ -97,30 +128,18 @@ void Player::Tick(const InputState& input_state)
 
 	for(uint32_t i= 0; i < 2; ++i)
 		pos_[i]+= vel_[i];
+
 }
 
-void Player::Push(const fixed16vec2_t& push_vec)
+void Player::Shoot(const InputState& input_state)
 {
-	pos_[0]+= push_vec[0];
-	pos_[1]+= push_vec[1];
-
-	const fixed16_t vel_dir_dot= Fixed16VecDot(push_vec, vel_);
-	if(vel_dir_dot < 0)
+	if(input_state.mouse[size_t(SystemEventTypes::ButtonCode::Left)] &&
+		current_tick_ - last_shoot_tick_ >= 20 &&
+		ammo_ > 0)
 	{
-		// Clamp velosity in case of opposing push.
-		const fixed16_t push_vec_square_len= Fixed16VecSquareLen(push_vec);
-		if(push_vec_square_len > 0)
-		{
-			const fixed16_t dot_corrected= Fixed16Div(vel_dir_dot, push_vec_square_len);
-			vel_[0]-= Fixed16Mul(push_vec[0], dot_corrected);
-			vel_[1]-= Fixed16Mul(push_vec[1], dot_corrected);
-		}
+		--ammo_;
+		last_shoot_tick_= current_tick_;
 	}
-}
-
-void Player::Hit(const int32_t damage)
-{
-	health_-= damage;
 }
 
 } // namespace Armed
