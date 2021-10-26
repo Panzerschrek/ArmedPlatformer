@@ -18,6 +18,8 @@ void Hud::Draw()
 	const int32_t c_health_circle_inner_radius= 10;
 	const int32_t c_health_circle_outer_radius= 24;
 	const int32_t c_health_circle_outer_extra_radius= 25;
+	const color_t c_health_circle_color= ColorRGB(220, 32, 32);
+	const color_t c_health_circle_extra_color= ColorRGB(180, 180, 180);
 
 	const SDL_Surface& surface= system_window_.GetSurface();
 	const int32_t surface_width= surface.w;
@@ -31,20 +33,25 @@ void Hud::Draw()
 			dst[x]= (dst[x] & 0xFEFEFEFE) >> 1;
 	}
 
+	const Player& player= world_.GetPlayer();
+
+	const int32_t c_max_displayed_health= 100;
+	const int32_t health= std::max(0, std::min(player.GetHealth(), c_max_displayed_health));
+
 	DrawRoundIndicator(
 		surface,
 		c_health_circle_offset_x,
 		surface_height - c_health_circle_offset_y,
 		c_health_circle_inner_radius, c_health_circle_outer_radius,
-		ColorRGB(220, 32, 32),
-		(world_.GetPlayer().GetPos()[0] / 8) & 65535);
+		c_health_circle_color,
+		IntToFixed16(health) / c_max_displayed_health);
 
 	DrawRoundIndicator(
 		surface,
 		c_health_circle_offset_x,
 		surface_height - c_health_circle_offset_y,
 		c_health_circle_outer_radius, c_health_circle_outer_extra_radius,
-		ColorRGB(180, 180, 180),
+		c_health_circle_extra_color,
 		g_fixed16_one);
 
 	const int32_t c_max_ammo= 48;

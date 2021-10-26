@@ -4,8 +4,10 @@
 namespace Armed
 {
 
+const int32_t c_max_health= 100;
+
 Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
-	: pos_{pos_x, pos_y}, vel_{0, 0}
+	: pos_{pos_x, pos_y}, vel_{0, 0}, health_(c_max_health)
 {
 }
 
