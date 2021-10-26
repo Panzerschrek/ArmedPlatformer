@@ -12,6 +12,9 @@ const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
 
+const World::TickT c_attack_frequency= World::c_update_frequency / 1;
+const int32_t c_melee_attack_damage= 25;
+
 } // namespace
 
 World::World(const MapDescription& map_description)
@@ -37,6 +40,7 @@ void World::Tick(const InputState& input_state)
 {
 	ProcessPlayerPhysics(input_state);
 	MoveMonsters();
+	++current_tick_;
 }
 
 void World::ProcessPlayerPhysics(const InputState& input_state)
@@ -196,9 +200,15 @@ void World::MoveMonster(Monster& monster)
 		{} // No collision.
 		else
 		{
-			can_move= false;
+			//can_move= false;
 
 			// TODO - continue to move in case o meelee attack.
+
+			if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
+			{
+				player_.Hit(c_melee_attack_damage);
+				monster.last_attack_tick= current_tick_;
+			}
 		}
 	}
 

@@ -17,6 +17,7 @@ public:
 
 	void Push(const fixed16vec2_t& push_vec);
 	void SetOnGround(const bool on_ground){ on_ground_= on_ground; }
+	void Hit(int32_t damage);
 
 private:
 	fixed16vec2_t pos_;

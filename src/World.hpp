@@ -14,13 +14,16 @@ struct MapDescription
 class World
 {
 public:
-	static constexpr const uint64_t c_update_frequency= 120;
+	static constexpr const uint32_t c_update_frequency= 120;
+
+	using TickT= uint32_t;
 
 	struct Monster
 	{
 		uint32_t spawn_tile_pos[2]{};
 		fixed16vec2_t pos{};
 		int32_t move_dir= 0; // -1, 0, +1
+		TickT last_attack_tick= 0;
 	};
 
 public:
@@ -42,6 +45,7 @@ private:
 	TilesMap map_;
 	Player player_;
 	std::vector<Monster> monsters_;
+	TickT current_tick_ = c_update_frequency * 100;
 };
 
 } // namespace Armed

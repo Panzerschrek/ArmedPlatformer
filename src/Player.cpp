@@ -118,4 +118,9 @@ void Player::Push(const fixed16vec2_t& push_vec)
 	}
 }
 
+void Player::Hit(const int32_t damage)
+{
+	health_-= damage;
+}
+
 } // namespace Armed
