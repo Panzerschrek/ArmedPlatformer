@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.hpp"
+#include "Rand.hpp"
 #include "TilesMap.hpp"
 
 namespace Armed
@@ -42,6 +43,7 @@ private:
 	void MoveMonster(Monster& monster);
 
 private:
+	Rand rand_; // TODO - initialize it with really-random seed
 	TilesMap map_;
 	Player player_;
 	std::vector<Monster> monsters_;

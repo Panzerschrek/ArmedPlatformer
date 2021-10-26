@@ -13,7 +13,8 @@ const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
 const int32_t c_monster_max_distance_to_spawn= 6;
 
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
-const int32_t c_melee_attack_damage= 25;
+const uint32_t c_melee_attack_min_damage= 20;
+const uint32_t c_melee_attack_max_damage= 30;
 
 } // namespace
 
@@ -206,7 +207,8 @@ void World::MoveMonster(Monster& monster)
 
 			if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
 			{
-				player_.Hit(c_melee_attack_damage);
+				const uint32_t damage= rand_.RandValue(c_melee_attack_min_damage, c_melee_attack_max_damage +1);
+				player_.Hit(int32_t(damage));
 				monster.last_attack_tick= current_tick_;
 			}
 		}
