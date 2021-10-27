@@ -14,6 +14,7 @@ const fixed16_t c_monster_width= g_fixed16_one * 5 / 8;
 const fixed16_t c_monster_height= g_fixed16_one * 6 / 8;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
+const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
 
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
@@ -210,12 +211,12 @@ void World::MoveMonster(Monster& monster)
 			other_bb_min[1] >= bb_max[1] ||
 			other_bb_max[0] <= bb_min[0] ||
 			other_bb_max[1] <= bb_min[1])
-			continue; // NO collision.
+			continue; // No collision.
 
 		can_move= false;
 	}
 
-	{ // Check collision with player.
+	{ // Try to attack player.
 		const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
 		const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
 
@@ -226,10 +227,6 @@ void World::MoveMonster(Monster& monster)
 		{} // No collision.
 		else
 		{
-			//can_move= false;
-
-			// TODO - continue to move in case o meelee attack.
-
 			if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
 			{
 				const uint32_t damage= rand_.RandValue(c_melee_attack_min_damage, c_melee_attack_max_damage +1);
@@ -239,19 +236,44 @@ void World::MoveMonster(Monster& monster)
 		}
 	}
 
+	bool is_too_far_from_spawn_point= false;
 	{ // Check for distance from spawn point.
 		const int32_t signed_distance_to_spawn= Fixed16RoundToInt(new_pos[0]) - int32_t(monster.spawn_tile_pos[0]);
-		if(std::abs(signed_distance_to_spawn) > c_monster_max_distance_to_spawn)
-			can_move= false;
+		if(std::abs(signed_distance_to_spawn) > c_monster_max_distance_to_spawn &&
+			signed_distance_to_spawn * monster.move_dir > 0)
+			is_too_far_from_spawn_point= true;
 	}
 
-	if(!can_move)
-		monster.move_dir= -monster.move_dir;
-	else
-	{
-		monster.pos[0]= new_pos[0];
-		monster.pos[1]= new_pos[1];
+	bool should_change_direction_towards_player= false;
+	bool should_face_player= false;
+	{ // Check for distance to player. Change direction if player is too close - stop patrooling, start moving towards player.
+		const fixed16vec2_t dir_to_player{player_.GetPos()[0] - new_pos[0], player_.GetPos()[1] - new_pos[1]};
+		if(std::abs(dir_to_player[1]) < g_fixed16_one * 2)
+		{
+			fixed16_t abs_dist= std::abs(dir_to_player[0]);
+			// Add some value to esitamed distance based on direction of view. This is needed to prevent monster changing move direction in corner cases.
+			const fixed16_t dir_dir_dot= monster.move_dir * dir_to_player[0]; // int * fixed16_t
+			abs_dist+= dir_dir_dot > 0 ? (+g_fixed16_one/2) : (-g_fixed16_one/2);
+			if(abs_dist < c_player_monster_distance_for_chase_start)
+			{
+				should_face_player= true;
+				if(dir_dir_dot < 0)
+					should_change_direction_towards_player= true;
+			}
+		}
 	}
+
+	if(should_face_player)
+	{
+		if(should_change_direction_towards_player)
+			monster.move_dir= -monster.move_dir;
+		else if(can_move)
+			monster.pos= new_pos;
+	}
+	else if(is_too_far_from_spawn_point || !can_move)
+		monster.move_dir= -monster.move_dir;
+	else if(can_move)
+		monster.pos= new_pos;
 }
 
 } // namespace Armed
