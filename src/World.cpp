@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "Assert.hpp"
+#include <optional>
 
 namespace Armed
 {
@@ -9,12 +10,68 @@ namespace
 
 const fixed16_t c_player_width= g_fixed16_one / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
+const fixed16_t c_monster_width= g_fixed16_one * 5 / 8;
+const fixed16_t c_monster_height= g_fixed16_one * 6 / 8;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
 
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
+
+std::optional<fixed16vec2_t> ProcessPlayerCollsion(
+	const fixed16vec2_t& player_bb_min,
+	const fixed16vec2_t& player_bb_max,
+	const fixed16vec2_t& bb_min,
+	const fixed16vec2_t& bb_max)
+{
+	if( player_bb_min[0] >= bb_max[0] ||
+		player_bb_min[1] >= bb_max[1] ||
+		player_bb_max[0] <= bb_min[0] ||
+		player_bb_max[1] <= bb_min[1] )
+		return std::nullopt; // No collision
+
+	const fixed16_t push_positive_x = bb_max[0] - player_bb_min[0];
+	const fixed16_t push_positive_y = bb_max[1] - player_bb_min[1];
+	const fixed16_t push_negative_x = bb_min[0] - player_bb_max[0];
+	const fixed16_t push_negative_y = bb_min[1] - player_bb_max[1];
+
+	const fixed16_t push_positive_x_abs = Fixed16Abs(push_positive_x);
+	const fixed16_t push_positive_y_abs = Fixed16Abs(push_positive_y);
+	const fixed16_t push_negative_x_abs = Fixed16Abs(push_negative_x);
+	const fixed16_t push_negative_y_abs = Fixed16Abs(push_negative_y);
+
+	// Search for smallest push distance. Check first Y pushes.
+	fixed16vec2_t push_vec{0, 0};
+	if( push_positive_y_abs <= push_positive_x_abs &&
+		push_positive_y_abs <= push_negative_x_abs &&
+		push_positive_y_abs <= push_negative_y_abs)
+	{
+		push_vec[1]= push_positive_y;
+	} else
+	if( push_negative_y_abs <= push_positive_x_abs &&
+		push_negative_y_abs <= push_positive_y_abs &&
+		push_negative_y_abs <= push_negative_x_abs)
+	{
+		push_vec[1]= push_negative_y;
+	} else
+	if( push_positive_x_abs <= push_positive_y_abs &&
+		push_positive_x_abs <= push_negative_x_abs &&
+		push_positive_x_abs <= push_negative_y_abs)
+	{
+		push_vec[0]= push_positive_x;
+	} else
+	/*
+	if( push_negative_x_abs <= push_positive_x_abs &&
+		push_negative_x_abs <= push_positive_y_abs &&
+		push_negative_x_abs <= push_negative_y_abs)
+	*/
+	{
+		push_vec[0]= push_negative_x;
+	}
+
+	return push_vec;
+}
 
 } // namespace
 
@@ -60,6 +117,7 @@ void World::ProcessPlayerPhysics(const InputState& input_state)
 		const fixed16vec2_t bbox_transformed_min{ bbox_min[0] + player_pos[0], bbox_min[1] + player_pos[1] };
 		const fixed16vec2_t bbox_transformed_max{ bbox_max[0] + player_pos[0], bbox_max[1] + player_pos[1] };
 
+		// Check for collisions with geometry.
 		const int32_t cell_min[2]{ Fixed16FloorToInt(bbox_transformed_min[0]), Fixed16FloorToInt(bbox_transformed_min[1]) };
 		const int32_t cell_max[2]{ Fixed16FloorToInt(bbox_transformed_max[0]), Fixed16FloorToInt(bbox_transformed_max[1]) };
 
@@ -75,60 +133,29 @@ void World::ProcessPlayerPhysics(const InputState& input_state)
 			{
 				const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
 				const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
-				if( bbox_transformed_min[0] >= tile_bb_max[0] ||
-					bbox_transformed_min[1] >= tile_bb_max[1] ||
-					bbox_transformed_max[0] <= tile_bb_min[0] ||
-					bbox_transformed_max[1] <= tile_bb_min[1] )
+				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
 				{
-					// Ok - does not collide.
-				}
-				else
-				{
-					const fixed16_t push_positive_x = tile_bb_max[0] - bbox_transformed_min[0];
-					const fixed16_t push_positive_y = tile_bb_max[1] - bbox_transformed_min[1];
-					const fixed16_t push_negative_x = tile_bb_min[0] - bbox_transformed_max[0];
-					const fixed16_t push_negative_y = tile_bb_min[1] - bbox_transformed_max[1];
-
-					const fixed16_t push_positive_x_abs = Fixed16Abs(push_positive_x);
-					const fixed16_t push_positive_y_abs = Fixed16Abs(push_positive_y);
-					const fixed16_t push_negative_x_abs = Fixed16Abs(push_negative_x);
-					const fixed16_t push_negative_y_abs = Fixed16Abs(push_negative_y);
-
-					// Search for smallest push distance. Check first Y pushes.
-					fixed16vec2_t push_vec{0, 0};
-					if( push_positive_y_abs <= push_positive_x_abs &&
-						push_positive_y_abs <= push_negative_x_abs &&
-						push_positive_y_abs <= push_negative_y_abs)
-					{
-						push_vec[1]= push_positive_y;
-					} else
-					if( push_negative_y_abs <= push_positive_x_abs &&
-						push_negative_y_abs <= push_positive_y_abs &&
-						push_negative_y_abs <= push_negative_x_abs)
-					{
+					player_.Push(*push_vec);
+					if((*push_vec)[1] < 0)
 						player_.SetOnGround(true);
-						push_vec[1]= push_negative_y;
-					} else
-					if( push_positive_x_abs <= push_positive_y_abs &&
-						push_positive_x_abs <= push_negative_x_abs &&
-						push_positive_x_abs <= push_negative_y_abs)
-					{
-						push_vec[0]= push_positive_x;
-					} else
-					/*
-					if( push_negative_x_abs <= push_positive_x_abs &&
-						push_negative_x_abs <= push_positive_y_abs &&
-						push_negative_x_abs <= push_negative_y_abs)
-					*/
-					{
-						push_vec[0]= push_negative_x;
-					}
-
-					player_.Push(push_vec);
 					goto collsion_check_end;
 				}
 			}
 				break;
+			}
+		}
+
+		// Check for collisions against monsters.
+		for(const Monster& monster : monsters_)
+		{
+			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
+			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
+			if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, monster_bb_min, monster_bb_max))
+			{
+				player_.Push(*push_vec);
+				if((*push_vec)[1] < 0)
+					player_.SetOnGround(true);
+				goto collsion_check_end;
 			}
 		}
 
@@ -146,14 +173,12 @@ void World::MoveMonsters()
 void World::MoveMonster(Monster& monster)
 {
 	const fixed16_t c_speed= g_fixed16_one / 64;
-	const fixed16_t c_width= g_fixed16_one * 5 / 8;
-	const fixed16_t c_height= g_fixed16_one * 6 / 8;
 
 	fixed16vec2_t new_pos{ monster.pos[0], monster.pos[1] };
 	new_pos[0]+= monster.move_dir * c_speed;
 
-	const fixed16vec2_t bb_min{new_pos[0] - c_width / 2, new_pos[1] - c_height / 2};
-	const fixed16vec2_t bb_max{new_pos[0] + c_width / 2, new_pos[1] + c_height / 2};
+	const fixed16vec2_t bb_min{new_pos[0] - c_monster_width / 2, new_pos[1] - c_monster_height / 2};
+	const fixed16vec2_t bb_max{new_pos[0] + c_monster_width / 2, new_pos[1] + c_monster_height / 2};
 
 	bool can_move= true;
 
@@ -178,8 +203,8 @@ void World::MoveMonster(Monster& monster)
 		if(&other_monster == &monster)
 			continue;
 
-		const fixed16vec2_t other_bb_min{other_monster.pos[0] - c_width / 2, other_monster.pos[1] - c_height / 2};
-		const fixed16vec2_t other_bb_max{other_monster.pos[0] + c_width / 2, other_monster.pos[1] + c_height / 2};
+		const fixed16vec2_t other_bb_min{other_monster.pos[0] - c_monster_width / 2, other_monster.pos[1] - c_monster_height / 2};
+		const fixed16vec2_t other_bb_max{other_monster.pos[0] + c_monster_width / 2, other_monster.pos[1] + c_monster_height / 2};
 
 		if( other_bb_min[0] >= bb_max[0] ||
 			other_bb_min[1] >= bb_max[1] ||
