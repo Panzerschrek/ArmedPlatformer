@@ -223,4 +223,29 @@ void WorldView::FillTrapezoid(
 	}
 }
 
+void WorldView::FillCircle(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const color_t color)
+{
+	const int32_t x_start= std::max(0, Fixed16RoundToInt(center[0] - radius));
+	const int32_t x_end= std::min(Fixed16RoundToInt(center[0] + radius), surface.w);
+	const int32_t y_start= std::max(0, Fixed16RoundToInt(center[1] - radius));
+	const int32_t y_end= std::min(Fixed16RoundToInt(center[1] + radius), surface.h);
+
+	const fixed16_t square_radius= Fixed16Mul(radius, radius);
+
+	for(int32_t y= y_start; y < y_end; ++y)
+	{
+		const fixed16_t dy = IntToFixed16(y) + g_fixed16_one / 2 - center[1];
+		const fixed16_t dy2= Fixed16Mul(dy, dy);
+		auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+		for(int32_t x= x_start; x < x_end; ++x)
+		{
+			const fixed16_t dx = IntToFixed16(x) + g_fixed16_one / 2 - center[0];
+			const fixed16_t dx2= Fixed16Mul(dx, dx);
+			const fixed16_t square_dist= dx2 + dy2;
+			if(square_dist <= square_radius)
+				dst[x]= color;
+		}
+	}
+}
+
 } // namespace Armed

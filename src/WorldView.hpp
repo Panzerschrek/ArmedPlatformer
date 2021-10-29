@@ -41,6 +41,9 @@ private:
 		fixed16_t x_end_0, fixed16_t x_end_1,
 		color_t color);
 
+	// Max radius ~ 127 pixels.
+	void FillCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
+
 private:
 	const World& world_;
 	SystemWindow& system_window_;
