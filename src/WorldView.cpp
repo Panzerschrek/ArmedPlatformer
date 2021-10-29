@@ -72,7 +72,7 @@ TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surfa
 	cam_shift.shift[0]= -player.GetPos()[0];
 	cam_shift.shift[1]= -player.GetPos()[1];
 
-	scale.scale[0]= scale.scale[1]= IntToFixed16(48);
+	scale.scale[0]= scale.scale[1]= IntToFixed16(24);
 	scale.shift[0]= scale.shift[1]= 0;
 
 	screen_shift.scale[0]= screen_shift.scale[1]= g_fixed16_one;

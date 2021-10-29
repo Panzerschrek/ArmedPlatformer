@@ -11,11 +11,12 @@ Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
 {
 }
 
-void Player::Tick(const InputState& input_state)
+Player::ShootRequestKind Player::Tick(const InputState& input_state)
 {
 	Move(input_state);
-	Shoot(input_state);
+	const auto res= Shoot(input_state);
 	++current_tick_;
+	return res;
 }
 
 void Player::Push(const fixed16vec2_t& push_vec)
@@ -131,7 +132,7 @@ void Player::Move(const InputState& input_state)
 
 }
 
-void Player::Shoot(const InputState& input_state)
+Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 {
 	if(input_state.mouse[size_t(SystemEventTypes::ButtonCode::Left)] &&
 		current_tick_ - last_shoot_tick_ >= 20 &&
@@ -139,7 +140,10 @@ void Player::Shoot(const InputState& input_state)
 	{
 		--ammo_;
 		last_shoot_tick_= current_tick_;
+		return ShootRequestKind::Machinegun;
 	}
+
+	return ShootRequestKind::None;
 }
 
 } // namespace Armed

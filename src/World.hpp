@@ -29,6 +29,9 @@ public:
 
 	struct Projectile
 	{
+		enum class OwnerKind{ Player, Monster };
+
+		OwnerKind owner_kind= OwnerKind::Player;
 		fixed16vec2_t pos{};
 		fixed16vec2_t vel{};
 	};
@@ -46,6 +49,7 @@ public:
 
 private:
 	void ProcessPlayerPhysics(const InputState& input_state);
+	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void MoveMonsters();
 	void MoveMonster(Monster& monster);
 

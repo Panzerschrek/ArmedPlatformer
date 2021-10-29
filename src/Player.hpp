@@ -8,9 +8,15 @@ namespace Armed
 class Player
 {
 public:
+	enum class ShootRequestKind
+	{
+		None,
+		Machinegun,
+	};
+
 	Player(fixed16_t pos_x, fixed16_t pos_y);
 
-	void Tick(const InputState& input_state);
+	ShootRequestKind Tick(const InputState& input_state);
 
 	const fixed16vec2_t& GetPos() const { return pos_; }
 	int32_t GetHealth() const { return health_; }
@@ -22,7 +28,7 @@ public:
 
 private:
 	void Move(const InputState& input_state);
-	void Shoot(const InputState& input_state);
+	ShootRequestKind Shoot(const InputState& input_state);
 
 private:
 	uint32_t current_tick_= 100000;

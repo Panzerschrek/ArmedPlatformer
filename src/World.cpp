@@ -93,13 +93,6 @@ World::World(const MapDescription& map_description)
 		monster.move_dir= (monsters_.size() & 1) == 0 ? (+1) : (-1);
 		monsters_.push_back(monster);
 	}
-
-	{
-		Projectile projectile;
-		projectile.pos[0]= IntToFixed16(13);
-		projectile.pos[1]= IntToFixed16(4);
-		projectiles_.push_back(projectile);
-	}
 }
 
 void World::Tick(const InputState& input_state)
@@ -111,7 +104,8 @@ void World::Tick(const InputState& input_state)
 
 void World::ProcessPlayerPhysics(const InputState& input_state)
 {
-	player_.Tick(input_state);
+	ProcessShootRequest(player_.Tick(input_state));
+
 	player_.SetOnGround(false);
 
 	// Check for collision against some geometry, correct player position, continue.
@@ -170,6 +164,17 @@ void World::ProcessPlayerPhysics(const InputState& input_state)
 		break; // No collision detected - skip all checks.
 		collsion_check_end:;
 	}
+}
+
+void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
+{
+	if(shoot_request == Player::ShootRequestKind::None)
+		return;
+
+	Projectile projectile;
+	projectile.owner_kind= Projectile::OwnerKind::Player;
+	projectile.pos= player_.GetPos();
+	projectiles_.push_back(projectile);
 }
 
 void World::MoveMonsters()
