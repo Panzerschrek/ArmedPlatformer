@@ -99,6 +99,7 @@ void World::Tick(const InputState& input_state)
 {
 	ProcessPlayerPhysics(input_state);
 	MoveMonsters();
+	MoveProjectiles();
 	++current_tick_;
 }
 
@@ -174,6 +175,8 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	Projectile projectile;
 	projectile.owner_kind= Projectile::OwnerKind::Player;
 	projectile.pos= player_.GetPos();
+	projectile.vel[0]= g_fixed16_one / 4;
+	projectile.vel[1]= 0;
 	projectiles_.push_back(projectile);
 }
 
@@ -181,6 +184,28 @@ void World::MoveMonsters()
 {
 	for(Monster& monster : monsters_)
 		MoveMonster(monster);
+}
+
+void World::MoveProjectiles()
+{
+	for(size_t i= 0; i < projectiles_.size();)
+	{
+		Projectile& projectile= projectiles_[i];
+		projectile.pos[0]+= projectile.vel[0];
+		projectile.pos[1]+= projectile.vel[1];
+
+		if( Fixed16CeilToInt(projectile.pos[0]) >= int32_t(map_.GetSizeX()) ||
+			Fixed16CeilToInt(projectile.pos[0]) < 0 ||
+			Fixed16CeilToInt(projectile.pos[1]) >= int32_t(map_.GetSizeY()) ||
+			Fixed16CeilToInt(projectile.pos[1]) < 0)
+		{
+			if(&projectile != &projectiles_.back())
+				projectile= projectiles_.back();
+			projectiles_.pop_back();
+		}
+		else
+			++i;
+	}
 }
 
 void World::MoveMonster(Monster& monster)

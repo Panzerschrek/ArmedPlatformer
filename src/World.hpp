@@ -51,6 +51,7 @@ private:
 	void ProcessPlayerPhysics(const InputState& input_state);
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void MoveMonsters();
+	void MoveProjectiles();
 	void MoveMonster(Monster& monster);
 
 private:
