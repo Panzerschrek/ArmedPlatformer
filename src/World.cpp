@@ -95,18 +95,17 @@ World::World(const MapDescription& map_description)
 	}
 }
 
-void World::Tick(const InputState& input_state)
+void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 {
-	ProcessPlayerPhysics(input_state);
+	ProcessShootRequest(player_.Tick(input_state, aim_vec));
+	ProcessPlayerPhysics();
 	MoveMonsters();
 	MoveProjectiles();
 	++current_tick_;
 }
 
-void World::ProcessPlayerPhysics(const InputState& input_state)
+void World::ProcessPlayerPhysics()
 {
-	ProcessShootRequest(player_.Tick(input_state));
-
 	player_.SetOnGround(false);
 
 	// Check for collision against some geometry, correct player position, continue.
@@ -172,11 +171,13 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	if(shoot_request == Player::ShootRequestKind::None)
 		return;
 
+	const fixed16_t c_vel= g_fixed16_one / 4;
+	const fixed16vec2_t& aim_vec= player_.GetAimNormal();
+
 	Projectile projectile;
 	projectile.owner_kind= Projectile::OwnerKind::Player;
 	projectile.pos= player_.GetPos();
-	projectile.vel[0]= g_fixed16_one / 4;
-	projectile.vel[1]= 0;
+	projectile.vel= {Fixed16Mul(aim_vec[0], c_vel), Fixed16Mul(aim_vec[1], c_vel)};
 	projectiles_.push_back(projectile);
 }
 

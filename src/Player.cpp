@@ -11,8 +11,24 @@ Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
 {
 }
 
-Player::ShootRequestKind Player::Tick(const InputState& input_state)
+Player::ShootRequestKind Player::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 {
+	{
+		// Do noy allow to aim too much up or down.
+		fixed16vec2_t aim_vec_clamped= aim_vec;
+		const fixed16_t abs_aim_vec_x= Fixed16Abs(aim_vec_clamped[0]);
+		if(aim_vec_clamped[1] > +abs_aim_vec_x)
+			aim_vec_clamped[1]= +abs_aim_vec_x;
+		if(aim_vec_clamped[1] < -abs_aim_vec_x)
+			aim_vec_clamped[1]= -abs_aim_vec_x;
+
+		const fixed16_t len= Fixed16VecLen(aim_vec_clamped);
+		if(len == 0)
+			aim_vec_= {g_fixed16_one, 0};
+		else
+			aim_vec_= {Fixed16Div(aim_vec_clamped[0], len), Fixed16Div(aim_vec_clamped[1], len)};
+	}
+
 	Move(input_state);
 	const auto res= Shoot(input_state);
 	++current_tick_;

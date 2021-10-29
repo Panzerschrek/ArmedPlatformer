@@ -38,8 +38,9 @@ bool Host::Loop()
 		t < physics_end_tick && iterations < 5;
 		++t, ++iterations)
 	{
-		world_.Tick(system_window_.GetInputState());
-		camera_.Update();
+		const InputState input_state= system_window_.GetInputState();
+		world_.Tick(input_state, camera_.GetAimVec());
+		camera_.Update(input_state);
 	}
 
 	system_window_.BeginFrame();

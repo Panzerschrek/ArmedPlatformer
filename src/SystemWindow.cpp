@@ -220,6 +220,8 @@ InputState SystemWindow::GetInputState()
 	for(int i= SDL_BUTTON_LEFT; i <= SDL_BUTTON_RIGHT; ++i)
 		result.mouse[size_t(TranslateMouseButton(Uint8(i)))]= (SDL_BUTTON(i) & mouse_state) != 0;
 
+	SDL_GetMouseState(&result.cursor_pos[0], &result.cursor_pos[1]);
+
 	return result;
 }
 

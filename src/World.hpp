@@ -40,7 +40,7 @@ public:
 	explicit World(const MapDescription& map_description);
 
 	// Update world (single fixed period step).
-	void Tick(const InputState& input_state);
+	void Tick(const InputState& input_state, const fixed16vec2_t& aim_vec);
 
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
@@ -48,7 +48,7 @@ public:
 	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
 
 private:
-	void ProcessPlayerPhysics(const InputState& input_state);
+	void ProcessPlayerPhysics();
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void MoveMonsters();
 	void MoveMonster(Monster& monster);

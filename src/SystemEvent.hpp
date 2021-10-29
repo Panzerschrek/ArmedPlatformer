@@ -110,6 +110,7 @@ struct InputState
 {
 	KeyboardState keyboard;
 	MouseState mouse;
+	int32_t cursor_pos[2]{}; // Inside window
 };
 
 std::string_view GetKeyName(SystemEventTypes::KeyCode key_code);
