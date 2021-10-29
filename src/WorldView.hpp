@@ -1,4 +1,5 @@
 #pragma once
+#include "Camera.hpp"
 #include "SystemWindow.hpp"
 #include "World.hpp"
 #include "Mat.hpp"
@@ -10,12 +11,11 @@ namespace Armed
 class WorldView
 {
 public:
-	WorldView(const World& world, SystemWindow& system_window);
+	WorldView(const World& world, const Camera& camera, SystemWindow& system_window);
 
 	void Draw();
 
 private:
-	TransformMatrix CalculateViewTransformMatrix(const SDL_Surface& surface);
 	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
 	void DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface);
 	void DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster);
@@ -35,6 +35,7 @@ private:
 
 private:
 	const World& world_;
+	const Camera& camera_;
 	SystemWindow& system_window_;
 };
 

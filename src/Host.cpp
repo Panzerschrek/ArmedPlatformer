@@ -9,7 +9,8 @@ namespace Armed
 Host::Host()
 	: system_window_()
 	, world_(Maps::Test::description)
-	, world_view_(world_, system_window_)
+	, camera_(world_, system_window_)
+	, world_view_(world_, camera_, system_window_)
 	, hud_(world_, system_window_)
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
@@ -38,6 +39,7 @@ bool Host::Loop()
 		++t, ++iterations)
 	{
 		world_.Tick(system_window_.GetInputState());
+		camera_.Update();
 	}
 
 	system_window_.BeginFrame();

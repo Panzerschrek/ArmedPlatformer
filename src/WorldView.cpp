@@ -5,8 +5,8 @@
 namespace Armed
 {
 
-WorldView::WorldView(const World& world, SystemWindow& system_window)
-	: world_(world), system_window_(system_window)
+WorldView::WorldView(const World& world, const Camera& camera, SystemWindow& system_window)
+	: world_(world), camera_(camera), system_window_(system_window)
 {
 }
 
@@ -22,7 +22,7 @@ void WorldView::Draw()
 	}
 
 	const TilesMap& tiles_map= world_.GetMap();
-	const TransformMatrix mat= CalculateViewTransformMatrix(surface);
+	const TransformMatrix mat=camera_.CalculateMatrix();
 
 	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
 	for(uint32_t x= 0; x < tiles_map.GetSizeX(); ++x)
@@ -40,26 +40,6 @@ void WorldView::Draw()
 
 	for(const World::Projectile& projectile : world_.GetProjectiles())
 		DrawProjectile(mat, surface, projectile);
-}
-
-TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surface)
-{
-	const Player& player= world_.GetPlayer();
-
-	TransformMatrix cam_shift{}, scale{}, screen_shift{};
-
-	cam_shift.scale[0]= cam_shift.scale[1] = g_fixed16_one;
-	cam_shift.shift[0]= -player.GetPos()[0];
-	cam_shift.shift[1]= -player.GetPos()[1];
-
-	scale.scale[0]= scale.scale[1]= IntToFixed16(24);
-	scale.shift[0]= scale.shift[1]= 0;
-
-	screen_shift.scale[0]= screen_shift.scale[1]= g_fixed16_one;
-	screen_shift.shift[0]= IntToFixed16(surface.w) / 2;
-	screen_shift.shift[1]= IntToFixed16(surface.h) / 2;
-
-	return MatrixMul(MatrixMul(cam_shift, scale), screen_shift);
 }
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)

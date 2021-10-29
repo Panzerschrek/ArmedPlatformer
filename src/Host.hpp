@@ -25,6 +25,7 @@ private:
 private:
 	SystemWindow system_window_;
 	World world_;
+	Camera camera_;
 	WorldView world_view_;
 	Hud hud_;
 
