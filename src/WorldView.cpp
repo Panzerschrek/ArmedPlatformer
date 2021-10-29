@@ -5,26 +5,6 @@
 namespace Armed
 {
 
-TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r)
-{
-	TransformMatrix res{};
-	res.scale[0] = Fixed16Mul(l.scale[0], r.scale[0]);
-	res.scale[1] = Fixed16Mul(l.scale[1], r.scale[1]);
-	res.shift[0]= Fixed16Mul(l.shift[0], r.scale[0]) + r.shift[0];
-	res.shift[1]= Fixed16Mul(l.shift[1], r.scale[1]) + r.shift[1];
-	return res;
-}
-
-fixed16_t TransformX(const TransformMatrix& mat, const fixed16_t x)
-{
-	return Fixed16Mul(mat.scale[0], x) + mat.shift[0];
-}
-
-fixed16_t TransformY(const TransformMatrix& mat, const fixed16_t y)
-{
-	return Fixed16Mul(mat.scale[1], y) + mat.shift[1];
-}
-
 WorldView::WorldView(const World& world, SystemWindow& system_window)
 	: world_(world), system_window_(system_window)
 {
@@ -93,17 +73,14 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 
 	const TransformMatrix result_mat= MatrixMul(tile_mat, view_mat);
 
-	const fixed16_t min_x= 0;
-	const fixed16_t max_x= g_fixed16_one;
-	const fixed16_t min_y= 0;
-	const fixed16_t max_y= g_fixed16_one;
+	const fixed16vec2_t tile_min{0, 0}, tile_max{g_fixed16_one, g_fixed16_one};
+	const fixed16vec2_t tile_min_transformed= VecMatMul(tile_min, result_mat), tile_max_transformed= VecMatMul(tile_max, result_mat);
 
-	const int32_t projected_min_x= Fixed16RoundToInt(TransformX(result_mat, min_x));
-	const int32_t projected_min_y= Fixed16RoundToInt(TransformY(result_mat, min_y));
-	const int32_t projected_max_x= Fixed16RoundToInt(TransformX(result_mat, max_x));
-	const int32_t projected_max_y= Fixed16RoundToInt(TransformY(result_mat, max_y));
-
-	FillRectangle(surface, projected_min_x, projected_min_y, projected_max_x, projected_max_y, 0xFF00FF00);
+	FillRectangle(
+		surface,
+		Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
+		Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
+		0xFF00FF00);
 }
 
 void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface)
@@ -138,9 +115,9 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile)
 {
 	const fixed16_t c_radius= g_fixed16_one / 8;
-	const fixed16vec2_t center_projected{TransformX(view_mat, projectile.pos[0]), TransformY(view_mat, projectile.pos[1])};
+	const fixed16vec2_t center_projected= VecMatMul(projectile.pos, view_mat);
 
-	const fixed16_t x_plus_edge_projected= TransformX(view_mat, projectile.pos[0] + c_radius);
+	const fixed16_t x_plus_edge_projected= VecMatMul({projectile.pos[0] + c_radius, projectile.pos[1]}, view_mat)[0];
 	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
 
 	FillCircle(surface, center_projected, radius_projected, ColorRGB(0, 255, 255));
@@ -150,25 +127,23 @@ void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface
 {
 	for(const ModelTrapezoid& trapeziod : model)
 	{
-		fixed16_t y_start= TransformY(mat, trapeziod.sides[0].y);
-		fixed16_t y_end= TransformY(mat, trapeziod.sides[1].y);
-		fixed16_t x_start_0= TransformX(mat, trapeziod.sides[0].x[0]);
-		fixed16_t x_start_1= TransformX(mat, trapeziod.sides[0].x[1]);
-		fixed16_t x_end_0= TransformX(mat, trapeziod.sides[1].x[0]);
-		fixed16_t x_end_1= TransformX(mat, trapeziod.sides[1].x[1]);
+		fixed16vec2_t start_0= VecMatMul({trapeziod.sides[0].x[0], trapeziod.sides[0].y}, mat);
+		fixed16vec2_t start_1= VecMatMul({trapeziod.sides[0].x[1], trapeziod.sides[0].y}, mat);
+		fixed16vec2_t end_0= VecMatMul({trapeziod.sides[1].x[0], trapeziod.sides[1].y}, mat);
+		fixed16vec2_t end_1= VecMatMul({trapeziod.sides[1].x[1], trapeziod.sides[1].y}, mat);
 		if(mat.scale[0] < 0)
 		{
-			std::swap(x_start_0, x_start_1);
-			std::swap(x_end_0, x_end_1);
+			std::swap(start_0[0], start_1[0]);
+			std::swap(end_0[0], end_1[0]);
 		}
 		if(mat.scale[1] < 0)
-			std::swap(y_start, y_end);
+			std::swap(start_0[1], end_0[1]);
 
 		FillTrapezoid(
 			surface,
-			y_start, y_end,
-			x_start_0, x_start_1,
-			x_end_0, x_end_1, trapeziod.color);
+			start_0[1], end_0[1],
+			start_0[0], start_1[0],
+			end_0[0], end_1[0], trapeziod.color);
 	}
 }
 

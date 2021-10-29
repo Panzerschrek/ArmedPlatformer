@@ -1,23 +1,11 @@
 #pragma once
 #include "SystemWindow.hpp"
 #include "World.hpp"
+#include "Mat.hpp"
 #include "Model.hpp"
 
 namespace Armed
 {
-
-// new_x = x * scale[0] + shift[0]
-// new_y = y * scale[1] + shift[1]
-struct TransformMatrix
-{
-	fixed16_t shift[2];
-	fixed16_t scale[2];
-};
-
-TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r);
-fixed16_t TransformX(const TransformMatrix& mat, fixed16_t x);
-fixed16_t TransformY(const TransformMatrix& mat, fixed16_t y);
-
 
 class WorldView
 {
