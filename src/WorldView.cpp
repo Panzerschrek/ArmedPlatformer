@@ -22,7 +22,7 @@ void WorldView::Draw()
 	}
 
 	const TilesMap& tiles_map= world_.GetMap();
-	const TransformMatrix mat=camera_.CalculateMatrix();
+	const TransformMatrix mat= camera_.CalculateMatrix();
 
 	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
 	for(uint32_t x= 0; x < tiles_map.GetSizeX(); ++x)
@@ -40,6 +40,25 @@ void WorldView::Draw()
 
 	for(const World::Projectile& projectile : world_.GetProjectiles())
 		DrawProjectile(mat, surface, projectile);
+
+	{
+		const fixed16vec2_t player_pos= VecMatMul(world_.GetPlayer().GetPos(), mat);
+		const fixed16vec2_t aim_vec= world_.GetPlayer().GetAimNormal();
+		if(aim_vec[0] != 0)
+		{
+			const int32_t c_aim_length= 128;
+			const fixed16_t aim_vec_x_abs= Fixed16Abs(aim_vec[0]);
+			for(
+				int32_t i= 0, i_end= Fixed16RoundToInt(c_aim_length * aim_vec_x_abs), x= Fixed16RoundToInt(player_pos[0]), x_step= aim_vec[0] > 0 ? 1 : -1, y= player_pos[1], y_step= Fixed16Div(aim_vec[1], aim_vec_x_abs);
+				i < i_end && x >= 0 && x < surface.w;
+				++i, x+= x_step, y+= y_step)
+			{
+				const int32_t y_int= Fixed16RoundToInt(y);
+				if(y_int >= 0 && y_int < surface.h)
+					reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y_int)[x]= 0xFFFFFFFF;
+			}
+		}
+	}
 }
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)
