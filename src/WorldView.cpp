@@ -57,6 +57,9 @@ void WorldView::Draw()
 
 	for(const World::Monster& monster : world_.GetMonsters())
 		DrawMonster(mat, surface, monster);
+
+	for(const World::Projectile& projectile : world_.GetProjectiles())
+		DrawProjectile(mat, surface, projectile);
 }
 
 TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surface)
@@ -69,7 +72,7 @@ TransformMatrix WorldView::CalculateViewTransformMatrix(const SDL_Surface& surfa
 	cam_shift.shift[0]= -player.GetPos()[0];
 	cam_shift.shift[1]= -player.GetPos()[1];
 
-	scale.scale[0]= scale.scale[1]= IntToFixed16(24);
+	scale.scale[0]= scale.scale[1]= IntToFixed16(48);
 	scale.shift[0]= scale.shift[1]= 0;
 
 	screen_shift.scale[0]= screen_shift.scale[1]= g_fixed16_one;
@@ -130,6 +133,17 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
 	DrawModel(result_mat, surface, Models::monster_biter);
+}
+
+void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile)
+{
+	const fixed16_t c_radius= g_fixed16_one / 8;
+	const fixed16vec2_t center_projected{TransformX(view_mat, projectile.pos[0]), TransformY(view_mat, projectile.pos[1])};
+
+	const fixed16_t x_plus_edge_projected= TransformX(view_mat, projectile.pos[0] + c_radius);
+	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
+
+	FillCircle(surface, center_projected, radius_projected, ColorRGB(0, 255, 255));
 }
 
 void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model)

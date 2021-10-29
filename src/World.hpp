@@ -27,6 +27,12 @@ public:
 		TickT last_attack_tick= 0;
 	};
 
+	struct Projectile
+	{
+		fixed16vec2_t pos{};
+		fixed16vec2_t vel{};
+	};
+
 public:
 	explicit World(const MapDescription& map_description);
 
@@ -36,6 +42,7 @@ public:
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
 	const std::vector<Monster>& GetMonsters() const { return monsters_; }
+	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
 
 private:
 	void ProcessPlayerPhysics(const InputState& input_state);
@@ -47,6 +54,7 @@ private:
 	TilesMap map_;
 	Player player_;
 	std::vector<Monster> monsters_;
+	std::vector<Projectile> projectiles_;
 	TickT current_tick_ = c_update_frequency * 100;
 };
 
