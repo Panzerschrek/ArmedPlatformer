@@ -186,28 +186,6 @@ void World::MoveMonsters()
 		MoveMonster(monster);
 }
 
-void World::MoveProjectiles()
-{
-	for(size_t i= 0; i < projectiles_.size();)
-	{
-		Projectile& projectile= projectiles_[i];
-		projectile.pos[0]+= projectile.vel[0];
-		projectile.pos[1]+= projectile.vel[1];
-
-		if( Fixed16CeilToInt(projectile.pos[0]) >= int32_t(map_.GetSizeX()) ||
-			Fixed16CeilToInt(projectile.pos[0]) < 0 ||
-			Fixed16CeilToInt(projectile.pos[1]) >= int32_t(map_.GetSizeY()) ||
-			Fixed16CeilToInt(projectile.pos[1]) < 0)
-		{
-			if(&projectile != &projectiles_.back())
-				projectile= projectiles_.back();
-			projectiles_.pop_back();
-		}
-		else
-			++i;
-	}
-}
-
 void World::MoveMonster(Monster& monster)
 {
 	const fixed16_t c_speed= g_fixed16_one / 64;
@@ -312,5 +290,108 @@ void World::MoveMonster(Monster& monster)
 	else if(can_move)
 		monster.pos= new_pos;
 }
+
+void World::MoveProjectiles()
+{
+	for(size_t i= 0; i < projectiles_.size();)
+	{
+		Projectile& projectile= projectiles_[i];
+		if(!MoveProjectile(projectile))
+		{
+			if(&projectile != &projectiles_.back())
+				projectile= projectiles_.back();
+			projectiles_.pop_back();
+		}
+		else
+			++i;
+	}
+}
+
+bool World::MoveProjectile(Projectile& projectile)
+{
+	projectile.pos[0]+= projectile.vel[0];
+	projectile.pos[1]+= projectile.vel[1];
+
+	if( Fixed16CeilToInt(projectile.pos[0]) >= int32_t(map_.GetSizeX()) ||
+		Fixed16CeilToInt(projectile.pos[0]) < 0 ||
+		Fixed16CeilToInt(projectile.pos[1]) >= int32_t(map_.GetSizeY()) ||
+		Fixed16CeilToInt(projectile.pos[1]) < 0)
+		return false;
+
+	const fixed16_t c_projectile_width = g_fixed16_one / 8;
+	const fixed16_t c_projectile_height= g_fixed16_one / 8;
+	const fixed16vec2_t bb_min{projectile.pos[0] - c_projectile_width / 2, projectile.pos[1] - c_projectile_height / 2};
+	const fixed16vec2_t bb_max{projectile.pos[0] + c_projectile_width / 2, projectile.pos[1] + c_projectile_height / 2};
+
+	// Check for collisions with geometry.
+	const int32_t cell_min[2]{ Fixed16FloorToInt(bb_min[0]), Fixed16FloorToInt(bb_min[1]) };
+	const int32_t cell_max[2]{ Fixed16FloorToInt(bb_max[0]), Fixed16FloorToInt(bb_max[1]) };
+
+	for(int32_t y= std::max(0, cell_min[1] - 1); y <= std::min(cell_max[1] + 1, int32_t(map_.GetSizeY()) - 1); ++y)
+	for(int32_t x= std::max(0, cell_min[0] - 1); x <= std::min(cell_max[0] + 1, int32_t(map_.GetSizeX()) - 1); ++x)
+	{
+		const TileId tile= map_.GetTile(uint32_t(x), uint32_t(y));
+		switch(tile)
+		{
+		case TileId::Air:
+			break;
+		case TileId::BasicWall:
+			{
+				const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
+				const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
+				if( tile_bb_min[0] >= bb_max[0] ||
+					tile_bb_min[1] >= bb_max[1] ||
+					tile_bb_max[0] <= bb_min[0] ||
+					tile_bb_max[1] <= bb_min[1] )
+				{} // No collision
+				else
+				{
+					// TODO - generate explosion effect, sounds, etc.
+					return false;
+				}
+			}
+			break;
+		}
+	}
+
+	if(projectile.owner_kind != Projectile::OwnerKind::Monster)
+	{
+		// Check for collisions against monsters.
+		for(const Monster& monster : monsters_)
+		{
+			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
+			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
+			if( monster_bb_min[0] >= bb_max[0] ||
+				monster_bb_min[1] >= bb_max[1] ||
+				monster_bb_max[0] <= bb_min[0] ||
+				monster_bb_max[1] <= bb_min[1] )
+			{} // No collision
+			else
+			{
+				// TODO - decrease monster health.
+				return false;
+			}
+		}
+	}
+	if(projectile.owner_kind != Projectile::OwnerKind::Player)
+	{
+		const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
+		const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
+
+		if( player_bb_min[0] >= bb_max[0] ||
+			player_bb_min[1] >= bb_max[1] ||
+			player_bb_max[0] <= bb_min[0] ||
+			player_bb_max[1] <= bb_min[1])
+		{} // No collision.
+		else
+		{
+			// TODO - hit player.
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 } // namespace Armed

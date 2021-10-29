@@ -51,8 +51,9 @@ private:
 	void ProcessPlayerPhysics(const InputState& input_state);
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void MoveMonsters();
-	void MoveProjectiles();
 	void MoveMonster(Monster& monster);
+	void MoveProjectiles();
+	bool MoveProjectile(Projectile& projectile); // Returns true if should keep alive.
 
 private:
 	Rand rand_; // TODO - initialize it with really-random seed

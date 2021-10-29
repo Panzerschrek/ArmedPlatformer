@@ -37,7 +37,7 @@ private:
 	bool on_ground_= false;
 	int32_t health_= 0;
 
-	uint32_t ammo_= 10;
+	uint32_t ammo_= 48;
 	uint32_t last_shoot_tick_= 0;
 };
 
