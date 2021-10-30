@@ -6,16 +6,8 @@ namespace Armed
 
 extern "C" int main()
 {
-	try
-	{
-		Host host;
-		while(!host.Loop()){}
-	}
-	catch(const std::exception& ex)
-	{
-		Log::FatalError("Exception throwed: ", ex.what());
-	}
-
+	Host host;
+	while(!host.Loop()){}
 	return 0;
 }
 

@@ -13,8 +13,10 @@ if(MSVC)
 	add_definitions(
 		-DNOMINMAX
 		-D_CRT_SECURE_NO_WARNINGS)
+	add_compile_options(/GR-)
 else()
 	add_compile_options(-Werror -Wall -Wextra -Wconversion)
+	add_compile_options(-fno-exceptions -fno-rtti)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
