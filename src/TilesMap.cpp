@@ -100,7 +100,7 @@ MapObjectsData ExtractMapObjects(const char* const map_data)
 			PowerUpInfo powr_up;
 			powr_up.pos[0]= x;
 			powr_up.pos[1]= y;
-			powr_up.id= PowerUpId((uint32_t(*c) - uint32_t('m')));
+			powr_up.id= PowerUpId((uint32_t(*c) - uint32_t('0')));
 			map_objects.power_ups.push_back(powr_up);
 		}
 

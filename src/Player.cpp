@@ -4,8 +4,6 @@
 namespace Armed
 {
 
-const int32_t c_max_health= 100;
-
 Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
 	: pos_{pos_x, pos_y}, vel_{0, 0}, health_(c_max_health)
 {
@@ -57,6 +55,8 @@ void Player::Push(const fixed16vec2_t& push_vec)
 void Player::Hit(const int32_t damage)
 {
 	health_-= damage;
+	if(health_ > c_max_health)
+		health_= c_max_health;
 }
 
 void Player::Move(const InputState& input_state)

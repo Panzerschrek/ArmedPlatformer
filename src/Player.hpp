@@ -14,6 +14,8 @@ public:
 		Machinegun,
 	};
 
+	static constexpr int32_t c_max_health= 100;
+
 	Player(fixed16_t pos_x, fixed16_t pos_y);
 
 	ShootRequestKind Tick(const InputState& input_state, const fixed16vec2_t& aim_vec);
@@ -37,7 +39,7 @@ private:
 	fixed16vec2_t vel_{};
 	fixed16vec2_t aim_vec_{};
 	bool on_ground_= false;
-	int32_t health_= 0;
+	int32_t health_= c_max_health;
 
 	uint32_t ammo_= 48;
 	uint32_t last_shoot_tick_= 0;

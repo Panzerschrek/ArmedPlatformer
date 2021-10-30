@@ -20,6 +20,7 @@ const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
 const int32_t c_monster_health= 20;
+const int32_t c_small_health= 25;
 
 const int32_t c_projectile_damage= 10;
 
@@ -112,6 +113,7 @@ void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 {
 	ProcessShootRequest(player_.Tick(input_state, aim_vec));
 	ProcessPlayerPhysics();
+	PickUpPowerUps();
 	MoveMonsters();
 	MoveProjectiles();
 	++current_tick_;
@@ -195,6 +197,35 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	projectile.pos= player_.GetPos();
 	projectile.vel= {Fixed16Mul(aim_vec[0], c_vel), Fixed16Mul(aim_vec[1], c_vel)};
 	projectiles_.push_back(projectile);
+}
+
+void World::PickUpPowerUps()
+{
+	const fixed16_t c_pick_up_distance= g_fixed16_one;
+
+	const fixed16vec2_t player_pos= player_.GetPos();
+	for(PowerUp& power_up : power_ups_)
+	{
+		if(power_up.picked_up)
+			continue;
+
+		// Use approximate distance to avoid overflow of square distance.
+		const fixed16_t dist= Fixed16Abs(player_pos[0] - power_up.pos[0]) + Fixed16Abs(player_pos[1] - power_up.pos[1]);
+		if(dist <= c_pick_up_distance)
+		{
+			switch(power_up.id)
+			{
+			case PowerUpId::SmallHealth:
+				if(player_.GetHealth() < Player::c_max_health)
+				{
+					player_.Hit(-c_small_health);
+					power_up.picked_up= true;
+				}
+				break;
+			};
+		}
+
+	}
 }
 
 void World::MoveMonsters()

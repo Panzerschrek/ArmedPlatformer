@@ -35,8 +35,7 @@ void Hud::Draw()
 
 	const Player& player= world_.GetPlayer();
 
-	const int32_t c_max_displayed_health= 100;
-	const int32_t health= std::max(0, std::min(player.GetHealth(), c_max_displayed_health));
+	const int32_t health= std::max(0, std::min(player.GetHealth(), Player::c_max_health));
 
 	DrawRoundIndicator(
 		surface,
@@ -44,7 +43,7 @@ void Hud::Draw()
 		surface_height - c_health_circle_offset_y,
 		c_health_circle_inner_radius, c_health_circle_outer_radius,
 		c_health_circle_color,
-		IntToFixed16(health) / c_max_displayed_health);
+		IntToFixed16(health) / Player::c_max_health);
 
 	DrawRoundIndicator(
 		surface,
