@@ -98,6 +98,9 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 
 void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster)
 {
+	if(monster.health <= 0)
+		return; // TODO - draw dead body?
+
 	TransformMatrix monster_mat;
 	monster_mat.scale[0]= monster_mat.scale[1] = g_fixed16_one;
 	monster_mat.shift[0]= monster.pos[0];

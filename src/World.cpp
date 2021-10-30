@@ -19,6 +19,9 @@ const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_mon
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
+const int32_t c_monster_health= 20;
+
+const int32_t c_projectile_damage= 10;
 
 std::optional<fixed16vec2_t> ProcessPlayerCollsion(
 	const fixed16vec2_t& player_bb_min,
@@ -86,6 +89,7 @@ World::World(const MapDescription& map_description)
 	for(const MonsterInfo& monster_info : map_objects.monsters)
 	{
 		Monster monster;
+		monster.health= c_monster_health;
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
 		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + (g_fixed16_one >> 1);
@@ -150,6 +154,9 @@ void World::ProcessPlayerPhysics()
 		// Check for collisions against monsters.
 		for(const Monster& monster : monsters_)
 		{
+			if(monster.health <= 0)
+				continue;
+
 			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
 			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
 			if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, monster_bb_min, monster_bb_max))
@@ -189,6 +196,9 @@ void World::MoveMonsters()
 
 void World::MoveMonster(Monster& monster)
 {
+	if(monster.health <= 0)
+		return;
+
 	const fixed16_t c_speed= g_fixed16_one / 64;
 
 	fixed16vec2_t new_pos{ monster.pos[0], monster.pos[1] };
@@ -358,8 +368,11 @@ bool World::MoveProjectile(Projectile& projectile)
 	if(projectile.owner_kind != Projectile::OwnerKind::Monster)
 	{
 		// Check for collisions against monsters.
-		for(const Monster& monster : monsters_)
+		for(Monster& monster : monsters_)
 		{
+			if(monster.health <= 0)
+				continue;
+
 			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
 			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
 			if( monster_bb_min[0] >= bb_max[0] ||
@@ -369,7 +382,7 @@ bool World::MoveProjectile(Projectile& projectile)
 			{} // No collision
 			else
 			{
-				// TODO - decrease monster health.
+				monster.health-= c_projectile_damage;
 				return false;
 			}
 		}
@@ -386,7 +399,7 @@ bool World::MoveProjectile(Projectile& projectile)
 		{} // No collision.
 		else
 		{
-			// TODO - hit player.
+			player_.Hit(c_projectile_damage);
 			return false;
 		}
 	}

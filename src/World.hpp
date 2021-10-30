@@ -25,6 +25,7 @@ public:
 		fixed16vec2_t pos{};
 		int32_t move_dir= 0; // -1, 0, +1
 		TickT last_attack_tick= 0;
+		int32_t health= 0;
 	};
 
 	struct Projectile
