@@ -8,8 +8,8 @@ namespace Armed
 // new_y = y * scale[1] + shift[1]
 struct TransformMatrix
 {
-	fixed16_t shift[2];
-	fixed16_t scale[2];
+	fixed16vec2_t shift;
+	fixed16vec2_t scale;
 };
 
 inline TransformMatrix MatrixMul(const TransformMatrix& l, const TransformMatrix& r)

@@ -38,6 +38,9 @@ void WorldView::Draw()
 	for(const World::Monster& monster : world_.GetMonsters())
 		DrawMonster(mat, surface, monster);
 
+	for(const World::PowerUp& power_up : world_.GetPowerUps())
+		DrawPowerUp(mat, surface, power_up);
+
 	for(const World::Projectile& projectile : world_.GetProjectiles())
 		DrawProjectile(mat, surface, projectile);
 
@@ -104,8 +107,7 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 
 	TransformMatrix monster_mat;
 	monster_mat.scale[0]= monster_mat.scale[1] = g_fixed16_one;
-	monster_mat.shift[0]= monster.pos[0];
-	monster_mat.shift[1]= monster.pos[1];
+	monster_mat.shift= monster.pos;
 
 	if(monster.move_dir <0)
 		monster_mat.scale[0]*= -1;
@@ -113,6 +115,20 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
 	DrawModel(result_mat, surface, Models::monster_biter);
+}
+
+void WorldView::DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::PowerUp& power_up)
+{
+	if(power_up.picked_up)
+		return;
+
+	TransformMatrix power_up_mat;
+	power_up_mat.scale[0]= power_up_mat.scale[1] = g_fixed16_one;
+	power_up_mat.shift= power_up.pos;
+
+	const TransformMatrix result_mat= MatrixMul(power_up_mat, view_mat);
+
+	DrawModel(result_mat, surface, Models::power_up);
 }
 
 void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile)

@@ -97,6 +97,15 @@ World::World(const MapDescription& map_description)
 		monster.move_dir= (monsters_.size() & 1) == 0 ? (+1) : (-1);
 		monsters_.push_back(monster);
 	}
+
+	for(const PowerUpInfo& power_up_info : map_objects.power_ups)
+	{
+		PowerUp power_up;
+		power_up.id= power_up_info.id;
+		power_up.pos= {IntToFixed16(int32_t(power_up_info.pos[0])) + (g_fixed16_one >> 1), IntToFixed16(int32_t(power_up_info.pos[1])) + (g_fixed16_one >> 1)};
+		power_up.picked_up= false;
+		power_ups_.push_back(power_up);
+	}
 }
 
 void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)

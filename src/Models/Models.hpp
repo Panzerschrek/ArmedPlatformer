@@ -36,6 +36,24 @@ const Model monster_biter
 	},
 };
 
+const Model power_up
+{
+	{
+		{
+			{ -g_fixed16_one / 4, { 0, 0 } },
+			{ 0, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+		},
+		ColorRGB(200, 16, 16),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+			{ +g_fixed16_one / 4, { 0, 0 } },
+		},
+		ColorRGB(200, 200, 200),
+	},
+};
+
 } // namespace Models
 
 } // namespace Armed

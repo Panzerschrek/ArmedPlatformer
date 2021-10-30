@@ -19,6 +19,7 @@ private:
 	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
 	void DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface);
 	void DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster);
+	void DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::PowerUp& power_up);
 	void DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile);
 	void DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model);
 	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);

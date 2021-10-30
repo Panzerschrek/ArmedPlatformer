@@ -28,6 +28,13 @@ public:
 		int32_t health= 0;
 	};
 
+	struct PowerUp
+	{
+		PowerUpId id= PowerUpId::SmallHealth;
+		fixed16vec2_t pos{};
+		bool picked_up= false;
+	};
+
 	struct Projectile
 	{
 		enum class OwnerKind{ Player, Monster };
@@ -46,6 +53,7 @@ public:
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
 	const std::vector<Monster>& GetMonsters() const { return monsters_; }
+	const std::vector<PowerUp>& GetPowerUps() const { return power_ups_; }
 	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
 
 private:
@@ -61,6 +69,7 @@ private:
 	TilesMap map_;
 	Player player_;
 	std::vector<Monster> monsters_;
+	std::vector<PowerUp> power_ups_;
 	std::vector<Projectile> projectiles_;
 	TickT current_tick_ = c_update_frequency * 100;
 };
