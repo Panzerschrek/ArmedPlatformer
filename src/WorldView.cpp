@@ -87,7 +87,8 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 	const Player& player= world_.GetPlayer();
 
 	TransformMatrix player_mat;
-	player_mat.scale[0]= player_mat.scale[1] = g_fixed16_one;
+	player_mat.scale[0]= player.GetAimNormal()[0] >= 0 ? (+g_fixed16_one) : (-g_fixed16_one);
+	player_mat.scale[1]= g_fixed16_one;
 	player_mat.shift[0]= player.GetPos()[0];
 	player_mat.shift[1]= player.GetPos()[1];
 
