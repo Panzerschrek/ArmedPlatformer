@@ -7,16 +7,41 @@ namespace Armed
 namespace Models
 {
 
+#define PLAYER_SCALE 7 / 20
+constexpr color_t c_player_color= ColorRGB(255, 0, 255);
+
 const Model player
 {
 	{
 		{
-			{ -g_fixed16_one / 2, { -g_fixed16_one / 2, +g_fixed16_one / 4 } },
-			{ +g_fixed16_one / 2, { -g_fixed16_one / 2, +g_fixed16_one / 2 } },
+			{ -g_fixed16_one * 5 / 2 * PLAYER_SCALE, { 0, 0 } },
+			{ -g_fixed16_one * 3 / 2 * PLAYER_SCALE, { -g_fixed16_one * 2 / 3 * PLAYER_SCALE, -g_fixed16_one / 2 * PLAYER_SCALE } },
 		},
-		ColorRGB(255, 0, 255),
+		c_player_color,
+	},
+	{
+		{
+			{ -g_fixed16_one * 3 / 2 * PLAYER_SCALE, { -g_fixed16_one * 2 / 3 * PLAYER_SCALE, g_fixed16_one * 2 * PLAYER_SCALE } },
+			{ +g_fixed16_one / 2 * PLAYER_SCALE, { -g_fixed16_one * 2 * PLAYER_SCALE, g_fixed16_one * PLAYER_SCALE } },
+		},
+		c_player_color,
+	},
+	{
+		{
+			{ -g_fixed16_one / 2 * PLAYER_SCALE, { -g_fixed16_one * PLAYER_SCALE, 0 } },
+			{ +g_fixed16_one * 5 / 2 * PLAYER_SCALE, { -g_fixed16_one * PLAYER_SCALE, -g_fixed16_one * PLAYER_SCALE } },
+		},
+		c_player_color,
+	},
+	{
+		{
+			{ -g_fixed16_one / 2 * PLAYER_SCALE, { 0, g_fixed16_one * PLAYER_SCALE } },
+			{ +g_fixed16_one * 5 / 2 * PLAYER_SCALE, { 0, g_fixed16_one * PLAYER_SCALE } },
+		},
+		c_player_color,
 	},
 };
+#undef PLAYER_SCALE
 
 const Model monster_biter
 {

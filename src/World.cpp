@@ -8,8 +8,8 @@ namespace Armed
 namespace
 {
 
-const fixed16_t c_player_width= g_fixed16_one / 2;
-const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
+const fixed16_t c_player_width= g_fixed16_one * 3 / 2;
+const fixed16_t c_player_heigth= g_fixed16_one * 7 / 4;
 const fixed16_t c_monster_width= g_fixed16_one * 3 / 2;
 const fixed16_t c_monster_height= g_fixed16_one * 2;
 
@@ -265,7 +265,6 @@ void World::MoveMonster(Monster& monster)
 			{
 				if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
 					can_move= false;
-
 			}
 		}
 	}
