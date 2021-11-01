@@ -10,8 +10,8 @@ namespace
 
 const fixed16_t c_player_width= g_fixed16_one / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 3 / 4;
-const fixed16_t c_monster_width= g_fixed16_one * 5 / 8;
-const fixed16_t c_monster_height= g_fixed16_one * 6 / 8;
+const fixed16_t c_monster_width= g_fixed16_one * 3 / 2;
+const fixed16_t c_monster_height= g_fixed16_one * 2;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
 const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
@@ -93,8 +93,8 @@ World::World(const MapDescription& map_description)
 		monster.health= c_monster_health;
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
-		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + (g_fixed16_one >> 1);
-		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + (g_fixed16_one >> 1);
+		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + g_fixed16_one / 2;
+		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + g_fixed16_one - c_monster_height / 2 - 1;
 		monster.move_dir= (monsters_.size() & 1) == 0 ? (+1) : (-1);
 		monsters_.push_back(monster);
 	}
@@ -253,14 +253,20 @@ void World::MoveMonster(Monster& monster)
 	{
 		const int32_t min_x= Fixed16FloorToInt(bb_min[0]);
 		const int32_t max_x= Fixed16FloorToInt(bb_max[0]);
-		const int32_t y= Fixed16FloorToInt(new_pos[1]);
+		const int32_t min_y= Fixed16FloorToInt(bb_min[1]);
+		const int32_t max_y= Fixed16FloorToInt(bb_max[1]);
 
 		for(int32_t x= std::max(0, min_x); x <= std::min(max_x, int32_t(map_.GetSizeX()) - 1); ++x)
 		{
-			if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
+			if(map_.GetTile(uint32_t(x), uint32_t(std::min(max_y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
 				can_move= false;
-			if(map_.GetTile(uint32_t(x), uint32_t(std::min(y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
-				can_move= false;
+
+			for(int32_t y= std::max(0, min_y); y <= std::min(max_y, int32_t(map_.GetSizeY()) - 1); ++y)
+			{
+				if(map_.GetTile(uint32_t(x), uint32_t(y)) != TileId::Air)
+					can_move= false;
+
+			}
 		}
 	}
 

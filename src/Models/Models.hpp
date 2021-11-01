@@ -22,15 +22,15 @@ const Model monster_biter
 {
 	{
 		{
-			{ -g_fixed16_one / 2, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
-			{ +g_fixed16_one / 2, { -g_fixed16_one / 2, +g_fixed16_one / 2 } },
+			{ -g_fixed16_one, { g_fixed16_one / 2, +g_fixed16_one / 2 } },
+			{ 0, { 0, g_fixed16_one } },
 		},
 		ColorRGB(64, 64, 255),
 	},
 	{
 		{
-			{ -g_fixed16_one * 3 / 4, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
-			{ -g_fixed16_one / 2, { -g_fixed16_one / 3, +g_fixed16_one / 5 } },
+			{ 0, { 0, 0 } },
+			{ +g_fixed16_one, { -g_fixed16_one / 2, +g_fixed16_one / 2 } },
 		},
 		ColorRGB(32, 32, 128),
 	},
