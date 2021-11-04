@@ -39,6 +39,7 @@ private:
 enum class MonsterId
 {
 	Biter,
+	Gunner,
 };
 
 enum class PowerUpId

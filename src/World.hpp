@@ -21,6 +21,7 @@ public:
 
 	struct Monster
 	{
+		MonsterId id= MonsterId::Biter;
 		uint32_t spawn_tile_pos[2]{};
 		fixed16vec2_t pos{};
 		int32_t move_dir= 0; // -1, 0, +1

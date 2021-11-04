@@ -5,6 +5,23 @@
 namespace Armed
 {
 
+namespace
+{
+
+const Model& GetModelForMonster(const MonsterId id)
+{
+	switch(id)
+	{
+	case MonsterId::Biter: return Models::monster_biter;
+	case MonsterId::Gunner: return Models::monster_gunner;
+	};
+
+	ARMED_ASSERT(false);
+	return Models::monster_biter;
+}
+
+} // namespace
+
 WorldView::WorldView(const World& world, const Camera& camera, SystemWindow& system_window)
 	: world_(world), camera_(camera), system_window_(system_window)
 {
@@ -114,7 +131,7 @@ void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& 
 
 	const TransformMatrix result_mat= MatrixMul(monster_mat, view_mat);
 
-	DrawModel(result_mat, surface, Models::monster_biter);
+	DrawModel(result_mat, surface, GetModelForMonster(monster.id));
 }
 
 void WorldView::DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::PowerUp& power_up)

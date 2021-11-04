@@ -12,7 +12,7 @@ namespace Test
 
 const char map_data[]=
 "                                                    \n"
-"            m                            m          \n"
+"            n                            m          \n"
 "          ############         #####################\n"
 "      0  ##           #                             \n"
 "      ###              #######   m     m            \n"

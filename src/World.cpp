@@ -90,6 +90,7 @@ World::World(const MapDescription& map_description)
 	for(const MonsterInfo& monster_info : map_objects.monsters)
 	{
 		Monster monster;
+		monster.id= monster_info.id;
 		monster.health= c_monster_health;
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
