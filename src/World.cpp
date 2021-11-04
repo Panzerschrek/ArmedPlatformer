@@ -259,7 +259,8 @@ void World::MoveMonster(Monster& monster)
 
 		for(int32_t x= std::max(0, min_x); x <= std::min(max_x, int32_t(map_.GetSizeX()) - 1); ++x)
 		{
-			if(map_.GetTile(uint32_t(x), uint32_t(std::min(max_y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
+			if(monster.id != MonsterId::Bomber &&
+				map_.GetTile(uint32_t(x), uint32_t(std::min(max_y + 1, int32_t(map_.GetSizeY()) - 1))) == TileId::Air)
 				can_move= false;
 
 			for(int32_t y= std::max(0, min_y); y <= std::min(max_y, int32_t(map_.GetSizeY()) - 1); ++y)
