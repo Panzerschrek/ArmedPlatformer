@@ -16,6 +16,8 @@ const fixed16_t c_monster_height= g_fixed16_one * 7 / 4;
 const int32_t c_monster_max_distance_to_spawn= 6;
 const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
 
+const fixed16_t c_bomber_attack_distance= g_fixed16_one * 5;
+
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
@@ -320,8 +322,22 @@ void World::MoveMonster(Monster& monster)
 
 	bool should_change_direction_towards_player= false;
 	bool should_face_player= false;
+	const fixed16vec2_t dir_to_player{player_.GetPos()[0] - new_pos[0], player_.GetPos()[1] - new_pos[1]};
+	if(monster.id == MonsterId::Bomber)
+	{
+		if(std::abs(dir_to_player[0]) < c_bomber_attack_distance && dir_to_player[1] > 0 &&
+			current_tick_ - monster.last_attack_tick >= c_attack_frequency)
+		{
+			Projectile projectile;
+			projectile.owner_kind= Projectile::OwnerKind::Monster;
+			projectile.pos= monster.pos;
+			projectile.vel= {fixed16_t(rand_.RandValue(Rand::RandResultType(g_fixed16_one / 8)) - g_fixed16_one / 16), g_fixed16_one / 4};
+			projectiles_.push_back(projectile);
+			monster.last_attack_tick= current_tick_;
+		}
+	}
+	else
 	{ // Check for distance to player. Change direction if player is too close - stop patrooling, start moving towards player.
-		const fixed16vec2_t dir_to_player{player_.GetPos()[0] - new_pos[0], player_.GetPos()[1] - new_pos[1]};
 		if(std::abs(dir_to_player[1]) < g_fixed16_one * 2)
 		{
 			fixed16_t abs_dist= std::abs(dir_to_player[0]);
