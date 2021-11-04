@@ -40,6 +40,7 @@ enum class MonsterId
 {
 	Biter,
 	Gunner,
+	Bomber,
 };
 
 enum class PowerUpId

@@ -64,7 +64,6 @@ const Model monster_biter
 };
 #undef MONSTER_SCALE
 
-
 const Model monster_gunner
 {
 	{
@@ -124,6 +123,54 @@ const Model monster_gunner
 		ColorRGB(255, 255, 0),
 	},
 };
+
+#define MONSTER_SCALE 3 / 2
+const Model monster_bomber
+{
+	{
+		{
+			{ -g_fixed16_one / 2 * MONSTER_SCALE, { -g_fixed16_one * MONSTER_SCALE, -g_fixed16_one / 2 * MONSTER_SCALE } },
+			{ -g_fixed16_one / 4 * MONSTER_SCALE, { -g_fixed16_one * MONSTER_SCALE, -g_fixed16_one / 4 * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+	{
+		{
+			{ -g_fixed16_one / 2 * MONSTER_SCALE, { 0, 0 } },
+			{ -g_fixed16_one / 4 * MONSTER_SCALE, { -g_fixed16_one / 4 * MONSTER_SCALE, +g_fixed16_one / 4 * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+	{
+		{
+			{ -g_fixed16_one / 2 * MONSTER_SCALE, { g_fixed16_one / 4 * MONSTER_SCALE, +g_fixed16_one / 2 * MONSTER_SCALE } },
+			{ -g_fixed16_one / 4 * MONSTER_SCALE, { g_fixed16_one / 4 * MONSTER_SCALE, g_fixed16_one * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+	{
+		{
+			{ -g_fixed16_one / 4 * MONSTER_SCALE, { -g_fixed16_one * MONSTER_SCALE, +g_fixed16_one * MONSTER_SCALE } },
+			{ 0, { -g_fixed16_one * MONSTER_SCALE, +g_fixed16_one * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one * MONSTER_SCALE, -g_fixed16_one / 4 * MONSTER_SCALE } },
+			{ g_fixed16_one / 4 * MONSTER_SCALE, { -g_fixed16_one / 4 * MONSTER_SCALE , -g_fixed16_one / 4 * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+	{
+		{
+			{ 0, { g_fixed16_one * 3 / 4 * MONSTER_SCALE, g_fixed16_one * MONSTER_SCALE } },
+			{ g_fixed16_one / 4 * MONSTER_SCALE, { g_fixed16_one * MONSTER_SCALE, g_fixed16_one * MONSTER_SCALE } },
+		},
+		ColorRGB(32, 128, 255),
+	},
+};
+#undef MONSTER_SCALE
 
 const Model power_up
 {
