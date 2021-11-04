@@ -86,14 +86,14 @@ const Model monster_gunner
 			{ -g_fixed16_one / 2 , { -g_fixed16_one / 2, -g_fixed16_one / 2 } },
 			{ -g_fixed16_one / 4, { -g_fixed16_one * 5 / 4, -g_fixed16_one / 2 } },
 		},
-		ColorRGB(255, 255, 0),
+		ColorRGB(220, 220, 0),
 	},
 	{
 		{
 			{ -g_fixed16_one / 4, { -g_fixed16_one * 5 / 4, -g_fixed16_one / 2 } },
 			{ +g_fixed16_one / 4 , { -g_fixed16_one / 2, -g_fixed16_one / 2 } },
 		},
-		ColorRGB(255, 255, 0),
+		ColorRGB(220, 220, 0),
 	},
 	{
 		{

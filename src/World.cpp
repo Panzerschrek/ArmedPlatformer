@@ -288,6 +288,7 @@ void World::MoveMonster(Monster& monster)
 		can_move= false;
 	}
 
+	if(monster.id == MonsterId::Biter)
 	{ // Try to attack player.
 		const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
 		const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
@@ -331,6 +332,18 @@ void World::MoveMonster(Monster& monster)
 				should_face_player= true;
 				if(dir_dir_dot < 0)
 					should_change_direction_towards_player= true;
+				else if(monster.id == MonsterId::Gunner)
+				{
+					if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
+					{
+						Projectile projectile;
+						projectile.owner_kind= Projectile::OwnerKind::Monster;
+						projectile.pos= monster.pos;
+						projectile.vel= {(dir_dir_dot > 0 ? (-1) : +1) * g_fixed16_one / 3, 0};
+						projectiles_.push_back(projectile);
+						monster.last_attack_tick= current_tick_;
+					}
+				}
 			}
 		}
 	}
