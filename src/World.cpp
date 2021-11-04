@@ -10,8 +10,6 @@ namespace
 
 const fixed16_t c_player_width= g_fixed16_one * 3 / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 7 / 4;
-const fixed16_t c_monster_width= g_fixed16_one * 3 / 2;
-const fixed16_t c_monster_height= g_fixed16_one * 7 / 4;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
 const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
@@ -25,6 +23,18 @@ const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
 
 const int32_t c_projectile_damage= 10;
+
+fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
+{
+	switch(monster_id)
+	{
+	case MonsterId::Biter: return {g_fixed16_one * 3 / 2, g_fixed16_one * 7 / 4};
+	case MonsterId::Gunner: return {g_fixed16_one * 7 / 4, g_fixed16_one * 7 / 4};
+	case MonsterId::Bomber: return {g_fixed16_one * 2, g_fixed16_one * 5 / 4};
+	};
+	ARMED_ASSERT(false);
+	return {0, 0};
+}
 
 std::optional<fixed16vec2_t> ProcessPlayerCollsion(
 	const fixed16vec2_t& player_bb_min,
@@ -97,7 +107,7 @@ World::World(const MapDescription& map_description)
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
 		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + g_fixed16_one / 2;
-		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + g_fixed16_one - c_monster_height / 2 - 1;
+		monster.pos[1]= IntToFixed16(int32_t(monster_info.pos[1])) + g_fixed16_one - GetMonsterSize(monster.id)[1] / 2 - 1;
 		monster.move_dir= (monsters_.size() & 1) == 0 ? (+1) : (-1);
 		monsters_.push_back(monster);
 	}
@@ -171,8 +181,9 @@ void World::ProcessPlayerPhysics()
 			if(monster.health <= 0)
 				continue;
 
-			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
-			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
+			const fixed16vec2_t monster_size= GetMonsterSize(monster.id);
+			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
+			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
 			if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, monster_bb_min, monster_bb_max))
 			{
 				player_.Push(*push_vec);
@@ -247,8 +258,9 @@ void World::MoveMonster(Monster& monster)
 	fixed16vec2_t new_pos{ monster.pos[0], monster.pos[1] };
 	new_pos[0]+= monster.move_dir * c_speed;
 
-	const fixed16vec2_t bb_min{new_pos[0] - c_monster_width / 2, new_pos[1] - c_monster_height / 2};
-	const fixed16vec2_t bb_max{new_pos[0] + c_monster_width / 2, new_pos[1] + c_monster_height / 2};
+	const fixed16vec2_t monster_size= GetMonsterSize(monster.id);
+	const fixed16vec2_t bb_min{new_pos[0] - monster_size[0] / 2, new_pos[1] - monster_size[1] / 2};
+	const fixed16vec2_t bb_max{new_pos[0] + monster_size[0] / 2, new_pos[1] + monster_size[1] / 2};
 
 	bool can_move= true;
 
@@ -279,8 +291,9 @@ void World::MoveMonster(Monster& monster)
 		if(&other_monster == &monster)
 			continue;
 
-		const fixed16vec2_t other_bb_min{other_monster.pos[0] - c_monster_width / 2, other_monster.pos[1] - c_monster_height / 2};
-		const fixed16vec2_t other_bb_max{other_monster.pos[0] + c_monster_width / 2, other_monster.pos[1] + c_monster_height / 2};
+		const fixed16vec2_t other_monster_size= GetMonsterSize(other_monster.id);
+		const fixed16vec2_t other_bb_min{other_monster.pos[0] - other_monster_size[0] / 2, other_monster.pos[1] - other_monster_size[1] / 2};
+		const fixed16vec2_t other_bb_max{other_monster.pos[0] + other_monster_size[0] / 2, other_monster.pos[1] + other_monster_size[1] / 2};
 
 		if( other_bb_min[0] >= bb_max[0] ||
 			other_bb_min[1] >= bb_max[1] ||
@@ -449,8 +462,9 @@ bool World::MoveProjectile(Projectile& projectile)
 			if(monster.health <= 0)
 				continue;
 
-			const fixed16vec2_t monster_bb_min{monster.pos[0] - c_monster_width / 2, monster.pos[1] - c_monster_height / 2};
-			const fixed16vec2_t monster_bb_max{monster.pos[0] + c_monster_width / 2, monster.pos[1] + c_monster_height / 2};
+			const fixed16vec2_t monster_size= GetMonsterSize(monster.id);
+			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
+			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
 			if( monster_bb_min[0] >= bb_max[0] ||
 				monster_bb_min[1] >= bb_max[1] ||
 				monster_bb_max[0] <= bb_min[0] ||
