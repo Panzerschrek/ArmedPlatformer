@@ -43,23 +43,26 @@ const Model player
 };
 #undef PLAYER_SCALE
 
+#define MONSTER_SCALE 7 / 8
+
 const Model monster_biter
 {
 	{
 		{
-			{ -g_fixed16_one, { g_fixed16_one / 2, +g_fixed16_one / 2 } },
-			{ 0, { 0, g_fixed16_one } },
+			{ -g_fixed16_one * MONSTER_SCALE, { g_fixed16_one / 2 * MONSTER_SCALE, +g_fixed16_one / 2 * MONSTER_SCALE } },
+			{ 0, { 0, g_fixed16_one * MONSTER_SCALE } },
 		},
 		ColorRGB(64, 64, 255),
 	},
 	{
 		{
 			{ 0, { 0, 0 } },
-			{ +g_fixed16_one, { -g_fixed16_one / 2, +g_fixed16_one / 2 } },
+			{ +g_fixed16_one * MONSTER_SCALE, { -g_fixed16_one / 2 * MONSTER_SCALE, +g_fixed16_one / 2 * MONSTER_SCALE } },
 		},
 		ColorRGB(32, 32, 128),
 	},
 };
+#undef MONSTER_SCALE
 
 const Model power_up
 {

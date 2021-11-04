@@ -11,7 +11,7 @@ namespace
 const fixed16_t c_player_width= g_fixed16_one * 3 / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 7 / 4;
 const fixed16_t c_monster_width= g_fixed16_one * 3 / 2;
-const fixed16_t c_monster_height= g_fixed16_one * 2;
+const fixed16_t c_monster_height= g_fixed16_one * 7 / 4;
 
 const int32_t c_monster_max_distance_to_spawn= 6;
 const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
