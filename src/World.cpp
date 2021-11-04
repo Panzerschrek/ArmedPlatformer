@@ -339,7 +339,7 @@ void World::MoveMonster(Monster& monster)
 						Projectile projectile;
 						projectile.owner_kind= Projectile::OwnerKind::Monster;
 						projectile.pos= monster.pos;
-						projectile.vel= {(dir_dir_dot > 0 ? (-1) : +1) * g_fixed16_one / 3, 0};
+						projectile.vel= {(dir_to_player[0] > 0 ? (+1) : (-1)) * g_fixed16_one / 3, 0};
 						projectiles_.push_back(projectile);
 						monster.last_attack_tick= current_tick_;
 					}
