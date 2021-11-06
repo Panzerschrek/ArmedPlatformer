@@ -11,6 +11,9 @@ namespace
 const fixed16_t c_player_width= g_fixed16_one * 3 / 2;
 const fixed16_t c_player_heigth= g_fixed16_one * 7 / 4;
 
+const fixed16_t c_platform_width= g_fixed16_one * 3 / 2;
+const fixed16_t c_platform_height= g_fixed16_one * 3 / 4;
+
 const int32_t c_monster_max_distance_to_spawn= 6;
 const fixed16_t c_player_monster_distance_for_chase_start= g_fixed16_one * c_monster_max_distance_to_spawn;
 
@@ -210,6 +213,20 @@ void World::ProcessPlayerPhysics()
 			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
 			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
 			if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, monster_bb_min, monster_bb_max))
+			{
+				player_.Push(*push_vec);
+				if((*push_vec)[1] < 0)
+					player_.SetOnGround(true);
+				goto collsion_check_end;
+			}
+		}
+
+		// Process interaction with platforms.
+		for(const Platform& platform : platforms_)
+		{
+			const fixed16vec2_t platform_bb_min{platform.pos[0] - c_platform_width / 2, platform.pos[1] - c_platform_height / 2};
+			const fixed16vec2_t platform_bb_max{platform.pos[0] + c_platform_width / 2, platform.pos[1] + c_platform_height / 2};
+			if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, platform_bb_min, platform_bb_max))
 			{
 				player_.Push(*push_vec);
 				if((*push_vec)[1] < 0)
@@ -540,6 +557,20 @@ bool World::MoveProjectile(Projectile& projectile)
 			player_.Hit(c_projectile_damage);
 			return false;
 		}
+	}
+
+	// Check for collisions against platforms.
+	for(const Platform& platform : platforms_)
+	{
+		const fixed16vec2_t platform_bb_min{platform.pos[0] - c_platform_width / 2, platform.pos[1] - c_platform_height / 2};
+		const fixed16vec2_t platform_bb_max{platform.pos[0] + c_platform_width / 2, platform.pos[1] + c_platform_height / 2};
+		if( platform_bb_min[0] >= bb_max[0] ||
+			platform_bb_min[1] >= bb_max[1] ||
+			platform_bb_max[0] <= bb_min[0] ||
+			platform_bb_max[1] <= bb_min[1])
+		{} // No collision.
+		else
+			return false;
 	}
 
 	return true;
