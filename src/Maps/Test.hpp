@@ -24,10 +24,12 @@ const char map_data[]=
 const MapDescription description
 {
 	map_data,
-	{ 3 * g_fixed16_one, -1 * g_fixed16_one },
+	{ 27 * g_fixed16_one, -1 * g_fixed16_one },
 	{
 		{ { {23, 4}, {26, 4} } },
-		{ { {23, 1}, {26, 1} } },
+		{ { {26, 1}, {23, 1} } },
+		{ { {28, 2}, {28, 0} } },
+		{ { {30, 0}, {30, 2} } },
 	},
 };
 

@@ -75,6 +75,8 @@ private:
 	void ProcessPlayerPhysics();
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void PickUpPowerUps();
+	void MovePlatforms();
+	void MovePlatform(Platform& platform);
 	void MoveMonsters();
 	void MoveMonster(Monster& monster);
 	void MoveProjectiles();

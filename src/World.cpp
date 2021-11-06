@@ -108,14 +108,14 @@ World::World(const MapDescription& map_description)
 		platform.points[1]= {IntToFixed16(platform_info.points[1][0]), IntToFixed16(platform_info.points[1][1])};
 		platform.pos= platform.points[0];
 
-		if(platform.points[0][0] > platform.points[1][0])
-			platform.vel= {+c_platform_speed, 0};
 		if(platform.points[0][0] < platform.points[1][0])
+			platform.vel= {+c_platform_speed, 0};
+		if(platform.points[0][0] > platform.points[1][0])
 			platform.vel= {-c_platform_speed, 0};
 
-		if(platform.points[0][1] > platform.points[1][1])
-			platform.vel= {0, +c_platform_speed};
 		if(platform.points[0][1] < platform.points[1][1])
+			platform.vel= {0, +c_platform_speed};
+		if(platform.points[0][1] > platform.points[1][1])
 			platform.vel= {0, -c_platform_speed};
 
 		platforms_.push_back(platform);
@@ -151,6 +151,7 @@ void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 	ProcessShootRequest(player_.Tick(input_state, aim_vec));
 	ProcessPlayerPhysics();
 	PickUpPowerUps();
+	MovePlatforms();
 	MoveMonsters();
 	MoveProjectiles();
 	++current_tick_;
@@ -264,6 +265,29 @@ void World::PickUpPowerUps()
 		}
 
 	}
+}
+
+void World::MovePlatforms()
+{
+	for(Platform& platform : platforms_)
+		MovePlatform(platform);
+}
+
+void World::MovePlatform(Platform& platform)
+{
+	fixed16vec2_t new_pos= platform.pos;
+	new_pos[0]+= platform.vel[0];
+	new_pos[1]+= platform.vel[1];
+
+	if( new_pos[0] > std::max(platform.points[0][0], platform.points[1][0]) ||
+		new_pos[0] < std::min(platform.points[0][0], platform.points[1][0]))
+		platform.vel[0]*= -1;
+	else
+	if( new_pos[1] > std::max(platform.points[0][1], platform.points[1][1]) ||
+		new_pos[1] < std::min(platform.points[0][1], platform.points[1][1]))
+		platform.vel[1]*= -1;
+	else
+		platform.pos= new_pos;
 }
 
 void World::MoveMonsters()
