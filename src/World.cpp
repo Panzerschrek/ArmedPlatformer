@@ -230,7 +230,10 @@ void World::ProcessPlayerPhysics()
 			{
 				player_.Push(*push_vec);
 				if((*push_vec)[1] < 0)
+				{
+					player_.AccelerateByMovingPlatform(platform.vel);
 					player_.SetOnGround(true);
+				}
 				goto collsion_check_end;
 			}
 		}

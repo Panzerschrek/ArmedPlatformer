@@ -26,6 +26,7 @@ public:
 	uint32_t GetAmmo() const { return ammo_; }
 
 	void Push(const fixed16vec2_t& push_vec);
+	void AccelerateByMovingPlatform(const fixed16vec2_t& target_vel);
 	void SetOnGround(const bool on_ground){ on_ground_= on_ground; }
 	void Hit(int32_t damage);
 

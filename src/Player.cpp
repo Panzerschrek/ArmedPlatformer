@@ -52,6 +52,18 @@ void Player::Push(const fixed16vec2_t& push_vec)
 	}
 }
 
+void Player::AccelerateByMovingPlatform(const fixed16vec2_t& target_vel)
+{
+	const fixed16_t vel_dot= Fixed16VecDot(vel_, target_vel);
+	const fixed16_t square_target_vel= Fixed16VecSquareLen(target_vel);
+	if(vel_dot < square_target_vel)
+	{
+		const fixed16_t c_accel = g_fixed16_one / 4096;
+		vel_[0]+= Fixed16MulDiv(target_vel[0], c_accel, square_target_vel);
+		vel_[1]+= Fixed16MulDiv(target_vel[1], c_accel, square_target_vel);
+	}
+}
+
 void Player::Hit(const int32_t damage)
 {
 	health_-= damage;
