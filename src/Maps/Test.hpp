@@ -24,7 +24,11 @@ const char map_data[]=
 const MapDescription description
 {
 	map_data,
-	{ 3 * g_fixed16_one, -1 * g_fixed16_one }
+	{ 3 * g_fixed16_one, -1 * g_fixed16_one },
+	{
+		{ { {23, 4}, {26, 4} } },
+		{ { {23, 1}, {26, 1} } },
+	},
 };
 
 } // namespace Test

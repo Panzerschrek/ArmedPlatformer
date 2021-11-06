@@ -53,6 +53,9 @@ void WorldView::Draw()
 
 	DrawPlayer(mat, surface);
 
+	for(const World::Platform& platform : world_.GetPlatforms())
+		DrawPlatform(mat, surface, platform);
+
 	for(const World::Monster& monster : world_.GetMonsters())
 		DrawMonster(mat, surface, monster);
 
@@ -116,6 +119,20 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 	const TransformMatrix result_mat= MatrixMul(player_mat, view_mat);
 
 	DrawModel(result_mat, surface, Models::player);
+}
+
+void WorldView::DrawPlatform(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Platform& platform)
+{
+	TransformMatrix platform_mat;
+	platform_mat.scale[0]= platform_mat.scale[1] = g_fixed16_one;
+	platform_mat.shift= platform.pos;
+
+	if(platform.vel[0] <0)
+		platform_mat.scale[0]*= -1;
+
+	const TransformMatrix result_mat= MatrixMul(platform_mat, view_mat);
+
+	DrawModel(result_mat, surface, Models::platform);
 }
 
 void WorldView::DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster)

@@ -6,10 +6,16 @@
 namespace Armed
 {
 
+struct PlatformDescription
+{
+	int32_t points[2][2];
+};
+
 struct MapDescription
 {
 	const char* tiles_map_data= nullptr;
 	fixed16vec2_t player_spawn{};
+	std::vector<PlatformDescription> platforms;
 };
 
 class World
@@ -18,6 +24,13 @@ public:
 	static constexpr const uint32_t c_update_frequency= 120;
 
 	using TickT= uint32_t;
+
+	struct Platform
+	{
+		fixed16vec2_t points[2]{};
+		fixed16vec2_t pos{};
+		fixed16vec2_t vel{};
+	};
 
 	struct Monster
 	{
@@ -53,6 +66,7 @@ public:
 
 	const TilesMap& GetMap() const { return map_; }
 	const Player& GetPlayer() const { return player_; }
+	const std::vector<Platform> GetPlatforms() const { return platforms_; }
 	const std::vector<Monster>& GetMonsters() const { return monsters_; }
 	const std::vector<PowerUp>& GetPowerUps() const { return power_ups_; }
 	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
@@ -70,6 +84,7 @@ private:
 	Rand rand_; // TODO - initialize it with really-random seed
 	TilesMap map_;
 	Player player_;
+	std::vector<Platform> platforms_;
 	std::vector<Monster> monsters_;
 	std::vector<PowerUp> power_ups_;
 	std::vector<Projectile> projectiles_;

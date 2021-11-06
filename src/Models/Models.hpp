@@ -43,6 +43,24 @@ const Model player
 };
 #undef PLAYER_SCALE
 
+const Model platform
+{
+	{
+		{
+			{ -g_fixed16_one * 3 / 8, { -g_fixed16_one * 3 / 4, +g_fixed16_one * 3 / 4 } },
+			{ 0, { -g_fixed16_one, +g_fixed16_one } },
+		},
+		ColorRGB(128, 128, 128),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one, +g_fixed16_one } },
+			{ +g_fixed16_one * 3 / 8, { -g_fixed16_one * 3 / 4, +g_fixed16_one * 3 / 4 } },
+		},
+		ColorRGB(140, 140, 140),
+	},
+};
+
 #define MONSTER_SCALE 7 / 8
 
 const Model monster_biter

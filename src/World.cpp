@@ -24,6 +24,8 @@ const int32_t c_small_health= 25;
 
 const int32_t c_projectile_damage= 10;
 
+const fixed16_t c_platform_speed= g_fixed16_one / 32;
+
 fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 {
 	switch(monster_id)
@@ -98,6 +100,27 @@ World::World(const MapDescription& map_description)
 {
 	const MapObjectsData map_objects= ExtractMapObjects(map_description.tiles_map_data);
 
+	platforms_.reserve(map_description.platforms.size());
+	for(const PlatformDescription& platform_info : map_description.platforms)
+	{
+		Platform platform;
+		platform.points[0]= {IntToFixed16(platform_info.points[0][0]), IntToFixed16(platform_info.points[0][1])};
+		platform.points[1]= {IntToFixed16(platform_info.points[1][0]), IntToFixed16(platform_info.points[1][1])};
+		platform.pos= platform.points[0];
+
+		if(platform.points[0][0] > platform.points[1][0])
+			platform.vel= {+c_platform_speed, 0};
+		if(platform.points[0][0] < platform.points[1][0])
+			platform.vel= {-c_platform_speed, 0};
+
+		if(platform.points[0][1] > platform.points[1][1])
+			platform.vel= {0, +c_platform_speed};
+		if(platform.points[0][1] < platform.points[1][1])
+			platform.vel= {0, -c_platform_speed};
+
+		platforms_.push_back(platform);
+	}
+
 	monsters_.reserve(map_objects.monsters.size());
 	for(const MonsterInfo& monster_info : map_objects.monsters)
 	{
@@ -112,6 +135,7 @@ World::World(const MapDescription& map_description)
 		monsters_.push_back(monster);
 	}
 
+	power_ups_.reserve(map_objects.power_ups.size());
 	for(const PowerUpInfo& power_up_info : map_objects.power_ups)
 	{
 		PowerUp power_up;
