@@ -320,7 +320,14 @@ void World::PickUpPowerUps()
 			case PowerUpId::Key1:
 			case PowerUpId::Key2:
 			case PowerUpId::Key3:
-				player_.GiveKey(size_t(power_up.id) - size_t(PowerUpId::Key0));
+				{
+					const size_t index= size_t(power_up.id) - size_t(PowerUpId::Key0);
+					if(!player_.HasKey(index))
+					{
+						player_.GiveKey(index);
+						power_up.picked_up= true;
+					}
+				}
 				break;
 			};
 		}
