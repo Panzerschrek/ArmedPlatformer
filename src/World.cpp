@@ -188,17 +188,23 @@ void World::ProcessPlayerPhysics()
 			case TileId::Air:
 				break;
 			case TileId::BasicWall:
-			{
-				const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
-				const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
-				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
 				{
-					player_.Push(*push_vec);
-					if((*push_vec)[1] < 0)
-						player_.SetOnGround(true);
-					goto collsion_check_end;
+					const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
+					const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
+					if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
+					{
+						player_.Push(*push_vec);
+						if((*push_vec)[1] < 0)
+							player_.SetOnGround(true);
+						goto collsion_check_end;
+					}
 				}
-			}
+				break;
+			case TileId::Water:
+				// TODO
+				break;
+			case TileId::Lava:
+				// TODO
 				break;
 			}
 		}
@@ -502,6 +508,8 @@ bool World::MoveProjectile(Projectile& projectile)
 		switch(tile)
 		{
 		case TileId::Air:
+		case TileId::Water:
+		case TileId::Lava:
 			break;
 		case TileId::BasicWall:
 			{

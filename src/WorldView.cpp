@@ -87,8 +87,6 @@ void WorldView::Draw()
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)
 {
-	ARMED_UNUSED(tile);
-
 	TransformMatrix tile_mat;
 	tile_mat.scale[0]= tile_mat.scale[1] = g_fixed16_one;
 	tile_mat.shift[0]= IntToFixed16(int32_t(tile_x));
@@ -99,11 +97,26 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	const fixed16vec2_t tile_min{0, 0}, tile_max{g_fixed16_one, g_fixed16_one};
 	const fixed16vec2_t tile_min_transformed= VecMatMul(tile_min, result_mat), tile_max_transformed= VecMatMul(tile_max, result_mat);
 
+	color_t color= ColorRGB(0, 0, 0);
+	switch(tile)
+	{
+	case TileId::BasicWall:
+		color= ColorRGB(120, 64, 16);
+		break;
+	case TileId::Water:
+		color= ColorRGB(64, 64, 220);
+		break;
+	case TileId::Lava:
+		color= ColorRGB(220, 130, 32);
+		break;
+	default:
+		break;
+	};
 	FillRectangle(
 		surface,
 		Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
 		Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
-		0xFF00FF00);
+		color);
 }
 
 void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface)

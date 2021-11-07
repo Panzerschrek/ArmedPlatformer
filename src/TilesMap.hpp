@@ -10,6 +10,8 @@ enum class TileId : uint8_t
 {
 	Air,
 	BasicWall,
+	Lava,
+	Water,
 };
 
 class TilesMap

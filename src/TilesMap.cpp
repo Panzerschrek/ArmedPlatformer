@@ -46,11 +46,11 @@ TileId TileForChar(const char c)
 {
 	switch(c)
 	{
-	case ' ':
 	default:
-		return TileId::Air;
-	case '#':
-		return TileId::BasicWall;
+	case ' ': return TileId::Air;
+	case '#': return TileId::BasicWall;
+	case '~': return TileId::Water;
+	case '&': return TileId::Lava;
 	};
 }
 

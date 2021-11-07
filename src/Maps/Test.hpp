@@ -19,7 +19,7 @@ const char map_data[]=
 "      0  ##           #                             \n"
 "      ###              #######   m     m            \n"
 "     #      #     m #           ##########          \n"
-" ####       #########                               \n";
+" ####       #########   ~~~~~             &&&&&&&&&&\n";
 
 const MapDescription description
 {
