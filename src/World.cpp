@@ -164,6 +164,7 @@ void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 void World::ProcessPlayerPhysics()
 {
 	player_.SetOnGround(false);
+	player_.SetInLiquid(false);
 
 	// Check for collision against some geometry, correct player position, continue.
 	for(uint32_t collision_number= 0; collision_number < 8; ++collision_number)
@@ -200,13 +201,18 @@ void World::ProcessPlayerPhysics()
 				}
 				break;
 			case TileId::Water:
-				// TODO
+				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
+					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
+					player_.SetInLiquid(true);
 				break;
 			case TileId::Lava:
 				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
-					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1] &&
-					current_tick_ % 12 == 0)
-					player_.Hit(c_lava_damage);
+					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
+				{
+					player_.SetInLiquid(true);
+					if(current_tick_ % 12 == 0)
+						player_.Hit(c_lava_damage);
+				}
 				break;
 			}
 		}

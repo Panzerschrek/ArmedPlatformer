@@ -28,6 +28,7 @@ public:
 	void Push(const fixed16vec2_t& push_vec);
 	void AccelerateByMovingPlatform(const fixed16vec2_t& target_vel);
 	void SetOnGround(const bool on_ground){ on_ground_= on_ground; }
+	void SetInLiquid(const bool in_liquid){ in_liquid_= in_liquid; }
 	void Hit(int32_t damage);
 
 private:
@@ -40,6 +41,7 @@ private:
 	fixed16vec2_t vel_{};
 	fixed16vec2_t aim_vec_{};
 	bool on_ground_= false;
+	bool in_liquid_= false;
 	int32_t health_= c_max_health;
 
 	uint32_t ammo_= 48;
