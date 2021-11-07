@@ -26,6 +26,7 @@ const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
 
 const int32_t c_projectile_damage= 10;
+const int32_t c_lava_damage= 3;
 
 const fixed16_t c_platform_speed= g_fixed16_one / 32;
 
@@ -183,28 +184,29 @@ void World::ProcessPlayerPhysics()
 		for(int32_t x= std::max(0, cell_min[0] - 1); x <= std::min(cell_max[0] + 1, int32_t(map_.GetSizeX()) - 1); ++x)
 		{
 			const TileId tile= map_.GetTile(uint32_t(x), uint32_t(y));
+			const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
+			const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
 			switch(tile)
 			{
 			case TileId::Air:
 				break;
 			case TileId::BasicWall:
+				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
 				{
-					const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
-					const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };
-					if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
-					{
-						player_.Push(*push_vec);
-						if((*push_vec)[1] < 0)
-							player_.SetOnGround(true);
-						goto collsion_check_end;
-					}
+					player_.Push(*push_vec);
+					if((*push_vec)[1] < 0)
+						player_.SetOnGround(true);
+					goto collsion_check_end;
 				}
 				break;
 			case TileId::Water:
 				// TODO
 				break;
 			case TileId::Lava:
-				// TODO
+				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
+					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1] &&
+					current_tick_ % 12 == 0)
+					player_.Hit(c_lava_damage);
 				break;
 			}
 		}
