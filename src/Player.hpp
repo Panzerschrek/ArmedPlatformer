@@ -1,6 +1,7 @@
 #pragma once
-#include "SystemEvent.hpp"
 #include "Fixed.hpp"
+#include "Assert.hpp"
+#include "SystemEvent.hpp"
 
 namespace Armed
 {
@@ -30,6 +31,7 @@ public:
 	void SetOnGround(const bool on_ground){ on_ground_= on_ground; }
 	void SetInLiquid(const bool in_liquid){ in_liquid_= in_liquid; }
 	void Hit(int32_t damage);
+	void GiveKey(const size_t key_index){ ARMED_ASSERT(key_index < std::size(keys_)); keys_[key_index]= true; }
 
 private:
 	void Move(const InputState& input_state);
@@ -42,6 +44,7 @@ private:
 	fixed16vec2_t aim_vec_{};
 	bool on_ground_= false;
 	bool in_liquid_= false;
+	bool keys_[4]= {false, false, false, false};
 	int32_t health_= c_max_health;
 
 	uint32_t ammo_= 48;

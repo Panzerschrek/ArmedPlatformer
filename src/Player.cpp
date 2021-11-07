@@ -1,5 +1,4 @@
 #include "Player.hpp"
-#include "Assert.hpp"
 
 namespace Armed
 {

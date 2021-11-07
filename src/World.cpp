@@ -200,6 +200,18 @@ void World::ProcessPlayerPhysics()
 					goto collsion_check_end;
 				}
 				break;
+			case TileId::KeyDoor0:
+			case TileId::KeyDoor1:
+			case TileId::KeyDoor2:
+			case TileId::KeyDoor3:
+				// TODO - pass if player has keys.
+				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
+				{
+					player_.Push(*push_vec);
+					if((*push_vec)[1] < 0)
+						player_.SetOnGround(true);
+					goto collsion_check_end;
+				}
 			case TileId::Water:
 				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
@@ -294,6 +306,21 @@ void World::PickUpPowerUps()
 					player_.Hit(-c_small_health);
 					power_up.picked_up= true;
 				}
+				break;
+			case PowerUpId::LargeHealth:
+			case PowerUpId::Health2:
+			case PowerUpId::Health3:
+			case PowerUpId::Ammo0:
+			case PowerUpId::Ammo1:
+			case PowerUpId::Ammo2:
+			case PowerUpId::Ammo3:
+				break;
+				// TODO
+			case PowerUpId::Key0:
+			case PowerUpId::Key1:
+			case PowerUpId::Key2:
+			case PowerUpId::Key3:
+				player_.GiveKey(size_t(power_up.id) - size_t(PowerUpId::Key0));
 				break;
 			};
 		}
@@ -519,6 +546,11 @@ bool World::MoveProjectile(Projectile& projectile)
 		case TileId::Water:
 		case TileId::Lava:
 			break;
+		// Block movement of projectiles by all doors.
+		case TileId::KeyDoor0:
+		case TileId::KeyDoor1:
+		case TileId::KeyDoor2:
+		case TileId::KeyDoor3:
 		case TileId::BasicWall:
 			{
 				const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };

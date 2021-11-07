@@ -12,6 +12,11 @@ enum class TileId : uint8_t
 	BasicWall,
 	Lava,
 	Water,
+
+	KeyDoor0= 64,
+	KeyDoor1,
+	KeyDoor2,
+	KeyDoor3,
 };
 
 class TilesMap
@@ -48,6 +53,17 @@ enum class MonsterId
 enum class PowerUpId
 {
 	SmallHealth,
+	LargeHealth,
+	Health2,
+	Health3,
+	Ammo0,
+	Ammo1,
+	Ammo2,
+	Ammo3,
+	Key0,
+	Key1,
+	Key2,
+	Key3,
 };
 
 struct MonsterInfo
