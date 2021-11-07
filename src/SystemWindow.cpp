@@ -104,8 +104,8 @@ SystemWindow::SystemWindow()
 
 	const Uint32 window_flags= SDL_WINDOW_SHOWN;
 
-	const int width = 640;
-	const int height= 480;
+	const int width = 1024;
+	const int height= 768;
 
 	window_=
 		SDL_CreateWindow(

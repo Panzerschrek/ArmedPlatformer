@@ -99,7 +99,7 @@ MapObjectsData ExtractMapObjects(const char* const map_data)
 			monster.id= MonsterId((uint32_t(*c) - uint32_t('m')));
 			map_objects.monsters.push_back(monster);
 		}
-		if(*c >= '0' && *c < '9')
+		if(*c >= '0' && *c <= '9' + 6)
 		{
 			PowerUpInfo powr_up;
 			powr_up.pos[0]= x;

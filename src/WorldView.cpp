@@ -21,6 +21,31 @@ const Model& GetModelForMonster(const MonsterId id)
 	return Models::monster_biter;
 }
 
+const Model& GetModelForPowerup(const PowerUpId id)
+{
+	switch(id)
+	{
+	case PowerUpId::SmallHealth:
+	case PowerUpId::LargeHealth:
+	case PowerUpId::Health2:
+	case PowerUpId::Health3:
+		return Models::small_health;
+	case PowerUpId::Ammo0:
+	case PowerUpId::Ammo1:
+	case PowerUpId::Ammo2:
+	case PowerUpId::Ammo3:
+		return Models::small_health; // TODO
+	case PowerUpId::Key0: return Models::key0;
+	case PowerUpId::Key1: return Models::key1;
+	case PowerUpId::Key2: return Models::key2;
+	case PowerUpId::Key3: return Models::key3;
+	};
+
+	ARMED_ASSERT(false);
+	return Models::small_health;
+}
+
+
 } // namespace
 
 WorldView::WorldView(const World& world, const Camera& camera, SystemWindow& system_window)
@@ -196,7 +221,7 @@ void WorldView::DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& 
 
 	const TransformMatrix result_mat= MatrixMul(power_up_mat, view_mat);
 
-	DrawModel(result_mat, surface, Models::power_up);
+	DrawModel(result_mat, surface, GetModelForPowerup(power_up.id));
 }
 
 void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile)

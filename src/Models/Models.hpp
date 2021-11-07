@@ -190,7 +190,7 @@ const Model monster_bomber
 };
 #undef MONSTER_SCALE
 
-const Model power_up
+const Model small_health
 {
 	{
 		{
@@ -205,6 +205,78 @@ const Model power_up
 			{ +g_fixed16_one / 4, { 0, 0 } },
 		},
 		ColorRGB(200, 200, 200),
+	},
+};
+
+const Model key0
+{
+	{
+		{
+			{ -g_fixed16_one / 3, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(224, 224, 224),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ +g_fixed16_one / 3, { 0, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(32, 32, 32),
+	},
+};
+
+const Model key1
+{
+	{
+		{
+			{ -g_fixed16_one / 3, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(224, 224, 224),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ +g_fixed16_one / 3, { -g_fixed16_one / 3, 0 } },
+		},
+		ColorRGB(32, 32, 32),
+	},
+};
+
+const Model key2
+{
+	{
+		{
+			{ -g_fixed16_one / 3, { 0, +g_fixed16_one / 3 } },
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(224, 224, 224),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ +g_fixed16_one / 3, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(32, 32, 32),
+	},
+};
+
+const Model key3
+{
+	{
+		{
+			{ -g_fixed16_one / 3, { -g_fixed16_one / 3, 0 } },
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(224, 224, 224),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+			{ +g_fixed16_one / 3, { -g_fixed16_one / 3, +g_fixed16_one / 3 } },
+		},
+		ColorRGB(32, 32, 32),
 	},
 };
 

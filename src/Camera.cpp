@@ -37,7 +37,7 @@ TransformMatrix Camera::CalculateMatrix() const
 	cam_shift.shift[0]= -pos_[0];
 	cam_shift.shift[1]= -pos_[1];
 
-	scale.scale[0]= scale.scale[1]= IntToFixed16(24);
+	scale.scale[0]= scale.scale[1]= IntToFixed16(32);
 	scale.shift[0]= scale.shift[1]= 0;
 
 	screen_shift.scale[0]= screen_shift.scale[1]= g_fixed16_one;
