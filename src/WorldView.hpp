@@ -24,6 +24,7 @@ private:
 	void DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile);
 	void DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model);
 	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
+	void FillRectangleWithBlending(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
 
 	void FillTrapezoid(
 		const SDL_Surface& surface,

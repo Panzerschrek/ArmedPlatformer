@@ -47,7 +47,7 @@ void WorldView::Draw()
 	{
 		const TileId tile= tiles_map.GetTile(x, y);
 
-		if(tile != TileId::Air)
+		if(tile != TileId::Air && !(tile == TileId::Water))
 			DrawTile(mat, surface, x, y, tile);
 	}
 
@@ -83,6 +83,16 @@ void WorldView::Draw()
 			}
 		}
 	}
+
+	// Draw transparent water after all other geometry.
+	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
+	for(uint32_t x= 0; x < tiles_map.GetSizeX(); ++x)
+	{
+		const TileId tile= tiles_map.GetTile(x, y);
+
+		if(tile == TileId::Water)
+			DrawTile(mat, surface, x, y, tile);
+	}
 }
 
 void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)
@@ -98,6 +108,7 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	const fixed16vec2_t tile_min_transformed= VecMatMul(tile_min, result_mat), tile_max_transformed= VecMatMul(tile_max, result_mat);
 
 	color_t color= ColorRGB(0, 0, 0);
+	bool use_blending= false;
 	switch(tile)
 	{
 	case TileId::BasicWall:
@@ -105,6 +116,7 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 		break;
 	case TileId::Water:
 		color= ColorRGB(64, 64, 220);
+		use_blending= true;
 		break;
 	case TileId::Lava:
 		color= ColorRGB(220, 130, 32);
@@ -112,11 +124,19 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	default:
 		break;
 	};
-	FillRectangle(
-		surface,
-		Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
-		Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
-		color);
+
+	if(use_blending)
+		FillRectangleWithBlending(
+			surface,
+			Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
+			Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
+			color);
+	else
+		FillRectangle(
+			surface,
+			Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
+			Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
+			color);
 }
 
 void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface)
@@ -232,6 +252,28 @@ void WorldView::FillRectangle(const SDL_Surface& surface, const int32_t min_x, c
 	{
 		auto& dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
 		dst= color;
+	}
+}
+
+void WorldView::FillRectangleWithBlending(const SDL_Surface& surface, const int32_t min_x, const int32_t min_y, const int32_t max_x, const int32_t max_y, color_t color)
+{
+	if(min_x >= surface.w ||
+		min_y >= surface.h ||
+		max_x <= 0 ||
+		max_y <= 0)
+		return;
+
+	const int32_t min_x_clamped= std::max(0, min_x);
+	const int32_t min_y_clamped= std::max(0, min_y);
+	const int32_t max_x_clamped= std::min(max_x, surface.w);
+	const int32_t max_y_clamped= std::min(max_y, surface.h);
+
+	const color_t color_prepared= color >> 1;
+	for(int32_t y= min_y_clamped; y < max_y_clamped; ++y)
+	for(int32_t x= min_x_clamped; x < max_x_clamped; ++x)
+	{
+		auto& dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x];
+		dst= ((dst & 0xFEFEFEFEu) >> 1) + color_prepared;
 	}
 }
 
