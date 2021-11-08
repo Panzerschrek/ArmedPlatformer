@@ -74,6 +74,19 @@ void WorldView::Draw()
 
 		if(tile != TileId::Air && !(tile == TileId::Water))
 			DrawTile(mat, surface, x, y, tile);
+
+		// Draw key model atop of door tiles.
+		if(tile >= TileId::KeyDoor0 && tile <= TileId::KeyDoor3)
+		{
+			TransformMatrix key_mat;
+			key_mat.scale[0]= key_mat.scale[1] = g_fixed16_one * 2 / 3;
+			key_mat.shift= {IntToFixed16(int32_t(x)) + g_fixed16_one / 2, IntToFixed16(int32_t(y)) + g_fixed16_one / 3};
+
+			DrawModel(
+				MatrixMul(key_mat, mat),
+				surface,
+				GetModelForPowerup(PowerUpId(size_t(tile) - size_t(TileId::KeyDoor0) + size_t(PowerUpId::Key0))));
+		}
 	}
 
 	DrawPlayer(mat, surface);
@@ -145,6 +158,12 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 		break;
 	case TileId::Lava:
 		color= ColorRGB(220, 130, 32);
+		break;
+	case TileId::KeyDoor0:
+	case TileId::KeyDoor1:
+	case TileId::KeyDoor2:
+	case TileId::KeyDoor3:
+		color= ColorRGB(128, 128, 128);
 		break;
 	default:
 		break;
