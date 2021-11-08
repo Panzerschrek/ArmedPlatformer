@@ -64,6 +64,9 @@ void WorldView::Draw()
 		dst= uint32_t(x) * 255u / uint32_t(surface.w) + ((uint32_t(y) * 255u / uint32_t(surface.h)) << 8);
 	}
 
+	const Player& player= world_.GetPlayer();
+	const fixed16vec2_t player_pos= player.GetPos();
+
 	const TilesMap& tiles_map= world_.GetMap();
 	const TransformMatrix mat= camera_.CalculateMatrix();
 
@@ -72,21 +75,29 @@ void WorldView::Draw()
 	{
 		const TileId tile= tiles_map.GetTile(x, y);
 
-		if(tile != TileId::Air && !(tile == TileId::Water))
-			DrawTile(mat, surface, x, y, tile);
-
 		// Draw key model atop of door tiles.
 		if(tile >= TileId::KeyDoor0 && tile <= TileId::KeyDoor3)
 		{
-			TransformMatrix key_mat;
-			key_mat.scale[0]= key_mat.scale[1] = g_fixed16_one * 2 / 3;
-			key_mat.shift= {IntToFixed16(int32_t(x)) + g_fixed16_one / 2, IntToFixed16(int32_t(y)) + g_fixed16_one / 3};
+			const fixed16vec2_t key_sign_pos= {IntToFixed16(int32_t(x)) + g_fixed16_one / 2, IntToFixed16(int32_t(y)) + g_fixed16_one / 3};
 
-			DrawModel(
-				MatrixMul(key_mat, mat),
-				surface,
-				GetModelForPowerup(PowerUpId(size_t(tile) - size_t(TileId::KeyDoor0) + size_t(PowerUpId::Key0))));
+			const bool is_nearby= std::abs(player_pos[0] - key_sign_pos[0]) + std::abs(player_pos[1] - key_sign_pos[1]) <= g_fixed16_one * 2;
+			if(!(is_nearby && player.HasKey(size_t(tile) - size_t(TileId::KeyDoor0))))
+			{
+				DrawTile(mat, surface, x, y, tile);
+
+				TransformMatrix key_mat;
+				key_mat.scale[0]= key_mat.scale[1] = g_fixed16_one * 2 / 3;
+				key_mat.shift= key_sign_pos;
+
+				DrawModel(
+					MatrixMul(key_mat, mat),
+					surface,
+					GetModelForPowerup(PowerUpId(size_t(tile) - size_t(TileId::KeyDoor0) + size_t(PowerUpId::Key0))));
+			}
 		}
+		else if(tile != TileId::Air && !(tile == TileId::Water))
+			DrawTile(mat, surface, x, y, tile);
+
 	}
 
 	DrawPlayer(mat, surface);

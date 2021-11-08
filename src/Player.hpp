@@ -32,7 +32,7 @@ public:
 	void SetInLiquid(const bool in_liquid){ in_liquid_= in_liquid; }
 	void Hit(int32_t damage);
 	void GiveKey(const size_t key_index){ ARMED_ASSERT(key_index < std::size(keys_)); keys_[key_index]= true; }
-	bool HasKey(const size_t key_index){ARMED_ASSERT(key_index < std::size(keys_)); return keys_[key_index]; }
+	bool HasKey(const size_t key_index) const {ARMED_ASSERT(key_index < std::size(keys_)); return keys_[key_index]; }
 
 private:
 	void Move(const InputState& input_state);
