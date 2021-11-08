@@ -208,6 +208,24 @@ const Model small_health
 	},
 };
 
+const Model large_health
+{
+	{
+		{
+			{ -g_fixed16_one / 4, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+			{ 0, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+		},
+		ColorRGB(200, 16, 16),
+	},
+	{
+		{
+			{ 0, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+			{ +g_fixed16_one / 4, { -g_fixed16_one / 4, +g_fixed16_one / 4 } },
+		},
+		ColorRGB(200, 200, 200),
+	},
+};
+
 const Model key0
 {
 	{

@@ -26,10 +26,11 @@ const Model& GetModelForPowerup(const PowerUpId id)
 	switch(id)
 	{
 	case PowerUpId::SmallHealth:
+		return Models::small_health;
 	case PowerUpId::LargeHealth:
 	case PowerUpId::Health2:
 	case PowerUpId::Health3:
-		return Models::small_health;
+		return Models::large_health;
 	case PowerUpId::Ammo0:
 	case PowerUpId::Ammo1:
 	case PowerUpId::Ammo2:

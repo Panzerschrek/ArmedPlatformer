@@ -24,6 +24,7 @@ const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
 const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
+const int32_t c_large_health= 50;
 
 const int32_t c_projectile_damage= 10;
 const int32_t c_lava_damage= 3;
@@ -310,6 +311,12 @@ void World::PickUpPowerUps()
 				}
 				break;
 			case PowerUpId::LargeHealth:
+				if(player_.GetHealth() < Player::c_max_health)
+				{
+					player_.Hit(-c_large_health);
+					power_up.picked_up= true;
+				}
+				break;
 			case PowerUpId::Health2:
 			case PowerUpId::Health3:
 			case PowerUpId::Ammo0:
