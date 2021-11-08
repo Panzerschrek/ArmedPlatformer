@@ -32,10 +32,11 @@ const Model& GetModelForPowerup(const PowerUpId id)
 	case PowerUpId::Health3:
 		return Models::large_health;
 	case PowerUpId::Ammo0:
+		return Models::ammo0;
 	case PowerUpId::Ammo1:
 	case PowerUpId::Ammo2:
 	case PowerUpId::Ammo3:
-		return Models::small_health; // TODO
+		return Models::ammo1;
 	case PowerUpId::Key0: return Models::key0;
 	case PowerUpId::Key1: return Models::key1;
 	case PowerUpId::Key2: return Models::key2;

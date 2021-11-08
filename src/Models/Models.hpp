@@ -226,6 +226,28 @@ const Model large_health
 	},
 };
 
+const Model ammo0
+{
+	{
+		{
+			{ -g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
+			{ +g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
+		},
+		ColorRGB(32, 32, 128),
+	},
+};
+
+const Model ammo1
+{
+	{
+		{
+			{ -g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
+			{ +g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
+		},
+		ColorRGB(128, 32, 128),
+	},
+};
+
 const Model key0
 {
 	{
