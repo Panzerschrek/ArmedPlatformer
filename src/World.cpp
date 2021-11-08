@@ -204,13 +204,15 @@ void World::ProcessPlayerPhysics()
 			case TileId::KeyDoor1:
 			case TileId::KeyDoor2:
 			case TileId::KeyDoor3:
-				// TODO - pass if player has keys.
-				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
+				if(!player_.HasKey(size_t(tile) - size_t(TileId::KeyDoor0)))
 				{
-					player_.Push(*push_vec);
-					if((*push_vec)[1] < 0)
-						player_.SetOnGround(true);
-					goto collsion_check_end;
+					if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
+					{
+						player_.Push(*push_vec);
+						if((*push_vec)[1] < 0)
+							player_.SetOnGround(true);
+						goto collsion_check_end;
+					}
 				}
 			case TileId::Water:
 				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
