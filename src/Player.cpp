@@ -70,6 +70,14 @@ void Player::Hit(const int32_t damage)
 		health_= c_max_health;
 }
 
+void Player::GiveAmmo(const size_t index, const uint32_t count)
+{
+	ARMED_ASSERT(std::size(c_max_ammo) == std::size(ammo_));
+
+	ARMED_ASSERT(index < std::size(ammo_));
+	ammo_[index]= std::min(ammo_[index] + count, c_max_ammo[index]);
+}
+
 void Player::Move(const InputState& input_state)
 {
 	using KeyCode= SystemEventTypes::KeyCode;
@@ -162,11 +170,12 @@ void Player::Move(const InputState& input_state)
 
 Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 {
+	uint32_t& ammo= ammo_[0];
 	if(input_state.mouse[size_t(SystemEventTypes::ButtonCode::Left)] &&
 		current_tick_ - last_shoot_tick_ >= 20 &&
-		ammo_ > 0)
+		ammo > 0)
 	{
-		--ammo_;
+		--ammo;
 		last_shoot_tick_= current_tick_;
 		return ShootRequestKind::Machinegun;
 	}

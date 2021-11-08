@@ -319,12 +319,20 @@ void World::PickUpPowerUps()
 				break;
 			case PowerUpId::Health2:
 			case PowerUpId::Health3:
+				break;
 			case PowerUpId::Ammo0:
 			case PowerUpId::Ammo1:
 			case PowerUpId::Ammo2:
 			case PowerUpId::Ammo3:
+				{
+					const size_t index= size_t(power_up.id) - size_t(PowerUpId::Ammo0);
+					if(player_.GetAmmo(index) < Player::c_max_ammo[index])
+					{
+						player_.GiveAmmo(index, Player::c_max_ammo[index] / 2);
+						power_up.picked_up= true;
+					}
+				}
 				break;
-				// TODO
 			case PowerUpId::Key0:
 			case PowerUpId::Key1:
 			case PowerUpId::Key2:
