@@ -31,6 +31,9 @@ const int32_t c_lava_damage= 3;
 
 const fixed16_t c_platform_speed= g_fixed16_one / 32;
 
+const fixed16_t c_bullet_speed= g_fixed16_one / 3;
+const fixed16_t c_grenade_speed= g_fixed16_one / 5;
+
 fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 {
 	switch(monster_id)
@@ -277,10 +280,7 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	if(shoot_request == Player::ShootRequestKind::None)
 		return;
 
-	const fixed16_t c_bullet_vel= g_fixed16_one / 3;
-	const fixed16_t c_grenade_vel= g_fixed16_one / 5;
-
-	const fixed16_t vel= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? c_grenade_vel : c_bullet_vel;
+	const fixed16_t vel= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? c_grenade_speed : c_bullet_speed;
 
 	const fixed16vec2_t& aim_vec= player_.GetAimNormal();
 
@@ -508,7 +508,7 @@ void World::MoveMonster(Monster& monster)
 						Projectile projectile;
 						projectile.owner_kind= Projectile::OwnerKind::Monster;
 						projectile.pos= monster.pos;
-						projectile.vel= {(dir_to_player[0] > 0 ? (+1) : (-1)) * g_fixed16_one / 3, 0};
+						projectile.vel= {(dir_to_player[0] > 0 ? (+1) : (-1)) * c_bullet_speed, 0};
 						projectiles_.push_back(projectile);
 						monster.last_attack_tick= current_tick_;
 					}
