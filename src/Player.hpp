@@ -27,6 +27,7 @@ public:
 	const fixed16vec2_t& GetAimNormal() const { return aim_vec_; }
 	int32_t GetHealth() const { return health_; }
 	uint32_t GetAmmo(const size_t index) const { ARMED_ASSERT(index < std::size(ammo_)); return ammo_[index]; }
+	size_t GetCurrentWeapon() const { return current_weapon_; }
 
 	void Push(const fixed16vec2_t& push_vec);
 	void AccelerateByMovingPlatform(const fixed16vec2_t& target_vel);

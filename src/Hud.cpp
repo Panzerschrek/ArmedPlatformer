@@ -74,6 +74,18 @@ void Hud::Draw()
 			c_ammo_bar_row_length,
 			player.GetAmmo(size_t(i)),
 			c_ammo_colors[i]);
+
+		if(size_t(i) == player.GetCurrentWeapon())
+		{
+			const int32_t start_x= ammo_bar_x, end_x= start_x + (c_ammo_bar_width + c_ammo_bar_margin) * c_ammo_bar_row_length - c_ammo_bar_margin;
+			const int32_t start_y= ammo_bar_y - 16, end_y= start_y + 8;
+			for(int32_t y= start_y; y < end_y; ++y)
+			{
+				auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+				for(int32_t x= start_x; x < end_x; ++x)
+					dst[x]= c_ammo_colors[i];
+			}
+		}
 	}
 }
 
