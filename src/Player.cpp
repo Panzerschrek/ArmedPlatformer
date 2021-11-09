@@ -178,7 +178,7 @@ Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 	{
 		--ammo;
 		last_shoot_tick_= current_tick_;
-		return ShootRequestKind::GrenadeLauncher;
+		return ShootRequestKind::Machinegun;
 	}
 
 	return ShootRequestKind::None;

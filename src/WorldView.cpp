@@ -47,6 +47,25 @@ const Model& GetModelForPowerup(const PowerUpId id)
 	return Models::small_health;
 }
 
+struct ProjectileModel
+{
+	fixed16_t radius;
+	color_t color;
+};
+
+ProjectileModel GetProjectileModel(const World::Projectile::Kind kind)
+{
+	using Kind= World::Projectile::Kind;
+	switch(kind)
+	{
+	case Kind::Bullet: return {g_fixed16_one / 10, ColorRGB(200, 200, 200)};
+	case Kind::Grenade: return {g_fixed16_one / 6, ColorRGB(220, 120, 64)};
+	case Kind::Bomb: return {g_fixed16_one / 4, ColorRGB(32, 64, 64)};
+	}
+
+	ARMED_ASSERT(false);
+	return {g_fixed16_one, ColorRGB(255, 0, 255)};
+}
 
 } // namespace
 
@@ -258,13 +277,13 @@ void WorldView::DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& 
 
 void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile)
 {
-	const fixed16_t c_radius= g_fixed16_one / 8;
+	const ProjectileModel model= GetProjectileModel(projectile.kind);
 	const fixed16vec2_t center_projected= VecMatMul(projectile.pos, view_mat);
 
-	const fixed16_t x_plus_edge_projected= VecMatMul({projectile.pos[0] + c_radius, projectile.pos[1]}, view_mat)[0];
+	const fixed16_t x_plus_edge_projected= VecMatMul({projectile.pos[0] + model.radius, projectile.pos[1]}, view_mat)[0];
 	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
 
-	FillCircle(surface, center_projected, radius_projected, ColorRGB(0, 255, 255));
+	FillCircle(surface, center_projected, radius_projected, model.color);
 }
 
 void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model)
