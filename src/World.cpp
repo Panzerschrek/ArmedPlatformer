@@ -481,8 +481,9 @@ void World::MoveMonster(Monster& monster)
 		{
 			Projectile projectile;
 			projectile.owner_kind= Projectile::OwnerKind::Monster;
+			projectile.kind= Projectile::Kind::Bomb;
 			projectile.pos= monster.pos;
-			projectile.vel= {fixed16_t(rand_.RandValue(Rand::RandResultType(g_fixed16_one / 8)) - g_fixed16_one / 16), g_fixed16_one / 4};
+			projectile.vel= {fixed16_t(rand_.RandValue(Rand::RandResultType(g_fixed16_one / 64)) - g_fixed16_one / 128), g_fixed16_one / 64};
 			projectiles_.push_back(projectile);
 			monster.last_attack_tick= current_tick_;
 		}
@@ -548,7 +549,7 @@ void World::MoveProjectiles()
 bool World::MoveProjectile(Projectile& projectile)
 {
 	const fixed16_t c_projectile_gravity= g_fixed16_one / 384;
-	if(projectile.kind == Projectile::Kind::Grenade)
+	if(projectile.kind == Projectile::Kind::Grenade || projectile.kind == Projectile::Kind::Bomb)
 		projectile.vel[1]+= c_projectile_gravity;
 
 	projectile.pos[0]+= projectile.vel[0];
