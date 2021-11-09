@@ -13,6 +13,7 @@ public:
 	{
 		None,
 		Machinegun,
+		GrenadeLauncher,
 	};
 
 	static constexpr int32_t c_max_health= 100;

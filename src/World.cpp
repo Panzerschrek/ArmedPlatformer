@@ -277,13 +277,18 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	if(shoot_request == Player::ShootRequestKind::None)
 		return;
 
-	const fixed16_t c_vel= g_fixed16_one / 4;
+	const fixed16_t c_bullet_vel= g_fixed16_one / 3;
+	const fixed16_t c_grenade_vel= g_fixed16_one / 5;
+
+	const fixed16_t vel= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? c_grenade_vel : c_bullet_vel;
+
 	const fixed16vec2_t& aim_vec= player_.GetAimNormal();
 
 	Projectile projectile;
 	projectile.owner_kind= Projectile::OwnerKind::Player;
 	projectile.pos= player_.GetPos();
-	projectile.vel= {Fixed16Mul(aim_vec[0], c_vel), Fixed16Mul(aim_vec[1], c_vel)};
+	projectile.vel= {Fixed16Mul(aim_vec[0], vel), Fixed16Mul(aim_vec[1], vel)};
+	projectile.kind= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? Projectile::Kind::Grenade : Projectile::Kind::Bullet;
 	projectiles_.push_back(projectile);
 }
 
@@ -542,6 +547,10 @@ void World::MoveProjectiles()
 
 bool World::MoveProjectile(Projectile& projectile)
 {
+	const fixed16_t c_projectile_gravity= g_fixed16_one / 384;
+	if(projectile.kind == Projectile::Kind::Grenade)
+		projectile.vel[1]+= c_projectile_gravity;
+
 	projectile.pos[0]+= projectile.vel[0];
 	projectile.pos[1]+= projectile.vel[1];
 

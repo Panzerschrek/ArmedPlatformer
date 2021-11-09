@@ -170,6 +170,7 @@ void Player::Move(const InputState& input_state)
 
 Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 {
+	// TODO - select weapon.
 	uint32_t& ammo= ammo_[0];
 	if(input_state.mouse[size_t(SystemEventTypes::ButtonCode::Left)] &&
 		current_tick_ - last_shoot_tick_ >= 20 &&
@@ -177,7 +178,7 @@ Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 	{
 		--ammo;
 		last_shoot_tick_= current_tick_;
-		return ShootRequestKind::Machinegun;
+		return ShootRequestKind::GrenadeLauncher;
 	}
 
 	return ShootRequestKind::None;

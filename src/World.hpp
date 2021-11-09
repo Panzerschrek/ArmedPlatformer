@@ -52,8 +52,10 @@ public:
 	struct Projectile
 	{
 		enum class OwnerKind{ Player, Monster };
+		enum class Kind{ Bullet, Grenade, Bomb };
 
 		OwnerKind owner_kind= OwnerKind::Player;
+		Kind kind= Kind::Bullet;
 		fixed16vec2_t pos{};
 		fixed16vec2_t vel{};
 	};
