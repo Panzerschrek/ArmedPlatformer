@@ -54,7 +54,7 @@ void Hud::Draw()
 		g_fixed16_one);
 
 	const int32_t c_max_ammo= 48;
-	const color_t c_ammo_colors[]{ColorRGB(32, 32, 128), ColorRGB(128, 32, 128), ColorRGB(128, 32, 32)};
+	const color_t c_ammo_colors[]{ColorRGB(200, 200, 200), ColorRGB(220, 120, 64), ColorRGB(128, 32, 32)};
 	for(int32_t i= 0; i < 3; ++i)
 	{
 		const int32_t c_ammo_bar_width= 4;
@@ -78,7 +78,8 @@ void Hud::Draw()
 		if(size_t(i) == player.GetCurrentWeapon())
 		{
 			const int32_t start_x= ammo_bar_x, end_x= start_x + (c_ammo_bar_width + c_ammo_bar_margin) * c_ammo_bar_row_length - c_ammo_bar_margin;
-			const int32_t start_y= ammo_bar_y - 16, end_y= start_y + 8;
+			const int32_t start_y= ammo_bar_y - c_ammo_bar_height - c_ammo_bar_margin * 2, end_y= start_y + c_ammo_bar_height;
+
 			for(int32_t y= start_y; y < end_y; ++y)
 			{
 				auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);

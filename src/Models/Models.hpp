@@ -233,7 +233,7 @@ const Model ammo0
 			{ -g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
 			{ +g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
 		},
-		ColorRGB(32, 32, 128),
+		ColorRGB(200, 200, 200),
 	},
 };
 
@@ -244,7 +244,7 @@ const Model ammo1
 			{ -g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
 			{ +g_fixed16_one / 4, { -g_fixed16_one / 6, +g_fixed16_one / 6 } },
 		},
-		ColorRGB(128, 32, 128),
+		ColorRGB(220, 120, 64),
 	},
 };
 
