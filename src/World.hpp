@@ -83,6 +83,8 @@ private:
 	void MoveMonster(Monster& monster);
 	void MoveProjectiles();
 	bool MoveProjectile(Projectile& projectile); // Returns true if should keep alive.
+	void ProcessProjectileHit(const Projectile& projectile);
+	void ApplySplashDamage(Projectile::OwnerKind owner_kind, const fixed16vec2_t& pos, fixed16_t radius, int32_t base_damage);
 
 private:
 	Rand rand_; // TODO - initialize it with really-random seed

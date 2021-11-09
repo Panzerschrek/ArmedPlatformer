@@ -26,7 +26,13 @@ const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
 const int32_t c_large_health= 50;
 
-const int32_t c_projectile_damage= 10;
+const int32_t c_bullet_damage= 10;
+const int32_t c_grenade_damage= 10;
+const int32_t c_bomb_damage= 0;
+
+const int32_t c_grenade_splash_damage= 30;
+const int32_t c_bomb_splash_damage= 40;
+
 const int32_t c_lava_damage= 3;
 
 const fixed16_t c_platform_speed= g_fixed16_one / 32;
@@ -44,6 +50,20 @@ fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 	};
 	ARMED_ASSERT(false);
 	return {0, 0};
+}
+
+int32_t GetProjectileDirectDamage(const World::Projectile::Kind kind)
+{
+	using Kind= World::Projectile::Kind;
+	switch(kind)
+	{
+	case Kind::Bullet: return c_bullet_damage;
+	case Kind::Grenade: return c_grenade_damage;
+	case Kind::Bomb: return c_bomb_damage;
+	}
+
+	ARMED_ASSERT(false);
+	return c_bullet_damage;
 }
 
 std::optional<fixed16vec2_t> ProcessPlayerCollsion(
@@ -597,6 +617,7 @@ bool World::MoveProjectile(Projectile& projectile)
 				else
 				{
 					// TODO - generate explosion effect, sounds, etc.
+					ProcessProjectileHit(projectile);
 					return false;
 				}
 			}
@@ -622,7 +643,8 @@ bool World::MoveProjectile(Projectile& projectile)
 			{} // No collision
 			else
 			{
-				monster.health-= c_projectile_damage;
+				monster.health-= GetProjectileDirectDamage(projectile.kind);
+				ProcessProjectileHit(projectile);
 				return false;
 			}
 		}
@@ -639,7 +661,8 @@ bool World::MoveProjectile(Projectile& projectile)
 		{} // No collision.
 		else
 		{
-			player_.Hit(c_projectile_damage);
+			player_.Hit( GetProjectileDirectDamage(projectile.kind));
+			ProcessProjectileHit(projectile);
 			return false;
 		}
 	}
@@ -655,11 +678,65 @@ bool World::MoveProjectile(Projectile& projectile)
 			platform_bb_max[1] <= bb_min[1])
 		{} // No collision.
 		else
+		{
+			ProcessProjectileHit(projectile);
 			return false;
+		}
 	}
 
 	return true;
 }
 
+void World::ProcessProjectileHit(const Projectile& projectile)
+{
+	if(projectile.kind == Projectile::Kind::Grenade || projectile.kind == Projectile::Kind::Bomb)
+	{
+		const fixed16_t radius= projectile.kind == Projectile::Kind::Bomb ? g_fixed16_one * 2 : g_fixed16_one;
+		const int32_t damage= projectile.kind == Projectile::Kind::Bomb ? c_bomb_splash_damage : c_grenade_splash_damage;
+		ApplySplashDamage(projectile.owner_kind, projectile.pos, radius, damage);
+	}
+}
+
+void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixed16vec2_t& pos, const fixed16_t radius, const int32_t base_damage)
+{
+	const auto get_damage=
+	[&](const fixed16vec2_t& bb_min, const fixed16vec2_t& bb_max)
+	{
+		fixed16vec2_t d{0, 0};
+		for(size_t i= 0; i < 2; ++i)
+		{
+			if(pos[i] < bb_min[i])
+				d[i]= bb_min[i] - pos[i];
+			if(pos[0] > bb_max[i])
+				d[i]= pos[i] - bb_max[i];
+		}
+
+		const fixed16_t dist= d[0] + d[1];
+		if(dist < radius)
+			return base_damage * (radius - dist) / radius;
+		return 0;
+	};
+
+	if(owner_kind != Projectile::OwnerKind::Monster)
+	{
+		// Check for collisions against monsters.
+		for(Monster& monster : monsters_)
+		{
+			if(monster.health <= 0)
+				continue;
+
+			const fixed16vec2_t monster_size= GetMonsterSize(monster.id);
+			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
+			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
+			monster.health -= get_damage(monster_bb_min, monster_bb_max);
+		}
+	}
+
+	// Affect player even with its own projectiles.
+	const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
+	const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
+
+	player_.Hit(get_damage(player_bb_min, player_bb_max));
+}
 
 } // namespace Armed
