@@ -154,6 +154,8 @@ void WorldView::Draw()
 		}
 	}
 
+	DrawExplosion(surface, VecMatMul(world_.GetPlayer().GetPos(), mat), g_fixed16_one * 7 / 2, ColorRGB(255, 255, 255));
+
 	// Draw transparent water after all other geometry.
 	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
 	for(uint32_t x= 0; x < tiles_map.GetSizeX(); ++x)
@@ -419,6 +421,28 @@ void WorldView::FillCircle(const SDL_Surface& surface, const fixed16vec2_t& cent
 			if(square_dist <= square_radius)
 				dst[x]= color;
 		}
+	}
+}
+
+void WorldView::DrawExplosion(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const color_t color)
+{
+	// TODO - get rid of floats.
+	const float c_pi= 3.1415926535f;
+	const float c_phi= (std::sqrt(5.0f) - 1.0f) / 2.0f;
+	const float c_golden_angle= 2.0f * c_pi * (1.0f - c_phi);
+	const float radius_f= float(radius) / float(g_fixed16_one);
+	for(size_t i= 0; i < 2048; ++i)
+	{
+		const float f_i= float(i);
+		const float current_radius= radius_f * std::sqrt(f_i);
+		const float angle= f_i * c_golden_angle;
+		float dx= current_radius * std::cos(angle);
+		float dy= current_radius * std::sin(angle);
+
+		const fixed16_t center_x= center[0] + fixed16_t(dx * float(g_fixed16_one));
+		const fixed16_t center_y= center[1] + fixed16_t(dy * float(g_fixed16_one));
+
+		FillCircle(surface, {center_x, center_y}, g_fixed16_one * 5 / 2, color);
 	}
 }
 
