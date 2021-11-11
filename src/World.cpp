@@ -182,6 +182,7 @@ void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 	MovePlatforms();
 	MoveMonsters();
 	MoveProjectiles();
+	UpdateExplosions();
 	++current_tick_;
 }
 
@@ -694,6 +695,7 @@ void World::ProcessProjectileHit(const Projectile& projectile)
 		const fixed16_t radius= projectile.kind == Projectile::Kind::Bomb ? g_fixed16_one * 2 : g_fixed16_one;
 		const int32_t damage= projectile.kind == Projectile::Kind::Bomb ? c_bomb_splash_damage : c_grenade_splash_damage;
 		ApplySplashDamage(projectile.owner_kind, projectile.pos, radius, damage);
+		AddExplosion(projectile.pos);
 	}
 }
 
@@ -737,6 +739,30 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 	const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
 
 	player_.Hit(get_damage(player_bb_min, player_bb_max));
+}
+
+void World::AddExplosion(const fixed16vec2_t& pos)
+{
+	Explosion explosion;
+	explosion.pos= pos;
+	explosions_.push_back(explosion);
+}
+
+void World::UpdateExplosions()
+{
+	const TickT c_explosion_lifetime= c_update_frequency;
+	for(size_t i= 0; i < explosions_.size();)
+	{
+		++explosions_[i].age;
+		if(explosions_[i].age > c_explosion_lifetime)
+		{
+			if(i + 1 < explosions_.size())
+				explosions_[i]= explosions_.back();
+			explosions_.pop_back();
+		}
+		else
+			++i;
+	}
 }
 
 } // namespace Armed

@@ -60,6 +60,12 @@ public:
 		fixed16vec2_t vel{};
 	};
 
+	struct Explosion
+	{
+		fixed16vec2_t pos{};
+		TickT age= 0;
+	};
+
 public:
 	explicit World(const MapDescription& map_description);
 
@@ -72,6 +78,7 @@ public:
 	const std::vector<Monster>& GetMonsters() const { return monsters_; }
 	const std::vector<PowerUp>& GetPowerUps() const { return power_ups_; }
 	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
+	const std::vector<Explosion>& GetExplosions() const { return explosions_; }
 
 private:
 	void ProcessPlayerPhysics();
@@ -85,6 +92,8 @@ private:
 	bool MoveProjectile(Projectile& projectile); // Returns true if should keep alive.
 	void ProcessProjectileHit(const Projectile& projectile);
 	void ApplySplashDamage(Projectile::OwnerKind owner_kind, const fixed16vec2_t& pos, fixed16_t radius, int32_t base_damage);
+	void AddExplosion(const fixed16vec2_t& pos);
+	void UpdateExplosions();
 
 private:
 	Rand rand_; // TODO - initialize it with really-random seed
@@ -94,6 +103,7 @@ private:
 	std::vector<Monster> monsters_;
 	std::vector<PowerUp> power_ups_;
 	std::vector<Projectile> projectiles_;
+	std::vector<Explosion> explosions_;
 	TickT current_tick_ = c_update_frequency * 100;
 };
 

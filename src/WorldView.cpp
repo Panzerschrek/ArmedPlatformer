@@ -135,6 +135,9 @@ void WorldView::Draw()
 	for(const World::Projectile& projectile : world_.GetProjectiles())
 		DrawProjectile(mat, surface, projectile);
 
+	for(const World::Explosion& explosion : world_.GetExplosions())
+		DrawExplosion(mat, surface, explosion);
+
 	{
 		const fixed16vec2_t player_pos= VecMatMul(world_.GetPlayer().GetPos(), mat);
 		const fixed16vec2_t aim_vec= world_.GetPlayer().GetAimNormal();
@@ -153,8 +156,6 @@ void WorldView::Draw()
 			}
 		}
 	}
-
-	DrawExplosion(surface, VecMatMul(world_.GetPlayer().GetPos(), mat), g_fixed16_one * 7 / 2, ColorRGB(255, 255, 255));
 
 	// Draw transparent water after all other geometry.
 	for(uint32_t y= 0; y < tiles_map.GetSizeY(); ++y)
@@ -286,6 +287,17 @@ void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surfac
 	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
 
 	FillCircle(surface, center_projected, radius_projected, model.color);
+}
+
+void WorldView::DrawExplosion(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Explosion& explosion)
+{
+	const fixed16_t c_radius= g_fixed16_one / 4;
+	const fixed16vec2_t center_projected= VecMatMul(explosion.pos, view_mat);
+
+	const fixed16_t x_plus_edge_projected= VecMatMul({explosion.pos[0] + c_radius, explosion.pos[1]}, view_mat)[0];
+	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
+
+	DrawParticlesCircle(surface, center_projected, radius_projected, ColorRGB(255, 255, 255));
 }
 
 void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model)
@@ -424,7 +436,7 @@ void WorldView::FillCircle(const SDL_Surface& surface, const fixed16vec2_t& cent
 	}
 }
 
-void WorldView::DrawExplosion(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const color_t color)
+void WorldView::DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const color_t color)
 {
 	// TODO - get rid of floats.
 	const float c_pi= 3.1415926535f;

@@ -22,6 +22,7 @@ private:
 	void DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster);
 	void DrawPowerUp(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::PowerUp& power_up);
 	void DrawProjectile(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Projectile& projectile);
+	void DrawExplosion(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Explosion& explosion);
 	void DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model);
 	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
 	void FillRectangleWithBlending(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
@@ -36,7 +37,7 @@ private:
 	// Max radius ~ 127 pixels.
 	void FillCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
 
-	void DrawExplosion(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
+	void DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
 
 private:
 	const World& world_;
