@@ -291,13 +291,16 @@ void WorldView::DrawProjectile(const TransformMatrix& view_mat, const SDL_Surfac
 
 void WorldView::DrawExplosion(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Explosion& explosion)
 {
-	const fixed16_t c_radius= g_fixed16_one / 4;
+	const float relative_age= 1.5f + float(explosion.age) / float(World::Explosion::c_max_age);
+	const fixed16_t radius= fixed16_t(relative_age * relative_age * float(g_fixed16_one) / 48.0f);
+	const float ratio_shift= float(explosion.age) / float(World::Explosion::c_max_age) - 0.5f;
+
 	const fixed16vec2_t center_projected= VecMatMul(explosion.pos, view_mat);
 
-	const fixed16_t x_plus_edge_projected= VecMatMul({explosion.pos[0] + c_radius, explosion.pos[1]}, view_mat)[0];
+	const fixed16_t x_plus_edge_projected= VecMatMul({explosion.pos[0] + radius, explosion.pos[1]}, view_mat)[0];
 	const fixed16_t radius_projected= x_plus_edge_projected - center_projected[0];
 
-	DrawParticlesCircle(surface, center_projected, radius_projected, ColorRGB(255, 255, 255));
+	DrawParticlesCircle(surface, center_projected, radius_projected, ratio_shift, ColorRGB(255, 255, 255));
 }
 
 void WorldView::DrawModel(const TransformMatrix& mat, const SDL_Surface& surface, const Model& model)
@@ -436,25 +439,30 @@ void WorldView::FillCircle(const SDL_Surface& surface, const fixed16vec2_t& cent
 	}
 }
 
-void WorldView::DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const color_t color)
+void WorldView::DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, const fixed16_t radius, const float ratio_shift, const color_t color)
 {
 	// TODO - get rid of floats.
 	const float c_pi= 3.1415926535f;
 	const float c_phi= (std::sqrt(5.0f) - 1.0f) / 2.0f;
 	const float c_golden_angle= 2.0f * c_pi * (1.0f - c_phi);
 	const float radius_f= float(radius) / float(g_fixed16_one);
-	for(size_t i= 0; i < 2048; ++i)
+	for(size_t i= 0; i < 256; ++i)
 	{
 		const float f_i= float(i);
 		const float current_radius= radius_f * std::sqrt(f_i);
-		const float angle= f_i * c_golden_angle;
+		const float angle= f_i * (c_golden_angle + ratio_shift * 0.01f);
 		float dx= current_radius * std::cos(angle);
 		float dy= current_radius * std::sin(angle);
 
 		const fixed16_t center_x= center[0] + fixed16_t(dx * float(g_fixed16_one));
 		const fixed16_t center_y= center[1] + fixed16_t(dy * float(g_fixed16_one));
 
-		FillCircle(surface, {center_x, center_y}, g_fixed16_one * 5 / 2, color);
+		const int32_t x= Fixed16RoundToInt(center_x);
+		const int32_t y= Fixed16RoundToInt(center_y);
+		if(x >= 0 && x < surface.w && y >= 0 && y < surface.h)
+			reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y)[x]= color;
+
+		//FillCircle(surface, {center_x, center_y}, g_fixed16_one * 5 / 2, color);
 	}
 }
 

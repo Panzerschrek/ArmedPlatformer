@@ -64,6 +64,8 @@ public:
 	{
 		fixed16vec2_t pos{};
 		TickT age= 0;
+
+		static constexpr int32_t c_max_age= c_update_frequency / 2;
 	};
 
 public:

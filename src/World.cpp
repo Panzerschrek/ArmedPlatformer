@@ -617,7 +617,6 @@ bool World::MoveProjectile(Projectile& projectile)
 				{} // No collision
 				else
 				{
-					// TODO - generate explosion effect, sounds, etc.
 					ProcessProjectileHit(projectile);
 					return false;
 				}
@@ -750,11 +749,10 @@ void World::AddExplosion(const fixed16vec2_t& pos)
 
 void World::UpdateExplosions()
 {
-	const TickT c_explosion_lifetime= c_update_frequency;
 	for(size_t i= 0; i < explosions_.size();)
 	{
 		++explosions_[i].age;
-		if(explosions_[i].age > c_explosion_lifetime)
+		if(explosions_[i].age > Explosion::c_max_age)
 		{
 			if(i + 1 < explosions_.size())
 				explosions_[i]= explosions_.back();

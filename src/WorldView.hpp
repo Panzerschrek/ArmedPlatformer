@@ -37,7 +37,7 @@ private:
 	// Max radius ~ 127 pixels.
 	void FillCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
 
-	void DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, color_t color);
+	void DrawParticlesCircle(const SDL_Surface& surface, const fixed16vec2_t& center, fixed16_t radius, float ratio_shift, color_t color);
 
 private:
 	const World& world_;
