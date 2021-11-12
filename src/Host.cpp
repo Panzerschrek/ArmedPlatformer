@@ -12,6 +12,7 @@ Host::Host()
 	, camera_(world_, system_window_)
 	, world_view_(world_, camera_, system_window_)
 	, hud_(world_, system_window_)
+	, menu_(system_window_, {[this]{NewGame();}, [this]{SaveGame();}, [this]{LoadGame();}, [this]{Quit();}})
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
 {
@@ -46,6 +47,7 @@ bool Host::Loop()
 	system_window_.BeginFrame();
 	world_view_.Draw();
 	hud_.Draw();
+	menu_.Draw();
 	system_window_.EndFrame();
 
 	const TimePoint tick_end_time= GetCurrentTime();
@@ -60,7 +62,7 @@ bool Host::Loop()
 
 	prev_tick_time_= tick_start_time;
 
-	return false;
+	return quit_requested_;
 }
 
 Host::TimePoint Host::GetCurrentTime()
@@ -69,6 +71,26 @@ Host::TimePoint Host::GetCurrentTime()
 	const auto dt= now - init_time_;
 
 	return TimePoint(std::chrono::duration_cast<ChronoDuration>(dt).count());
+}
+
+void Host::NewGame()
+{
+	// TODO
+}
+
+void Host::SaveGame()
+{
+	// TODO
+}
+
+void Host::LoadGame()
+{
+	// TODO
+}
+
+void Host::Quit()
+{
+	quit_requested_= true;
 }
 
 } // namespace Armed

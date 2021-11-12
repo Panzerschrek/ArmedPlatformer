@@ -1,5 +1,6 @@
 #pragma once
 #include "Hud.hpp"
+#include "Menu.hpp"
 #include "WorldView.hpp"
 #include <chrono>
 
@@ -23,14 +24,22 @@ private:
 	TimePoint GetCurrentTime();
 
 private:
+	void NewGame();
+	void SaveGame();
+	void LoadGame();
+	void Quit();
+
+private:
 	SystemWindow system_window_;
 	World world_;
 	Camera camera_;
 	WorldView world_view_;
 	Hud hud_;
+	Menu menu_;
 
 	const Clock::time_point init_time_;
 	TimePoint prev_tick_time_;
+	bool quit_requested_= false;
 };
 
 } // namespace Armed
