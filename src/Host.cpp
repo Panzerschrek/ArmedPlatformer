@@ -12,7 +12,14 @@ Host::Host()
 	, camera_(world_, system_window_)
 	, world_view_(world_, camera_, system_window_)
 	, hud_(world_, system_window_)
-	, menu_(system_window_, {[this]{NewGame();}, [this]{SaveGame();}, [this]{LoadGame();}, [this]{Quit();}})
+	, menu_(
+		system_window_,
+		{
+			[this]{NewGame();},
+			[this](const size_t slot){SaveGame(slot);},
+			[this](const size_t slot){LoadGame(slot);},
+			[this]{Quit();}
+		})
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
 {
@@ -80,14 +87,16 @@ void Host::NewGame()
 	// TODO
 }
 
-void Host::SaveGame()
+void Host::SaveGame(const size_t slot)
 {
 	// TODO
+	ARMED_UNUSED(slot);
 }
 
-void Host::LoadGame()
+void Host::LoadGame(const size_t slot)
 {
 	// TODO
+	ARMED_UNUSED(slot);
 }
 
 void Host::Quit()

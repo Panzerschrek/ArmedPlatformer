@@ -12,8 +12,8 @@ public:
 	struct Callbacks
 	{
 		std::function<void()> new_game;
-		std::function<void()> save_game;
-		std::function<void()> load_game;
+		std::function<void(size_t slot)> save_game;
+		std::function<void(size_t slot)> load_game;
 		std::function<void()> quit;
 	};
 

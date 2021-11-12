@@ -25,8 +25,8 @@ private:
 
 private:
 	void NewGame();
-	void SaveGame();
-	void LoadGame();
+	void SaveGame(size_t slot);
+	void LoadGame(size_t slot);
 	void Quit();
 
 private:
