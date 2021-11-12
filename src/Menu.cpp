@@ -46,14 +46,15 @@ void Menu::Draw()
 	const int32_t c_save_cursor_height= 24;
 	const int32_t c_save_cursor_margin= 4;
 
-	const int32_t c_menu_start_x= 16;
-	const int32_t c_menu_start_y= 16;
+	const int32_t c_menu_start_x= 64;
+	const int32_t c_menu_start_y= 48;
 
 	const color_t c_color= ColorRGB(64, 255, 128);
 	const color_t c_cursor_color= ColorRGB(48, 220, 80);
 
+	const int32_t cur_menu_start_x= c_menu_start_x + (surface.w - base_width) / 2 + c_cursor_margin + c_cursor_width;
 	{
-		int32_t cur_x= c_menu_start_x + (surface.w - base_width) / 2;
+		int32_t cur_x= cur_menu_start_x;
 		int32_t cur_y= c_menu_start_y;
 
 		const CursorPos base_cursors[4]{CursorPos::NewGame, CursorPos::SaveGame, CursorPos::LoadGame, CursorPos::Quit};
@@ -79,7 +80,7 @@ void Menu::Draw()
 
 	if(current_save_slot < c_num_save_slots)
 	{
-		int32_t cur_x= c_menu_start_x + (surface.w - base_width) / 2 + c_menu_bar_width + c_save_bar_margin + c_save_cursor_width + c_save_cursor_margin;
+		int32_t cur_x= cur_menu_start_x + c_menu_bar_width + c_save_bar_margin + c_save_cursor_width + c_save_cursor_margin;
 		int32_t cur_y= c_menu_start_y;
 
 		for(size_t i= 0; i < c_num_save_slots; ++i)
