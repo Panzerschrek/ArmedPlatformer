@@ -20,6 +20,8 @@ public:
 public:
 	explicit Menu(SystemWindow& system_window, Callbacks callbacks);
 
+	void ProcessInput(const SystemEvents& system_events);
+
 	void Draw();
 
 private:
@@ -38,6 +40,8 @@ private:
 	};
 
 private:
+	void ProcessKeyPress(SystemEventTypes::KeyCode code);
+
 	// TODO - remove copy-paste.
 	void FillRectangle(const SDL_Surface& surface, int32_t min_x, int32_t min_y, int32_t max_x, int32_t max_y, color_t color);
 

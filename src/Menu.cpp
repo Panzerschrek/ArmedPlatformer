@@ -9,6 +9,18 @@ Menu::Menu(SystemWindow& system_window, Callbacks callbacks)
 {
 }
 
+void Menu::ProcessInput(const SystemEvents& system_events)
+{
+	for(const SystemEvent& event : system_events)
+	{
+		if(const auto key_event= std::get_if<SystemEventTypes::KeyEvent>(&event))
+		{
+			if(key_event->pressed)
+				ProcessKeyPress(key_event->key_code);
+		}
+	}
+}
+
 void Menu::Draw()
 {
 	if(cursor_pos_ == CursorPos::None)
@@ -44,6 +56,66 @@ void Menu::Draw()
 		}
 
 		cur_y+= c_menu_bar_height + c_menu_bar_padding;
+	}
+}
+
+void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
+{
+	using KeyCode= SystemEventTypes::KeyCode;
+	if(code == KeyCode::Escape)
+	{
+		if(cursor_pos_ == CursorPos::None)
+			cursor_pos_= CursorPos::SaveGame;
+		else if(cursor_pos_ == CursorPos::NewGame ||
+				cursor_pos_ == CursorPos::SaveGame ||
+				cursor_pos_ == CursorPos::LoadGame |
+				cursor_pos_ == CursorPos::Quit)
+			cursor_pos_= CursorPos::None;
+		else if(cursor_pos_ >= CursorPos::SaveSlot0 && cursor_pos_ <= CursorPos::SaveSlotLast)
+			cursor_pos_= CursorPos::SaveGame;
+		else if(cursor_pos_ >= CursorPos::LoadSlot0 && cursor_pos_ <= CursorPos::LoadSlotLast)
+			cursor_pos_= CursorPos::LoadGame;
+	}
+
+	if(cursor_pos_ == CursorPos::None)
+		return;
+
+	if(code == KeyCode::Up)
+	{
+		if(cursor_pos_ == CursorPos::NewGame)
+			cursor_pos_= CursorPos::Quit;
+		else if(cursor_pos_ == CursorPos::SaveGame)
+			cursor_pos_= CursorPos::NewGame;
+		else if(cursor_pos_ == CursorPos::LoadGame)
+			cursor_pos_= CursorPos::SaveGame;
+		else if(cursor_pos_ == CursorPos::Quit)
+			cursor_pos_= CursorPos::LoadGame;
+		else if(cursor_pos_ >= CursorPos::SaveSlot0 && cursor_pos_ <= CursorPos::SaveSlotLast)
+		{
+			cursor_pos_= CursorPos((size_t(cursor_pos_) - size_t(CursorPos::SaveSlot0) + c_num_save_slots - 1) % c_num_save_slots);
+		}
+	}
+	else if(code == KeyCode::Down)
+	{
+		if(cursor_pos_ == CursorPos::NewGame)
+			cursor_pos_= CursorPos::SaveGame;
+		else if(cursor_pos_ == CursorPos::SaveGame)
+			cursor_pos_= CursorPos::LoadGame;
+		else if(cursor_pos_ == CursorPos::LoadGame)
+			cursor_pos_= CursorPos::Quit;
+		else if(cursor_pos_ == CursorPos::Quit)
+			cursor_pos_= CursorPos::NewGame;
+	}
+	else if(code == KeyCode::Enter)
+	{
+		if(cursor_pos_ == CursorPos::NewGame)
+			callbacks_.new_game();
+		else if(cursor_pos_ == CursorPos::SaveGame)
+			cursor_pos_= CursorPos::SaveSlot0;
+		else if(cursor_pos_ == CursorPos::LoadGame)
+			cursor_pos_= CursorPos::LoadSlot0;
+		else if(cursor_pos_ == CursorPos::Quit)
+			callbacks_.quit();
 	}
 }
 

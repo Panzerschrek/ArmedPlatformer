@@ -29,6 +29,8 @@ bool Host::Loop()
 			return true;
 	}
 
+	menu_.ProcessInput(system_events);
+
 	// Perform some ticks. Possible 0, 1 or many. But do not perform more than 5 ticks once.
 	for (
 		uint64_t
