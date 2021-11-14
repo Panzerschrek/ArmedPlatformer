@@ -2,6 +2,7 @@
 #include "Player.hpp"
 #include "Rand.hpp"
 #include "TilesMap.hpp"
+#include <optional>
 
 namespace Armed
 {
@@ -82,6 +83,8 @@ public:
 	const std::vector<Projectile>& GetProjectiles() const { return projectiles_; }
 	const std::vector<Explosion>& GetExplosions() const { return explosions_; }
 
+	bool ShouldChageMap() const { return trigger_map_change_; }
+
 private:
 	void ProcessPlayerPhysics();
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
@@ -107,7 +110,8 @@ private:
 	std::vector<Projectile> projectiles_;
 	std::vector<Explosion> explosions_;
 	TickT current_tick_ = c_update_frequency * 100;
-	bool map_end_reached_= false;
+	std::optional<TickT> map_end_reach_time_;
+	bool trigger_map_change_= false;
 };
 
 } // namespace Armed

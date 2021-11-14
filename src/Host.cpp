@@ -58,6 +58,12 @@ bool Host::Loop()
 			const InputState input_state= system_window_.GetInputState();
 			current_world_data_->world.Tick(input_state, current_world_data_->camera.GetAimVec());
 			current_world_data_->camera.Update(input_state);
+
+			if(current_world_data_->world.ShouldChageMap())
+			{
+				NewGame(); // TODO - select next map
+				break;
+			}
 		}
 	}
 
