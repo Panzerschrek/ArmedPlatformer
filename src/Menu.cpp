@@ -28,6 +28,15 @@ void Menu::Draw()
 
 	const SDL_Surface& surface= system_window_.GetSurface();
 
+	// Make background darker.
+	// TODO - remove copy-paste.
+	for(int32_t y= 0; y < surface.h; ++y)
+	{
+		auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+		for(int32_t x= 0; x < surface.w; ++x)
+			dst[x]= (dst[x] & 0xFEFEFEFE) >> 1;
+	}
+
 	const int32_t base_width= 640;
 
 	const int32_t c_menu_bar_width= 240;
