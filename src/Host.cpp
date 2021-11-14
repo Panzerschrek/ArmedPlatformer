@@ -42,7 +42,7 @@ bool Host::Loop()
 
 	menu_.ProcessInput(system_events);
 
-	if(current_world_data_ != std::nullopt)
+	if(current_world_data_ != std::nullopt && !menu_.IsActive())
 	{
 		// Perform some ticks. Possible 0, 1 or many. But do not perform more than 5 ticks once.
 		for (

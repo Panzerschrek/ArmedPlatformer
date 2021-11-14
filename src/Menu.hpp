@@ -24,6 +24,8 @@ public:
 
 	void Draw();
 
+	bool IsActive() const { return cursor_pos_ != CursorPos::None; }
+
 private:
 	constexpr static size_t c_num_save_slots= 5;
 	enum class CursorPos
