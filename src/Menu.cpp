@@ -148,7 +148,10 @@ void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
 	else if(code == KeyCode::Enter)
 	{
 		if(cursor_pos_ == CursorPos::NewGame)
+		{
 			callbacks_.new_game();
+			cursor_pos_= CursorPos::None;
+		}
 		else if(cursor_pos_ == CursorPos::SaveGame)
 			cursor_pos_= CursorPos::SaveSlot0;
 		else if(cursor_pos_ == CursorPos::LoadGame)
@@ -156,9 +159,15 @@ void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
 		else if(cursor_pos_ == CursorPos::Quit)
 			callbacks_.quit();
 		else if(cursor_pos_ >= CursorPos::SaveSlot0 && cursor_pos_ <= CursorPos::SaveSlotLast)
+		{
 			callbacks_.save_game(size_t(cursor_pos_) - size_t(CursorPos::SaveSlot0));
+			cursor_pos_= CursorPos::None;
+		}
 		else if(cursor_pos_ >= CursorPos::LoadSlot0 && cursor_pos_ <= CursorPos::LoadSlotLast)
+		{
 			callbacks_.load_game(size_t(cursor_pos_) - size_t(CursorPos::LoadSlot0));
+			cursor_pos_= CursorPos::None;
+		}
 	}
 }
 
