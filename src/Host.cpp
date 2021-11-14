@@ -61,7 +61,8 @@ bool Host::Loop()
 
 			if(current_world_data_->world.ShouldChageMap())
 			{
-				NewGame(); // TODO - select next map
+				current_map_= (current_map_ + 1) % std::size(Maps::maps_list);
+				current_world_data_.emplace(Maps::maps_list[current_map_], system_window_);
 				break;
 			}
 		}
@@ -101,7 +102,7 @@ Host::TimePoint Host::GetCurrentTime()
 
 void Host::NewGame()
 {
-	current_world_data_.emplace(Maps::Test::description, system_window_);
+	current_world_data_.emplace(Maps::maps_list[0], system_window_);
 }
 
 void Host::SaveGame(const size_t slot)

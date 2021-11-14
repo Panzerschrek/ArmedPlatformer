@@ -48,6 +48,7 @@ private:
 	const Clock::time_point init_time_;
 	TimePoint prev_tick_time_;
 	bool quit_requested_= false;
+	size_t current_map_= 0;
 };
 
 } // namespace Armed
