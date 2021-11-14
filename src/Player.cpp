@@ -10,6 +10,9 @@ Player::Player(const fixed16_t pos_x, const fixed16_t pos_y)
 
 Player::ShootRequestKind Player::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 {
+	const bool is_alive= health_ > 0;
+
+	if(is_alive) // Allow aim vector change only if alive.
 	{
 		// Do noy allow to aim too much up or down.
 		fixed16vec2_t aim_vec_clamped= aim_vec;
@@ -26,8 +29,9 @@ Player::ShootRequestKind Player::Tick(const InputState& input_state, const fixed
 			aim_vec_= {Fixed16Div(aim_vec_clamped[0], len), Fixed16Div(aim_vec_clamped[1], len)};
 	}
 
-	Move(input_state);
-	const auto res= Shoot(input_state);
+	if(is_alive)
+		Move(input_state);
+	const auto res= is_alive ? Shoot(input_state) : ShootRequestKind::None;
 	++current_tick_;
 	return res;
 }
