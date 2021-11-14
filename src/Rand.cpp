@@ -1,5 +1,6 @@
 #include "Rand.hpp"
 #include "Assert.hpp"
+#include <cstring>
 
 namespace Armed
 {
@@ -41,6 +42,22 @@ bool Rand::RandBool(const RandResultType chance_numerator, const RandResultType 
 	return
 		ExtendedType(Next()) * ExtendedType(chance_denominator) <
 		ExtendedType(c_max_rand_plus_one_) * ExtendedType(chance_numerator);
+}
+
+uint32_t Rand::GetInnerState() const
+{
+	// We assume, that std::linear_congruential_engine is simple struct without pointers.
+	static_assert(sizeof(*this) == sizeof(uint32_t), "invalid size");
+	uint32_t result{};
+	std::memcpy(&result, &generator_, sizeof(Generator));
+	return result;
+}
+
+void Rand::SetInnerState(const uint32_t state)
+{
+	// We assume, that std::linear_congruential_engine is simple struct without pointers.
+	static_assert(sizeof(*this) == sizeof(uint32_t), "invalid size");
+	std::memcpy(&generator_, &state, sizeof(Generator));
 }
 
 } // namespace PanzerChasm

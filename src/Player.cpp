@@ -82,6 +82,21 @@ void Player::GiveAmmo(const size_t index, const uint32_t count)
 	ammo_[index]= std::min(ammo_[index] + count, c_max_ammo[index]);
 }
 
+void Player::Save(SaveStream& stream)
+{
+	stream.Write(current_tick_);
+	stream.Write(pos_);
+	stream.Write(vel_);
+	stream.Write(aim_vec_);
+	stream.Write(on_ground_);
+	stream.Write(in_liquid_);
+	stream.Write(current_weapon_);
+	stream.Write(ammo_);
+	stream.Write(keys_);
+	stream.Write(health_);
+	stream.Write(last_shoot_tick_);
+}
+
 void Player::Move(const InputState& input_state)
 {
 	using KeyCode= SystemEventTypes::KeyCode;

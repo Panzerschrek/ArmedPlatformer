@@ -78,6 +78,14 @@ TilesMap::TilesMap(const char* const data)
 	: size_{ MapParser::CalculateSizeX(data), MapParser::CalculateSizeY(data) }, data_(MapParser::ParseData(data))
 {}
 
+void TilesMap::Save(SaveStream& stream)
+{
+	stream.Write(size_[0]);
+	stream.Write(size_[1]);
+	for(const TileId tile : data_)
+		stream.Write(size_t(tile));
+}
+
 MapObjectsData ExtractMapObjects(const char* const map_data)
 {
 	MapObjectsData map_objects;

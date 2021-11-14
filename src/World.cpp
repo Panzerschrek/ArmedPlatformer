@@ -193,6 +193,60 @@ void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 	++current_tick_;
 }
 
+void World::Save(SaveStream& stream)
+{
+	stream.Write(rand_.GetInnerState());
+	map_.Save(stream);
+	player_.Save(stream);
+
+	stream.Write(platforms_.size());
+	for(const Platform& platform : platforms_)
+	{
+		stream.Write(platform.points);
+		stream.Write(platform.pos);
+		stream.Write(platform.vel);
+	}
+
+	stream.Write(monsters_.size());
+	for(const Monster& monster : monsters_)
+	{
+		stream.Write(size_t(monster.id));
+		stream.Write(monster.spawn_tile_pos);
+		stream.Write(monster.pos);
+		stream.Write(monster.move_dir);
+		stream.Write(monster.last_attack_tick);
+		stream.Write(monster.health);
+	}
+
+	stream.Write(power_ups_.size());
+	for(const PowerUp& power_up : power_ups_)
+	{
+		stream.Write(size_t(power_up.id));
+		stream.Write(power_up.pos);
+		stream.Write(power_up.picked_up);
+	}
+
+	stream.Write(projectiles_.size());
+	for(const Projectile& projectile : projectiles_)
+	{
+		stream.Write(size_t(projectile.owner_kind));
+		stream.Write(size_t(projectile.kind));
+		stream.Write(projectile.pos);
+		stream.Write(projectile.vel);
+	}
+
+	stream.Write(explosions_.size());
+	for(const Explosion& explosion : explosions_)
+	{
+		stream.Write(explosion.pos);
+		stream.Write(explosion.age);
+	}
+
+	stream.Write(current_tick_);
+	stream.Write(map_end_reach_time_);
+	stream.Write(trigger_map_change_);
+}
+
 void World::ProcessPlayerPhysics()
 {
 	player_.SetOnGround(false);

@@ -1,6 +1,7 @@
 #pragma once
-#include "Fixed.hpp"
 #include "Assert.hpp"
+#include "Fixed.hpp"
+#include "SaveLoadStreams.hpp"
 #include "SystemEvent.hpp"
 
 namespace Armed
@@ -37,6 +38,8 @@ public:
 	void GiveAmmo(size_t index, uint32_t count);
 	void GiveKey(const size_t key_index){ ARMED_ASSERT(key_index < std::size(keys_)); keys_[key_index]= true; }
 	bool HasKey(const size_t key_index) const {ARMED_ASSERT(key_index < std::size(keys_)); return keys_[key_index]; }
+
+	void Save(SaveStream& stream);
 
 private:
 	void Move(const InputState& input_state);

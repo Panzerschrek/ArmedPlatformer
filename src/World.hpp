@@ -85,6 +85,8 @@ public:
 
 	bool ShouldChageMap() const { return trigger_map_change_; }
 
+	void Save(SaveStream& stream);
+
 private:
 	void ProcessPlayerPhysics();
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);

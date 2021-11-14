@@ -24,6 +24,10 @@ public:
 	// Returns "true" with chanse= chance_numerator / denominator.
 	bool RandBool(RandResultType chance_numerator, RandResultType chance_denominator);
 
+	// Serialization.
+	uint32_t GetInnerState() const;
+	void SetInnerState(uint32_t state);
+
 private:
 	// Simple and fast generator.
 	// Produces good result for bits 0-31.

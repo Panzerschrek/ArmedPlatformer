@@ -1,5 +1,6 @@
 #pragma once
 #include "Assert.hpp"
+#include "SaveLoadStreams.hpp"
 #include <cstdint>
 #include <vector>
 
@@ -34,6 +35,8 @@ public:
 		ARMED_ASSERT(y < size_[1]);
 		return data_[x + y * size_[0]];
 	}
+
+	void Save(SaveStream& stream);
 
 private:
 	const uint32_t size_[2];
