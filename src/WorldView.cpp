@@ -138,6 +138,7 @@ void WorldView::Draw()
 	for(const World::Explosion& explosion : world_.GetExplosions())
 		DrawExplosion(mat, surface, explosion);
 
+	if(player.GetHealth() > 0) // Do not draw aim direction if player is dead.
 	{
 		const fixed16vec2_t player_pos= VecMatMul(world_.GetPlayer().GetPos(), mat);
 		const fixed16vec2_t aim_vec= world_.GetPlayer().GetAimNormal();
@@ -227,6 +228,12 @@ void WorldView::DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& s
 	player_mat.scale[1]= g_fixed16_one;
 	player_mat.shift[0]= player.GetPos()[0];
 	player_mat.shift[1]= player.GetPos()[1];
+
+	if(player.GetHealth() <= 0)
+	{
+		player_mat.scale[1]/= 4;
+		player_mat.shift[1]+= g_fixed16_one * 3 / 4;
+	}
 
 	const TransformMatrix result_mat= MatrixMul(player_mat, view_mat);
 
