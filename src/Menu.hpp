@@ -15,6 +15,7 @@ public:
 		std::function<void(size_t slot)> save_game;
 		std::function<void(size_t slot)> load_game;
 		std::function<void()> quit;
+		std::function<bool()> save_available;
 	};
 
 public:

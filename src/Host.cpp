@@ -22,7 +22,8 @@ Host::Host()
 			[this]{NewGame();},
 			[this](const size_t slot){SaveGame(slot);},
 			[this](const size_t slot){LoadGame(slot);},
-			[this]{Quit();}
+			[this]{Quit();},
+			[this]{return SaveAvailable();},
 		})
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
@@ -112,6 +113,12 @@ void Host::LoadGame(const size_t slot)
 void Host::Quit()
 {
 	quit_requested_= true;
+}
+
+bool Host::SaveAvailable()
+{
+	// TODO - disable save when player is dead.
+	return current_world_data_ != std::nullopt;
 }
 
 } // namespace Armed

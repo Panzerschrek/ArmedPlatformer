@@ -38,6 +38,7 @@ private:
 	void SaveGame(size_t slot);
 	void LoadGame(size_t slot);
 	void Quit();
+	bool SaveAvailable();
 
 private:
 	SystemWindow system_window_;
