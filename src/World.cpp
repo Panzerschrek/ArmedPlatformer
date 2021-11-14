@@ -176,7 +176,8 @@ World::World(const MapDescription& map_description)
 
 void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
 {
-	ProcessShootRequest(player_.Tick(input_state, aim_vec));
+	if(!map_end_reached_)
+		ProcessShootRequest(player_.Tick(input_state, aim_vec));
 	ProcessPlayerPhysics();
 	PickUpPowerUps();
 	MovePlatforms();
@@ -215,6 +216,11 @@ void World::ProcessPlayerPhysics()
 			switch(tile)
 			{
 			case TileId::Air:
+				break;
+			case TileId::MapEnd:
+				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
+					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
+					map_end_reached_= true;
 				break;
 			case TileId::BasicWall:
 				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
@@ -600,6 +606,7 @@ bool World::MoveProjectile(Projectile& projectile)
 		case TileId::Air:
 		case TileId::Water:
 		case TileId::Lava:
+		case TileId::MapEnd:
 			break;
 		// Block movement of projectiles by all doors.
 		case TileId::KeyDoor0:

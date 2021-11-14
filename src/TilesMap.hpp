@@ -12,6 +12,7 @@ enum class TileId : uint8_t
 	BasicWall,
 	Lava,
 	Water,
+	MapEnd,
 
 	KeyDoor0= 64,
 	KeyDoor1,

@@ -195,6 +195,9 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	case TileId::Lava:
 		color= ColorRGB(220, 130, 32);
 		break;
+	case TileId::MapEnd:
+		color= ColorRGB(240, 16, 16);
+		break;
 	case TileId::KeyDoor0:
 	case TileId::KeyDoor1:
 	case TileId::KeyDoor2:

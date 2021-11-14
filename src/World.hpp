@@ -107,6 +107,7 @@ private:
 	std::vector<Projectile> projectiles_;
 	std::vector<Explosion> explosions_;
 	TickT current_tick_ = c_update_frequency * 100;
+	bool map_end_reached_= false;
 };
 
 } // namespace Armed
