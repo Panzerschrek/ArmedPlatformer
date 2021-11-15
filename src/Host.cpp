@@ -121,6 +121,7 @@ void Host::SaveGame(const size_t slot)
 	SaveLoadBuffer buffer;
 	{
 		SaveStream stream(buffer);
+		stream.Write(current_map_);
 		current_world_data_->world.Save(stream);
 	}
 
@@ -134,6 +135,7 @@ void Host::LoadGame(const size_t slot)
 		return;
 
 	LoadStream stream(buffer, 0);
+	stream.Read(current_map_);
 
 	current_world_data_= std::nullopt;
 	current_world_data_.emplace(World::Load(stream), system_window_);
