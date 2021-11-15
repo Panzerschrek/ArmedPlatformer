@@ -16,6 +16,7 @@ public:
 		std::function<void(size_t slot)> load_game;
 		std::function<void()> quit;
 		std::function<bool()> save_available;
+		std::function<bool(size_t slot)> has_save;
 	};
 
 public:
@@ -52,6 +53,7 @@ private:
 	SystemWindow& system_window_;
 	Callbacks callbacks_;
 	CursorPos cursor_pos_= CursorPos::NewGame;
+	bool has_saves_[c_num_save_slots]{};
 };
 
 } // namespace Armed

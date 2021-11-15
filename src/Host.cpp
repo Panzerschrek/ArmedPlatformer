@@ -32,6 +32,7 @@ Host::Host()
 			[this](const size_t slot){LoadGame(slot);},
 			[this]{Quit();},
 			[this]{return SaveAvailable();},
+			[this](const size_t slot){return HasSave(slot);},
 		})
 	, init_time_(Clock::now())
 	, prev_tick_time_(GetCurrentTime())
@@ -148,8 +149,18 @@ void Host::Quit()
 
 bool Host::SaveAvailable()
 {
-	// TODO - disable save when player is dead.
-	return current_world_data_ != std::nullopt;
+	return current_world_data_ != std::nullopt && current_world_data_->world.GetPlayer().GetHealth() > 0;
+}
+
+bool Host::HasSave(const size_t slot)
+{
+	FILE* const f= std::fopen(GetSaveFileNameForSlot(slot).c_str(), "rb");
+	if(f != nullptr)
+	{
+		std::fclose(f);
+		return true;
+	}
+	return false;
 }
 
 } // namespace Armed

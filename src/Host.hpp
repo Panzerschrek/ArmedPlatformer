@@ -40,6 +40,7 @@ private:
 	void LoadGame(size_t slot);
 	void Quit();
 	bool SaveAvailable();
+	bool HasSave(size_t slot);
 
 private:
 	SystemWindow system_window_;

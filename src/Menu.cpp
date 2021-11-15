@@ -60,6 +60,7 @@ void Menu::Draw()
 
 	const color_t c_color= ColorRGB(64, 255, 128);
 	const color_t c_cursor_color= ColorRGB(48, 220, 80);
+	const color_t c_unactive_color= ColorRGB(128, 128, 128);
 
 	const int32_t cur_menu_start_x= c_menu_start_x + (surface.w - base_width) / 2 + c_cursor_margin + c_cursor_width;
 	{
@@ -69,7 +70,8 @@ void Menu::Draw()
 		const CursorPos base_cursors[4]{CursorPos::NewGame, CursorPos::SaveGame, CursorPos::LoadGame, CursorPos::Quit};
 		for(CursorPos menu_bar : base_cursors)
 		{
-			FillRectangle(surface, cur_x, cur_y, cur_x + c_menu_bar_width, cur_y + c_menu_bar_height, c_color);
+			const auto color= (menu_bar == CursorPos::SaveGame && !callbacks_.save_available()) ? c_unactive_color : c_color;
+			FillRectangle(surface, cur_x, cur_y, cur_x + c_menu_bar_width, cur_y + c_menu_bar_height, color);
 
 			if(cursor_pos_ == menu_bar)
 			{
@@ -94,7 +96,8 @@ void Menu::Draw()
 
 		for(size_t i= 0; i < c_num_save_slots; ++i)
 		{
-			FillRectangle(surface, cur_x, cur_y, cur_x + c_save_bar_width, cur_y + c_save_bar_height, c_color);
+			const auto color= (cursor_pos_ >= CursorPos::LoadSlot0 && cursor_pos_ <= CursorPos::LoadSlotLast && !has_saves_[i]) ? c_unactive_color : c_color;
+			FillRectangle(surface, cur_x, cur_y, cur_x + c_save_bar_width, cur_y + c_save_bar_height, color);
 			if(current_save_slot == i)
 				FillRectangle(surface, cur_x - c_save_cursor_margin - c_save_cursor_width, cur_y + c_save_cursor_margin, cur_x - c_save_cursor_margin, cur_y + c_save_cursor_margin + c_save_cursor_height, c_color);
 
@@ -167,7 +170,11 @@ void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
 				cursor_pos_= CursorPos::SaveSlot0;
 		}
 		else if(cursor_pos_ == CursorPos::LoadGame)
+		{
 			cursor_pos_= CursorPos::LoadSlot0;
+			for(size_t i= 0; i < c_num_save_slots; ++i)
+				has_saves_[i]= callbacks_.has_save(i);
+		}
 		else if(cursor_pos_ == CursorPos::Quit)
 			callbacks_.quit();
 		else if(cursor_pos_ >= CursorPos::SaveSlot0 && cursor_pos_ <= CursorPos::SaveSlotLast)
@@ -180,8 +187,12 @@ void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
 		}
 		else if(cursor_pos_ >= CursorPos::LoadSlot0 && cursor_pos_ <= CursorPos::LoadSlotLast)
 		{
-			callbacks_.load_game(size_t(cursor_pos_) - size_t(CursorPos::LoadSlot0));
-			cursor_pos_= CursorPos::None;
+			const size_t slot= size_t(cursor_pos_) - size_t(CursorPos::LoadSlot0);
+			if(has_saves_[slot])
+			{
+				callbacks_.load_game(slot);
+				cursor_pos_= CursorPos::None;
+			}
 		}
 	}
 }
