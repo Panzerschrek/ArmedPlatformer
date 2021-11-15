@@ -86,8 +86,13 @@ public:
 	bool ShouldChageMap() const { return trigger_map_change_; }
 
 	void Save(SaveStream& stream);
+	static World Load(LoadStream& stream);
 
 private:
+	World(Rand rand, TilesMap map, Player player);
+
+	void LoadImpl(LoadStream& stream);
+
 	void ProcessPlayerPhysics();
 	void ProcessShootRequest(Player::ShootRequestKind shoot_request);
 	void PickUpPowerUps();

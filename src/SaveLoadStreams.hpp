@@ -40,7 +40,16 @@ public:
 
 	size_t GetBufferPos() const { return buffer_pos_; }
 
-private:
+public:
+	template<typename T, size_t N>
+	void Read(std::array<T, N>& a);
+
+	template<typename T, size_t N>
+	void Read(T (&a)[N]);
+
+	template<typename T>
+	void Read(std::optional<T>& o);
+
 	template<class T>
 	void Read(T& t);
 
@@ -84,6 +93,35 @@ void SaveStream::Write(const T& t)
 		buffer_.data() + pos,
 		&t,
 		sizeof(T));
+}
+
+template<typename T, size_t N>
+void LoadStream::Read(std::array<T, N>& a)
+{
+	for(T& t : a)
+		Read(t);
+}
+
+template<typename T, size_t N>
+void LoadStream::Read(T (&a)[N])
+{
+	for(T& t : a)
+		Read(t);
+}
+
+template<typename T>
+void LoadStream::Read(std::optional<T>& o)
+{
+	bool has_value= false;
+	Read(has_value);
+	if(has_value)
+	{
+		T value;
+		Read(value);
+		o= value;
+	}
+	else
+		o= std::nullopt;
 }
 
 template<class T>

@@ -37,6 +37,10 @@ public:
 	}
 
 	void Save(SaveStream& stream);
+	static TilesMap Load(LoadStream& stream);
+
+private:
+	TilesMap(uint32_t size_x, uint32_t size_y, std::vector<TileId> data);
 
 private:
 	const uint32_t size_[2];

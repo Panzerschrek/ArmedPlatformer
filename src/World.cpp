@@ -247,6 +247,94 @@ void World::Save(SaveStream& stream)
 	stream.Write(trigger_map_change_);
 }
 
+World World::Load(LoadStream& stream)
+{
+	uint32_t rand_state;
+	stream.Read(rand_state);
+
+	Rand rand;
+	rand.SetInnerState(rand_state);
+
+	TilesMap map= TilesMap::Load(stream);
+	Player player= Player::Load(stream);
+
+	World w(std::move(rand), std::move(map), std::move(player));
+
+	w.LoadImpl(stream);
+	return w;
+}
+
+World::World(Rand rand, TilesMap map, Player player)
+	: rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
+{
+}
+
+void World::LoadImpl(LoadStream& stream)
+{
+	const auto read_vec_size=
+	[&](auto& vec)
+	{
+		size_t size= 0;
+		stream.Read(size);
+		vec.resize(size);
+	};
+
+	read_vec_size(platforms_);
+	for(Platform& platform : platforms_)
+	{
+		stream.Read(platform.points);
+		stream.Read(platform.pos);
+		stream.Read(platform.vel);
+	}
+
+	read_vec_size(monsters_);
+	for(Monster& monster : monsters_)
+	{
+		size_t monster_id;
+		stream.Read(monster_id);
+		monster.id= MonsterId(monster_id);
+		stream.Read(monster.spawn_tile_pos);
+		stream.Read(monster.pos);
+		stream.Read(monster.move_dir);
+		stream.Read(monster.last_attack_tick);
+		stream.Read(monster.health);
+	}
+
+	read_vec_size(power_ups_);
+	for(PowerUp& power_up : power_ups_)
+	{
+		size_t power_up_id;
+		stream.Read(power_up_id);
+		power_up.id= PowerUpId(power_up_id);
+		stream.Read(power_up.pos);
+		stream.Read(power_up.picked_up);
+	}
+
+	read_vec_size(projectiles_);
+	for(Projectile& projectile : projectiles_)
+	{
+		size_t owner_kind;
+		stream.Read(owner_kind);
+		projectile.owner_kind= Projectile::OwnerKind(owner_kind);
+		size_t kind;
+		stream.Read(kind);
+		projectile.kind= Projectile::Kind(kind);
+		stream.Read(projectile.pos);
+		stream.Read(projectile.vel);
+	}
+
+	read_vec_size(explosions_);
+	for(Explosion& explosion : explosions_)
+	{
+		stream.Read(explosion.pos);
+		stream.Read(explosion.age);
+	}
+
+	stream.Read(current_tick_);
+	stream.Read(map_end_reach_time_);
+	stream.Read(trigger_map_change_);
+}
+
 void World::ProcessPlayerPhysics()
 {
 	player_.SetOnGround(false);

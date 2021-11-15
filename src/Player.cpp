@@ -97,6 +97,24 @@ void Player::Save(SaveStream& stream)
 	stream.Write(last_shoot_tick_);
 }
 
+Player Player::Load(LoadStream& stream)
+{
+	Player p;
+	stream.Read(p.current_tick_);
+	stream.Read(p.pos_);
+	stream.Read(p.vel_);
+	stream.Read(p.aim_vec_);
+	stream.Read(p.on_ground_);
+	stream.Read(p.in_liquid_);
+	stream.Read(p.current_weapon_);
+	stream.Read(p.ammo_);
+	stream.Read(p.keys_);
+	stream.Read(p.health_);
+	stream.Read(p.last_shoot_tick_);
+
+	return p;
+}
+
 void Player::Move(const InputState& input_state)
 {
 	using KeyCode= SystemEventTypes::KeyCode;

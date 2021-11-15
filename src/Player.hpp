@@ -40,8 +40,11 @@ public:
 	bool HasKey(const size_t key_index) const {ARMED_ASSERT(key_index < std::size(keys_)); return keys_[key_index]; }
 
 	void Save(SaveStream& stream);
+	static Player Load(LoadStream& stream);
 
 private:
+	Player()= default;
+
 	void Move(const InputState& input_state);
 	ShootRequestKind Shoot(const InputState& input_state);
 

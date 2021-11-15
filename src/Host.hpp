@@ -30,6 +30,7 @@ private:
 		Hud hud;
 
 		CurrentWolrdData(const MapDescription& map_description, SystemWindow& system_window);
+		CurrentWolrdData(World in_world, SystemWindow& system_window);
 	};
 
 private:

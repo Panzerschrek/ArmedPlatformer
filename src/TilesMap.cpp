@@ -86,6 +86,28 @@ void TilesMap::Save(SaveStream& stream)
 		stream.Write(size_t(tile));
 }
 
+TilesMap TilesMap::Load(LoadStream& stream)
+{
+	uint32_t size[2];
+	stream.Read(size[0]);
+	stream.Read(size[1]);
+
+	std::vector<TileId> data;
+	data.resize(size_t(size[0] * size[1]), TileId::Air);
+	for(TileId& tile : data)
+	{
+		size_t tile_id= 0;
+		stream.Read(tile_id);
+		tile= TileId(tile_id);
+	}
+
+	return TilesMap(size[0], size[1], std::move(data));
+}
+
+TilesMap::TilesMap(const uint32_t size_x, const uint32_t size_y, std::vector<TileId> data)
+	: size_{size_x, size_y}, data_(std::move(data))
+{}
+
 MapObjectsData ExtractMapObjects(const char* const map_data)
 {
 	MapObjectsData map_objects;

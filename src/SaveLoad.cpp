@@ -117,7 +117,7 @@ bool LoadData( const char* const file_name, SaveLoadBuffer& out_data)
 std::string GetSaveFileNameForSlot(const size_t slot_number)
 {
 	char name[256]{};
-	std::snprintf(name, sizeof(name), "/save_%02zu.pcs", slot_number);
+	std::snprintf(name, sizeof(name), "save_%02zu.ars", slot_number);
 	return name;
 }
 

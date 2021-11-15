@@ -14,6 +14,14 @@ Host::CurrentWolrdData::CurrentWolrdData(const MapDescription& map_description, 
 {
 }
 
+Host::CurrentWolrdData::CurrentWolrdData(World in_world, SystemWindow& system_window)
+	: world(std::move(in_world))
+	, camera(world, system_window)
+	, world_view(world, camera, system_window)
+	, hud(world, system_window)
+{
+}
+
 Host::Host()
 	: system_window_()
 	, menu_(
@@ -107,14 +115,28 @@ void Host::NewGame()
 
 void Host::SaveGame(const size_t slot)
 {
-	// TODO
-	ARMED_UNUSED(slot);
+	if(current_world_data_ == std::nullopt)
+		return;
+
+	SaveLoadBuffer buffer;
+	{
+		SaveStream stream(buffer);
+		current_world_data_->world.Save(stream);
+	}
+
+	SaveData(GetSaveFileNameForSlot(slot).c_str(), buffer);
 }
 
 void Host::LoadGame(const size_t slot)
 {
-	// TODO
-	ARMED_UNUSED(slot);
+	SaveLoadBuffer buffer;
+	if (!LoadData(GetSaveFileNameForSlot(slot).c_str(), buffer))
+		return;
+
+	LoadStream stream(buffer, 0);
+
+	current_world_data_= std::nullopt;
+	current_world_data_.emplace(World::Load(stream), system_window_);
 }
 
 void Host::Quit()
