@@ -48,10 +48,17 @@ TileId TileForChar(const char c)
 	{
 	default:
 	case ' ': return TileId::Air;
-	case '#': return TileId::BasicWall;
+
 	case '~': return TileId::Water;
 	case '&': return TileId::Lava;
 	case '%': return TileId::MapEnd;
+
+	case '#': return TileId::BasicWall;
+	case 'a': return TileId::Dirt;
+	case 'b': return TileId::DirtWithGrass;
+	case 'c': return TileId::DirtLower;
+	case 'd': return TileId::PawedDirt;
+
 	case 'A': return TileId::KeyDoor0;
 	case 'B': return TileId::KeyDoor1;
 	case 'C': return TileId::KeyDoor2;

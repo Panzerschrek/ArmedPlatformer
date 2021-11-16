@@ -374,6 +374,10 @@ void World::ProcessPlayerPhysics()
 				}
 				break;
 			case TileId::BasicWall:
+			case TileId::Dirt:
+			case TileId::DirtWithGrass:
+			case TileId::DirtLower:
+			case TileId::PawedDirt:
 				if(const auto push_vec= ProcessPlayerCollsion(bbox_transformed_min, bbox_transformed_max, tile_bb_min, tile_bb_max))
 				{
 					player_.Push(*push_vec);
@@ -765,6 +769,10 @@ bool World::MoveProjectile(Projectile& projectile)
 		case TileId::KeyDoor2:
 		case TileId::KeyDoor3:
 		case TileId::BasicWall:
+		case TileId::Dirt:
+		case TileId::DirtWithGrass:
+		case TileId::DirtLower:
+		case TileId::PawedDirt:
 			{
 				const fixed16vec2_t tile_bb_min{ IntToFixed16(x  ), IntToFixed16(y  ) };
 				const fixed16vec2_t tile_bb_max{ IntToFixed16(x+1), IntToFixed16(y+1) };

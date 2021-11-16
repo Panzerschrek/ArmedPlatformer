@@ -11,6 +11,12 @@ enum class TileId : uint8_t
 {
 	Air,
 	BasicWall,
+
+	Dirt,
+	DirtWithGrass,
+	DirtLower,
+	PawedDirt,
+
 	Lava,
 	Water,
 	MapEnd,

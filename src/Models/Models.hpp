@@ -320,6 +320,84 @@ const Model key3
 	},
 };
 
+const color_t c_dirt_color= ColorRGB(119, 79, 22);
+const color_t c_grass_color= ColorRGB(39, 124, 13);
+const color_t c_pawment_color= ColorRGB(109, 124, 129);
+
+const Model dirt
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_dirt_color,
+	},
+	// TODO - add small dark dots.
+};
+
+const Model dirt_with_grass
+{
+	{
+		{
+			{ -g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+		},
+		c_grass_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_dirt_color,
+	},
+};
+
+const Model dirt_lower
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one } },
+		},
+		c_dirt_color,
+	},
+
+	{
+		{
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one / 4 } },
+			{ g_fixed16_one * 17 / 16, { g_fixed16_one / 6, g_fixed16_one / 6 } },
+		},
+		c_dirt_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 7 / 8, { g_fixed16_one / 3, g_fixed16_one * 2 / 3 } },
+			{ g_fixed16_one * 35 / 32, { g_fixed16_one / 2, g_fixed16_one * 17 / 32 } },
+		},
+		c_dirt_color,
+	},
+};
+
+const Model pawed_dirt
+{
+	{
+		{
+			{ -g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+		},
+		c_pawment_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_dirt_color,
+	},
+};
+
 } // namespace Models
 
 } // namespace Armed
