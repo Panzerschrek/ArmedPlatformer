@@ -208,44 +208,22 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 	tile_mat.scale= {g_fixed16_one, g_fixed16_one};
 	tile_mat.shift= {IntToFixed16(int32_t(tile_x)), IntToFixed16(int32_t(tile_y))};
 
-	// Mirror each second tile. TODO - use more random pattern?
-	if(((tile_x ^ tile_y) &1) == 0)
-	{
-		tile_mat.scale[0]*= -1;
-		tile_mat.shift[0]+= g_fixed16_one;
-	}
-
-	const TransformMatrix result_mat= MatrixMul(tile_mat, view_mat);
-
-	DrawModel(result_mat, surface, GetModelForTile(tile));
-
-	if(false)
+	if (tile == TileId::Water || tile == TileId::Lava)
 	{
 		const fixed16vec2_t tile_min{0, 0}, tile_max{g_fixed16_one, g_fixed16_one};
+		const TransformMatrix result_mat= MatrixMul(tile_mat, view_mat);
 		const fixed16vec2_t tile_min_transformed= VecMatMul(tile_min, result_mat), tile_max_transformed= VecMatMul(tile_max, result_mat);
 
 		color_t color= ColorRGB(0, 0, 0);
 		bool use_blending= false;
 		switch(tile)
 		{
-		case TileId::BasicWall:
-			color= ColorRGB(120, 64, 16);
-			break;
 		case TileId::Water:
 			color= ColorRGB(64, 64, 220);
 			use_blending= true;
 			break;
 		case TileId::Lava:
 			color= ColorRGB(220, 130, 32);
-			break;
-		case TileId::MapEnd:
-			color= ColorRGB(240, 16, 16);
-			break;
-		case TileId::KeyDoor0:
-		case TileId::KeyDoor1:
-		case TileId::KeyDoor2:
-		case TileId::KeyDoor3:
-			color= ColorRGB(128, 128, 128);
 			break;
 		default:
 			break;
@@ -263,6 +241,19 @@ void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& sur
 				Fixed16RoundToInt(tile_min_transformed[0]), Fixed16RoundToInt(tile_min_transformed[1]),
 				Fixed16RoundToInt(tile_max_transformed[0]), Fixed16RoundToInt(tile_max_transformed[1]),
 				color);
+	}
+	else
+	{
+		// Mirror each second tile. TODO - use more random pattern?
+		if(((tile_x ^ tile_y) &1) == 0)
+		{
+			tile_mat.scale[0]*= -1;
+			tile_mat.shift[0]+= g_fixed16_one;
+		}
+
+		const TransformMatrix result_mat= MatrixMul(tile_mat, view_mat);
+
+		DrawModel(result_mat, surface, GetModelForTile(tile));
 	}
 }
 
