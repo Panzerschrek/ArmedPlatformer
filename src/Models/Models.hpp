@@ -323,6 +323,7 @@ const Model key3
 const color_t c_dirt_color= ColorRGB(119, 79, 22);
 const color_t c_grass_color= ColorRGB(39, 124, 13);
 const color_t c_pawment_color= ColorRGB(109, 124, 129);
+const color_t c_techno_color= ColorRGB(74, 70, 70);
 
 const Model dirt
 {
@@ -395,6 +396,294 @@ const Model pawed_dirt
 			{ g_fixed16_one, { 0, g_fixed16_one } },
 		},
 		c_dirt_color,
+	},
+};
+
+const Model techno_block
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { 0, g_fixed16_one / 4 } },
+			{ g_fixed16_one / 4, { 0, g_fixed16_one * 3 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+			{ g_fixed16_one / 4, { g_fixed16_one * 5 / 8, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { 0, g_fixed16_one / 8 } },
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one / 8, g_fixed16_one * 3 / 8 } },
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one / 2 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one * 5 / 8, g_fixed16_one * 7 / 8 } },
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 2, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one / 2 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one / 8, g_fixed16_one * 3 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 2, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one * 7 / 8 } },
+		},
+		c_techno_color,
+	},
+
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one * 3 / 8 } },
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 7 / 8, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+};
+
+const Model techno_block_lower
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { 0, g_fixed16_one / 4 } },
+			{ g_fixed16_one / 4, { 0, g_fixed16_one * 3 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+			{ g_fixed16_one / 4, { g_fixed16_one * 5 / 8, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { 0, g_fixed16_one / 8 } },
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one / 8, g_fixed16_one * 3 / 8 } },
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one / 2 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one * 5 / 8, g_fixed16_one * 7 / 8 } },
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 2, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one / 2 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one / 8, g_fixed16_one * 3 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 2, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one * 7 / 8 } },
+		},
+		c_techno_color,
+	},
+
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one * 3 / 8 } },
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 7 / 8, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+};
+
+const Model pawed_techno_block
+{
+	{
+		{
+			{ -g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+		},
+		c_pawment_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one / 4, { 0, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { 0, g_fixed16_one / 8 } },
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 7 / 8, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 4, { g_fixed16_one / 8, g_fixed16_one * 7 / 8 } },
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one / 2, { g_fixed16_one * 3 / 8, g_fixed16_one * 5 / 8 } },
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one * 3 / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 4, g_fixed16_one / 2 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one / 8, g_fixed16_one * 3 / 8 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 5 / 8, { g_fixed16_one / 2, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one * 7 / 8 } },
+		},
+		c_techno_color,
+	},
+
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { 0, g_fixed16_one * 3 / 8 } },
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one / 4 } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 3 / 4, { g_fixed16_one * 5 / 8, g_fixed16_one } },
+			{ g_fixed16_one * 7 / 8, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+		},
+		c_techno_color,
+	},
+	{
+		{
+			{ g_fixed16_one * 7 / 8, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_techno_color,
 	},
 };
 

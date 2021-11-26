@@ -59,6 +59,10 @@ TileId TileForChar(const char c)
 	case 'c': return TileId::DirtLower;
 	case 'd': return TileId::PawedDirt;
 
+	case 'e': return TileId::TechnoBlock;
+	case 'f': return TileId::TechnoBlockLower;
+	case 'g': return TileId::PawedTechnoBlock;
+
 	case 'A': return TileId::KeyDoor0;
 	case 'B': return TileId::KeyDoor1;
 	case 'C': return TileId::KeyDoor2;

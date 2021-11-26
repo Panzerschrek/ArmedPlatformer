@@ -65,6 +65,10 @@ const Model& GetModelForTile(const TileId tile)
 	case TileId::DirtLower: return Models::dirt_lower;
 	case TileId::PawedDirt: return Models::pawed_dirt;
 
+	case TileId::TechnoBlock: return Models::techno_block;
+	case TileId::TechnoBlockLower:  return Models::techno_block_lower;
+	case TileId::PawedTechnoBlock: return Models::pawed_techno_block;
+
 			break;
 		case TileId::KeyDoor0:
 		case TileId::KeyDoor1:
@@ -73,7 +77,7 @@ const Model& GetModelForTile(const TileId tile)
 			break;
 	};
 
-	return Models::dirt_lower;
+	return Models::techno_block;
 }
 
 struct ProjectileModel

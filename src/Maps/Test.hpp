@@ -11,10 +11,10 @@ namespace Test
 {
 
 const char map_data[]=
-"               bbbbbddd                                                      \n"
-"               aaaaaaac                                                      \n"
-"               aaaaaac                                                       \n"
-"               cccccc                                                        \n"
+"               bbbbbddd                       gggg                           \n"
+"               aaaaaaac                       eeee                           \n"
+"               aaaaaac                        eeee                           \n"
+"               cccccc                         ffff                           \n"
 "                                                                             \n"
 "                           o                                                 \n"
 "                                 A B C                                       \n"
