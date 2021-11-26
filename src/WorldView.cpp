@@ -55,7 +55,6 @@ const Model& GetModelForTile(const TileId tile)
 		case TileId::Air:
 		case TileId::Water:
 		case TileId::Lava:
-		case TileId::MapEnd:
 
 	case TileId::BasicWall:
 		break;
@@ -69,11 +68,13 @@ const Model& GetModelForTile(const TileId tile)
 	case TileId::TechnoBlockLower:  return Models::techno_block_lower;
 	case TileId::PawedTechnoBlock: return Models::pawed_techno_block;
 
-		case TileId::KeyDoor0:
-		case TileId::KeyDoor1:
-		case TileId::KeyDoor2:
-		case TileId::KeyDoor3:
-			return Models::door;
+	case TileId::KeyDoor0:
+	case TileId::KeyDoor1:
+	case TileId::KeyDoor2:
+	case TileId::KeyDoor3:
+		return Models::door;
+
+	case TileId::MapEnd: return Models::map_end;
 	};
 
 	return Models::techno_block;

@@ -326,6 +326,8 @@ const color_t c_pawment_color= ColorRGB(109, 124, 129);
 const color_t c_techno_color= ColorRGB(74, 70, 70);
 const color_t c_door_color_0= ColorRGB(187, 178, 145);
 const color_t c_door_color_1= ColorRGB(170, 144, 55);
+const color_t c_map_end_frame_color= ColorRGB(233, 233, 233);
+const color_t c_map_end_sign_color= ColorRGB(136, 236, 240);
 
 const Model dirt
 {
@@ -732,6 +734,66 @@ const Model door
 			{ g_fixed16_one, { g_fixed16_one * 5 / 6, g_fixed16_one } },
 		},
 		c_door_color_1,
+	},
+};
+
+const Model map_end
+{
+	{
+		{
+			{ -g_fixed16_one * 3 / 4, { g_fixed16_one * 3 / 8, g_fixed16_one * 7 / 8 } },
+			{ -g_fixed16_one / 2, { g_fixed16_one / 8, g_fixed16_one * 5 / 8 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one / 2, { g_fixed16_one / 8, g_fixed16_one * 5 / 8 } },
+			{ -g_fixed16_one * 3 / 8, { g_fixed16_one / 8, g_fixed16_one / 2 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one * 3 / 8, { g_fixed16_one / 8, g_fixed16_one / 2 } },
+			{ g_fixed16_one, { g_fixed16_one / 8, g_fixed16_one / 2 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one * 3 / 4, { g_fixed16_one * 9 / 8, g_fixed16_one * 13 / 8 } },
+			{ -g_fixed16_one / 2, { g_fixed16_one * 11 / 8, g_fixed16_one * 15 / 8 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one / 2, { g_fixed16_one * 11 / 8, g_fixed16_one * 15 / 8 } },
+			{ -g_fixed16_one * 3 / 8, { g_fixed16_one * 3 / 2, g_fixed16_one * 15 / 8 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one * 3 / 8, { g_fixed16_one * 3 / 2,  g_fixed16_one * 15 / 8 } },
+			{ g_fixed16_one, { g_fixed16_one * 3 / 2,  g_fixed16_one * 15 / 8 } },
+		},
+		c_map_end_frame_color,
+	},
+	{
+		{
+			{ -g_fixed16_one, { g_fixed16_one, g_fixed16_one } },
+			{ -g_fixed16_one * 7 / 8, { g_fixed16_one * 7 / 8,  g_fixed16_one * 9 / 8 } },
+		},
+		c_map_end_sign_color,
+	},
+	{
+		{
+			{ -g_fixed16_one * 7 / 8, { g_fixed16_one * 7 / 8,  g_fixed16_one * 9 / 8 } },
+			{ -g_fixed16_one * 3 / 4, { g_fixed16_one, g_fixed16_one } },
+		},
+		c_map_end_sign_color,
 	},
 };
 
