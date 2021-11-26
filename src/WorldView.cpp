@@ -111,12 +111,7 @@ void WorldView::Draw()
 {
 	const SDL_Surface& surface= system_window_.GetSurface();
 
-	for(uint32_t y= 0; y < uint32_t(surface.h); ++y)
-	for(uint32_t x= 0; x < uint32_t(surface.w); ++x)
-	{
-		auto& dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + uint32_t(surface.pitch) * y)[x];
-		dst= uint32_t(x) * 255u / uint32_t(surface.w) + ((uint32_t(y) * 255u / uint32_t(surface.h)) << 8);
-	}
+	FillBackground(surface);
 
 	const Player& player= world_.GetPlayer();
 	const fixed16vec2_t player_pos= player.GetPos();
@@ -199,6 +194,52 @@ void WorldView::Draw()
 
 		if(tile == TileId::Water)
 			DrawTile(mat, surface, x, y, tile);
+	}
+}
+
+void WorldView::FillBackground(const SDL_Surface& surface)
+{
+	using PreciseColor= std::array<fixed16_t, 3>;
+	const PreciseColor colors[2][2]
+	{
+		{ {217, 215, 166}, {155, 203, 217} },
+		{ {78, 71, 63}, {45, 45, 45} },
+	};
+
+	PreciseColor color_left, color_right, color_delta_left, color_delta_right;
+	for(size_t i= 0; i < 3; ++i)
+	{
+		color_left[i]= colors[0][0][i] << g_fixed16_base;
+		color_right[i]= colors[0][1][i] << g_fixed16_base;
+		color_delta_left[i]= ((colors[1][0][i] - colors[0][0][i]) << g_fixed16_base) / surface.h;
+		color_delta_right[i]= ((colors[1][1][i] - colors[0][1][i]) << g_fixed16_base) / surface.h;
+	}
+
+	for(int32_t y= 0; y < surface.h; ++y)
+	{
+		PreciseColor color= color_left;
+		PreciseColor color_delta;
+		for(size_t i= 0; i < 3; ++i)
+			color_delta[i]= (color_right[i] - color_left[i]) / surface.w;
+
+		const auto dst= reinterpret_cast<color_t*>(static_cast<char*>(surface.pixels) + surface.pitch * y);
+		for(int32_t x= 0; x < surface.w; ++x)
+		{
+			uint8_t components[3];
+			for(size_t i= 0; i < 3; ++i)
+				components[i]= uint8_t(color[i] >> g_fixed16_base);
+
+			dst[x]= ColorRGB(components[0], components[1], components[2]);
+
+			for(size_t i= 0; i < 3; ++i)
+				color[i]+= color_delta[i];
+		}
+
+		for(size_t i= 0; i < 3; ++i)
+		{
+			color_left[i]+= color_delta_left[i];
+			color_right[i]+= color_delta_right[i];
+		}
 	}
 }
 
