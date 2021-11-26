@@ -324,6 +324,8 @@ const color_t c_dirt_color= ColorRGB(119, 79, 22);
 const color_t c_grass_color= ColorRGB(39, 124, 13);
 const color_t c_pawment_color= ColorRGB(109, 124, 129);
 const color_t c_techno_color= ColorRGB(74, 70, 70);
+const color_t c_door_color_0= ColorRGB(187, 178, 145);
+const color_t c_door_color_1= ColorRGB(170, 144, 55);
 
 const Model dirt
 {
@@ -684,6 +686,52 @@ const Model pawed_techno_block
 			{ g_fixed16_one, { 0, g_fixed16_one } },
 		},
 		c_techno_color,
+	},
+};
+
+const Model door
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one / 6 } },
+			{ g_fixed16_one, { 0, g_fixed16_one / 6 } },
+		},
+		c_door_color_0,
+	},
+	{
+		{
+			{ 0, { g_fixed16_one / 6, g_fixed16_one / 3 } },
+			{ g_fixed16_one, { g_fixed16_one / 6, g_fixed16_one / 3 } },
+		},
+		c_door_color_1,
+	},
+	{
+		{
+			{ 0, { g_fixed16_one / 3, g_fixed16_one / 2 } },
+			{ g_fixed16_one, { g_fixed16_one / 3, g_fixed16_one / 2 } },
+		},
+		c_door_color_0,
+	},
+	{
+		{
+			{ 0, { g_fixed16_one / 2, g_fixed16_one * 2 / 3 } },
+			{ g_fixed16_one, { g_fixed16_one / 2, g_fixed16_one * 2 / 3 } },
+		},
+		c_door_color_1,
+	},
+	{
+		{
+			{ 0, {  g_fixed16_one * 2 / 3, g_fixed16_one * 5 / 6 } },
+			{ g_fixed16_one, {  g_fixed16_one * 2 / 3, g_fixed16_one * 5 / 6 } },
+		},
+		c_door_color_0,
+	},
+	{
+		{
+			{ 0, { g_fixed16_one * 5 / 6, g_fixed16_one } },
+			{ g_fixed16_one, { g_fixed16_one * 5 / 6, g_fixed16_one } },
+		},
+		c_door_color_1,
 	},
 };
 

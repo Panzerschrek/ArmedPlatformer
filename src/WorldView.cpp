@@ -69,12 +69,11 @@ const Model& GetModelForTile(const TileId tile)
 	case TileId::TechnoBlockLower:  return Models::techno_block_lower;
 	case TileId::PawedTechnoBlock: return Models::pawed_techno_block;
 
-			break;
 		case TileId::KeyDoor0:
 		case TileId::KeyDoor1:
 		case TileId::KeyDoor2:
 		case TileId::KeyDoor3:
-			break;
+			return Models::door;
 	};
 
 	return Models::techno_block;
