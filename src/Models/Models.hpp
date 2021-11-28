@@ -328,6 +328,9 @@ const color_t c_door_color_0= ColorRGB(187, 178, 145);
 const color_t c_door_color_1= ColorRGB(170, 144, 55);
 const color_t c_map_end_frame_color= ColorRGB(233, 233, 233);
 const color_t c_map_end_sign_color= ColorRGB(136, 236, 240);
+const color_t c_rock_color= ColorRGB(104, 97, 86);
+const color_t c_rock_top_color= ColorRGB(91, 85, 75);
+const color_t c_rock_lower_color= ColorRGB(112, 105, 93);
 
 const Model dirt
 {
@@ -796,6 +799,68 @@ const Model map_end
 		c_map_end_sign_color,
 	},
 };
+
+const Model rock_top
+{
+	{
+		{
+			{ -g_fixed16_one / 16, { g_fixed16_one / 4, g_fixed16_one * 5 / 8 } },
+			{ 0, { 0, g_fixed16_one * 3 / 4 } },
+		},
+		c_rock_top_color,
+	},
+	{
+		{
+			{ -g_fixed16_one / 16, { g_fixed16_one * 7 / 8, g_fixed16_one * 7 / 8 } },
+			{ 0, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+		},
+		c_rock_top_color,
+	},
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_rock_color,
+	},
+};
+
+const Model rock
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_rock_color,
+	},
+};
+
+const Model rock_lower
+{
+	{
+		{
+			{ 0, { 0, g_fixed16_one } },
+			{ g_fixed16_one, { 0, g_fixed16_one } },
+		},
+		c_rock_color,
+	},
+	{
+		{
+			{ g_fixed16_one, { 0, g_fixed16_one * 3 / 4 } },
+			{ g_fixed16_one * 19 / 16, { g_fixed16_one / 4, g_fixed16_one * 5 / 8 } },
+		},
+		c_rock_lower_color,
+	},
+	{
+		{
+			{ g_fixed16_one, { g_fixed16_one * 3 / 4, g_fixed16_one } },
+			{ g_fixed16_one  * 9 / 8, { g_fixed16_one * 7 / 8, g_fixed16_one * 7 / 8 } },
+		},
+		c_rock_lower_color,
+	},
+};
+
 
 } // namespace Models
 

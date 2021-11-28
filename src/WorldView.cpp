@@ -68,6 +68,10 @@ const Model& GetModelForTile(const TileId tile)
 	case TileId::TechnoBlockLower:  return Models::techno_block_lower;
 	case TileId::PawedTechnoBlock: return Models::pawed_techno_block;
 
+	case TileId::Rock: return Models::rock;
+	case TileId::RockTop:  return Models::rock_top;
+	case TileId::RockLower: return Models::rock_lower;
+
 	case TileId::KeyDoor0:
 	case TileId::KeyDoor1:
 	case TileId::KeyDoor2:
@@ -77,7 +81,7 @@ const Model& GetModelForTile(const TileId tile)
 	case TileId::MapEnd: return Models::map_end;
 	};
 
-	return Models::techno_block;
+	return Models::rock_lower;
 }
 
 struct ProjectileModel

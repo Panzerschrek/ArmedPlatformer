@@ -21,6 +21,10 @@ enum class TileId : uint8_t
 	TechnoBlockLower,
 	PawedTechnoBlock,
 
+	Rock,
+	RockTop,
+	RockLower,
+
 	Lava,
 	Water,
 	MapEnd,
