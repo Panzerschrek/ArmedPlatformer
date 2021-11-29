@@ -136,7 +136,7 @@ void WorldView::Draw()
 			const bool is_nearby= std::abs(player_pos[0] - key_sign_pos[0]) + std::abs(player_pos[1] - key_sign_pos[1]) <= g_fixed16_one * 2;
 			if(!(is_nearby && player.HasKey(size_t(tile) - size_t(TileId::KeyDoor0))))
 			{
-				DrawTile(mat, surface, x, y, tile);
+				DrawTile(mat, surface, int32_t(x), int32_t(y), tile);
 
 				TransformMatrix key_mat;
 				key_mat.scale[0]= key_mat.scale[1] = g_fixed16_one * 2 / 3;
@@ -149,7 +149,7 @@ void WorldView::Draw()
 			}
 		}
 		else if(tile != TileId::Air && !(tile == TileId::Water))
-			DrawTile(mat, surface, x, y, tile);
+			DrawTile(mat, surface, int32_t(x), int32_t(y), tile);
 
 	}
 
@@ -197,7 +197,52 @@ void WorldView::Draw()
 		const TileId tile= tiles_map.GetTile(x, y);
 
 		if(tile == TileId::Water)
-			DrawTile(mat, surface, x, y, tile);
+			DrawTile(mat, surface, int32_t(x), int32_t(y), tile);
+	}
+
+	// Draw border around the world.
+	{
+		// Project screen dimensions into world to know visible area.
+		const TransformMatrix iverse_mat= CalculateInverseMatrix(mat);
+
+		const fixed16vec2_t screen_min{-1, -1};
+		const fixed16vec2_t screen_max{IntToFixed16(surface.w + 1), IntToFixed16(surface.h + 1)};
+
+		const fixed16vec2_t world_visible_min= VecMatMul(screen_min, iverse_mat);
+		const fixed16vec2_t world_visible_max= VecMatMul(screen_max, iverse_mat);
+
+		const auto draw_border_tile=
+		[&](const int32_t x, const int32_t y)
+		{
+			DrawTile(
+				mat,
+				surface,
+				x, y,
+				tiles_map.GetTile(
+					uint32_t(std::max(0, std::min(x, int32_t(tiles_map.GetSizeX()) - 1))),
+					uint32_t(std::max(0, std::min(y, int32_t(tiles_map.GetSizeY()) - 1)))));
+		};
+
+		// Top stripe.
+		for(int32_t y= Fixed16FloorToInt(world_visible_min[1]); y < 0; ++y)
+		for(int32_t x= Fixed16FloorToInt(world_visible_min[0]); x < Fixed16CeilToInt(world_visible_max[0]); ++x)
+			draw_border_tile(x, y);
+
+		// Bottom stripe.
+		for(int32_t y= int32_t(tiles_map.GetSizeY()); y < Fixed16CeilToInt(world_visible_max[1]); ++y)
+		for(int32_t x= Fixed16FloorToInt(world_visible_min[0]); x < Fixed16CeilToInt(world_visible_max[0]); ++x)
+			draw_border_tile(x, y);
+
+		for(int32_t y= 0; y < int32_t(tiles_map.GetSizeY()); ++y)
+		{
+			// Left column.
+			for(int32_t x= Fixed16FloorToInt(world_visible_min[0]); x < 0; ++x)
+				draw_border_tile(x, y);
+
+			// Right column.
+			for(int32_t x= int32_t(tiles_map.GetSizeX()); x < Fixed16CeilToInt(world_visible_max[0]); ++x)
+				draw_border_tile(x, y);
+		}
 	}
 }
 
@@ -247,13 +292,15 @@ void WorldView::FillBackground(const SDL_Surface& surface)
 	}
 }
 
-void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const uint32_t tile_x, const uint32_t tile_y, const TileId tile)
+void WorldView::DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, const int32_t tile_x, const int32_t tile_y, const TileId tile)
 {
 	TransformMatrix tile_mat{};
 	tile_mat.scale= {g_fixed16_one, g_fixed16_one};
-	tile_mat.shift= {IntToFixed16(int32_t(tile_x)), IntToFixed16(int32_t(tile_y))};
+	tile_mat.shift= {IntToFixed16(tile_x), IntToFixed16(tile_y)};
 
-	if (tile == TileId::Water || tile == TileId::Lava)
+	if(tile == TileId::Air)
+		return;
+	else if (tile == TileId::Water || tile == TileId::Lava)
 	{
 		const fixed16vec2_t tile_min{0, 0}, tile_max{g_fixed16_one, g_fixed16_one};
 		const TransformMatrix result_mat= MatrixMul(tile_mat, view_mat);

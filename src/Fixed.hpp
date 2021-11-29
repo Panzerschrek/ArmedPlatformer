@@ -48,6 +48,11 @@ inline fixed16_t Fixed16Div(const fixed16_t l, const fixed16_t r)
 	return fixed16_t((int64_t(l) << g_fixed16_base) / int64_t(r));
 }
 
+inline fixed16_t Fixed16Invert(const fixed16_t x)
+{
+	return fixed16_t((int64_t(1) << (g_fixed16_base * 2)) / int64_t(x));
+}
+
 inline fixed16_t Fixed16Abs(const fixed16_t x)
 {
 	return x >= 0 ? x : -x;

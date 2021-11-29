@@ -27,4 +27,12 @@ inline fixed16vec2_t VecMatMul(const fixed16vec2_t& v, const TransformMatrix& ma
 	return { Fixed16Mul(mat.scale[0], v[0]) + mat.shift[0], Fixed16Mul(mat.scale[1], v[1]) + mat.shift[1]};
 }
 
+inline TransformMatrix CalculateInverseMatrix(const TransformMatrix& m)
+{
+	TransformMatrix inverse_mat{};
+	inverse_mat.scale = { Fixed16Invert(m.scale[0]), Fixed16Invert(m.scale[1]) };
+	inverse_mat.shift= { -Fixed16Div(m.shift[0], m.scale[0]), -Fixed16Div(m.shift[1], m.scale[1]) };
+	return inverse_mat;
+}
+
 } // namespace Armed

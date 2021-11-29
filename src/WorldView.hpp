@@ -17,7 +17,7 @@ public:
 
 private:
 	void FillBackground(const SDL_Surface& surface);
-	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, uint32_t tile_x, uint32_t tile_y, TileId tile);
+	void DrawTile(const TransformMatrix& view_mat, const SDL_Surface& surface, int32_t tile_x, int32_t tile_y, TileId tile);
 	void DrawPlayer(const TransformMatrix& view_mat, const SDL_Surface& surface);
 	void DrawPlatform(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Platform& platform);
 	void DrawMonster(const TransformMatrix& view_mat, const SDL_Surface& surface, const World::Monster& monster);
