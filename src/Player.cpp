@@ -212,9 +212,11 @@ Player::ShootRequestKind Player::Shoot(const InputState& input_state)
 	if(input_state.keyboard[size_t(SystemEventTypes::KeyCode::K2)])
 		current_weapon_= 1;
 
+	const uint32_t c_weapon_delay[2]{30, 90};
+
 	uint32_t& ammo= ammo_[current_weapon_];
 	if(input_state.mouse[size_t(SystemEventTypes::ButtonCode::Left)] &&
-		current_tick_ - last_shoot_tick_ >= 20 &&
+		current_tick_ - last_shoot_tick_ >= c_weapon_delay[current_weapon_] &&
 		ammo > 0)
 	{
 		--ammo;
