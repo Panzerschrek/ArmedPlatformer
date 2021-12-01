@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <cmath> // For sqrt.
+#include <cstdint>
 
 namespace Armed
 {

@@ -115,7 +115,7 @@ void Menu::ProcessKeyPress(const SystemEventTypes::KeyCode code)
 			cursor_pos_= CursorPos::SaveGame;
 		else if(cursor_pos_ == CursorPos::NewGame ||
 				cursor_pos_ == CursorPos::SaveGame ||
-				cursor_pos_ == CursorPos::LoadGame |
+				cursor_pos_ == CursorPos::LoadGame ||
 				cursor_pos_ == CursorPos::Quit)
 			cursor_pos_= CursorPos::None;
 		else if(cursor_pos_ >= CursorPos::SaveSlot0 && cursor_pos_ <= CursorPos::SaveSlotLast)
