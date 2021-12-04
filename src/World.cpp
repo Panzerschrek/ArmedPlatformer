@@ -887,7 +887,7 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 		{
 			if(pos[i] < bb_min[i])
 				d[i]= bb_min[i] - pos[i];
-			if(pos[0] > bb_max[i])
+			if(pos[i] > bb_max[i])
 				d[i]= pos[i] - bb_max[i];
 		}
 
