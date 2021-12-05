@@ -60,4 +60,4 @@ void Rand::SetInnerState(const uint32_t state)
 	std::memcpy(&generator_, &state, sizeof(Generator));
 }
 
-} // namespace PanzerChasm
+} // namespace Armed
