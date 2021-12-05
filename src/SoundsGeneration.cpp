@@ -1,4 +1,5 @@
 #include "SoundsGeneration.hpp"
+#include "Assert.hpp"
 #include "Rand.hpp"
 #include <limits>
 
@@ -8,7 +9,7 @@ namespace Armed
 namespace
 {
 
-const int32_t g_samle_scale= int32_t(std::numeric_limits<SampleType>::max());
+const int32_t g_sample_scale= int32_t(std::numeric_limits<SampleType>::max());
 const float g_two_pi = 2.0f * 3.1415926535f;
 
 SampleType ClampSample(const int32_t x)
@@ -32,8 +33,9 @@ std::vector<int32_t> LinearResample(const std::vector<int32_t>& data, const size
 	{
 		const int64_t coord= ((int64_t(i) * int64_t(data.size())) << c_shift) / int64_t(res.size());
 		const size_t coord_int= size_t(coord >> c_shift);
-		const size_t coord_int_plus_one= std::min(res.size() - 1, coord_int + 1);
-		const int32_t noise_fract= coord & (c_scale - 1);
+		ARMED_ASSERT(coord_int < data.size());
+		const size_t coord_int_plus_one= std::min(data.size() - 1, coord_int + 1);
+		const int64_t noise_fract= coord & (c_scale - 1);
 		const int32_t value= int32_t((int64_t(data[coord_int]) * (int64_t(c_scale) - noise_fract) + int64_t(data[coord_int_plus_one] * noise_fract)) >> c_shift);
 		res[i]= value;
 	}
@@ -77,7 +79,7 @@ SoundData GenSinWaveSound(const uint32_t sample_rate, const fixed16_t sin_wave_f
 	out_data.samples.resize(total_samples);
 
 	const float scale_f= float(sin_wave_frequency) * g_two_pi / (float(sample_rate) * float(g_fixed16_one));
-	const float sample_scale= float(g_samle_scale);
+	const float sample_scale= float(g_sample_scale);
 	for(uint32_t i= 0; i < total_samples; ++i)
 		out_data.samples[i]= SampleType(std::sin(float(i) * scale_f) * sample_scale);
 
@@ -126,7 +128,6 @@ SoundData GenShotSound(const uint32_t sample_rate)
 	return out_data;
 }
 
-
 SoundData GenPickUpSound(const uint32_t sample_rate)
 {
 	const uint32_t total_samples= sample_rate;
@@ -135,7 +136,7 @@ SoundData GenPickUpSound(const uint32_t sample_rate)
 
 	const float base_freq= 400.0f;
 	const float scale_f= float(base_freq) * g_two_pi / float(sample_rate);
-	const float sample_scale= float(g_samle_scale);
+	const float sample_scale= float(g_sample_scale);
 
 	for(uint32_t i= 0; i < total_samples; ++i)
 	{
@@ -155,6 +156,58 @@ SoundData GenPickUpSound(const uint32_t sample_rate)
 
 		out_data.samples[i]= SampleType(s * sample_scale);
 	}
+
+	return out_data;
+}
+
+SoundData GenMapEndMelody(const uint32_t sample_rate)
+{
+	const uint32_t c_samples_per_base_wave= 1 << 7;
+	const uint32_t c_beat_waves= 64;
+	const uint32_t c_beat_period= c_samples_per_base_wave * c_beat_waves;
+	const uint32_t c_start_beat= 2;
+	const uint32_t c_end_beat= 9;
+	const uint32_t c_base_period_waves= c_beat_period * c_end_beat * 3;
+
+	const uint32_t samples_initial= c_base_period_waves * 8;
+
+	std::vector<int32_t> data;
+	data.resize(samples_initial);
+
+	const float sample_scale= float(g_sample_scale) * 0.5f / float(1 + c_end_beat - c_start_beat);
+
+	for(uint32_t i= 0; i < samples_initial; ++i)
+	{
+		const uint32_t i_masked= i & (c_samples_per_base_wave - 1);
+		const float val= float(i_masked) / float(c_samples_per_base_wave);
+		const float t= float(val) * g_two_pi;
+		const float base_wave= std::sin(t) + std::sin(t * 2.0f) * 0.5f;
+
+		float result= base_wave;
+
+		// See https://www.youtube.com/watch?v=Qyn64b4LNJ0.
+		for(uint32_t beat_n= c_start_beat; beat_n <= c_end_beat; ++beat_n)
+		{
+			const uint32_t beat_factor= i % (c_beat_period * beat_n);
+			if(beat_factor < c_beat_period * beat_n / 8)
+			{
+				const float beat_t= t * float(beat_n);
+				result+= std::sin(beat_t) + std::sin(beat_t * 2.0f) * 0.5f + std::sin(beat_t * 3.0f) * 0.3333f;
+			}
+		}
+
+		data[i]= int32_t(result * sample_scale);
+	}
+
+	const uint32_t c_base_freq= 220;
+	const uint32_t samples_final= uint32_t(uint64_t(samples_initial) * uint64_t(sample_rate) / (uint64_t(c_base_freq) * uint64_t(c_samples_per_base_wave)));
+
+	const std::vector<int32_t> data_resampled= LinearResample(data, samples_final);
+
+	SoundData out_data;
+	out_data.samples.resize(data_resampled.size());
+	for(size_t i= 0; i < data_resampled.size(); ++i)
+		out_data.samples[i]= ClampSample(data_resampled[i]);
 
 	return out_data;
 }

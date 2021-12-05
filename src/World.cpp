@@ -371,7 +371,10 @@ void World::ProcessPlayerPhysics()
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
 				{
 					if(map_end_reach_time_ == std::nullopt)
+					{
 						map_end_reach_time_= current_tick_;
+						sound_processor_.MakeSound(SoundId::MapEndMelody);
+					}
 				}
 				break;
 			case TileId::BasicWall:
