@@ -69,14 +69,14 @@ std::vector<int32_t> GenOctaveNoise(const size_t size, const uint32_t octaves)
 
 } // namespace
 
-SoundData GenSinWaveSound(const uint32_t frequency, const fixed16_t sin_wave_frequency, const uint32_t periods)
+SoundData GenSinWaveSound(const uint32_t sample_rate, const fixed16_t sin_wave_frequency, const uint32_t periods)
 {
-	const uint32_t total_samples= uint32_t(uint64_t(frequency) * uint64_t(periods) * uint64_t(g_fixed16_one) / uint64_t(sin_wave_frequency));
+	const uint32_t total_samples= uint32_t(uint64_t(sample_rate) * uint64_t(periods) * uint64_t(g_fixed16_one) / uint64_t(sin_wave_frequency));
 
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
-	const float scale_f= float(sin_wave_frequency) * g_two_pi / (float(frequency) * float(g_fixed16_one));
+	const float scale_f= float(sin_wave_frequency) * g_two_pi / (float(sample_rate) * float(g_fixed16_one));
 	const float sample_scale= float(g_samle_scale);
 	for(uint32_t i= 0; i < total_samples; ++i)
 		out_data.samples[i]= SampleType(std::sin(float(i) * scale_f) * sample_scale);
@@ -84,16 +84,16 @@ SoundData GenSinWaveSound(const uint32_t frequency, const fixed16_t sin_wave_fre
 	return out_data;
 }
 
-SoundData GenExplosionSound(const uint32_t frequency)
+SoundData GenExplosionSound(const uint32_t sample_rate)
 {
-	const uint32_t total_samples= 3 * frequency;
+	const uint32_t total_samples= 3 * sample_rate;
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
 	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 4), total_samples);
 
-	const float fade_factor= -3.0f / float(frequency);
-	const float hyp_factor= 512.0f / float(frequency);
+	const float fade_factor= -3.0f / float(sample_rate);
+	const float hyp_factor= 512.0f / float(sample_rate);
 	const float constant_scale= 8.0f;
 	for(uint32_t i= 0; i < total_samples; ++i)
 	{
@@ -105,16 +105,16 @@ SoundData GenExplosionSound(const uint32_t frequency)
 	return out_data;
 }
 
-SoundData GenShotSound(const uint32_t frequency)
+SoundData GenShotSound(const uint32_t sample_rate)
 {
-	const uint32_t total_samples= frequency;
+	const uint32_t total_samples= sample_rate;
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
 	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 5), total_samples);
 
-	const float fade_factor= -16.0f / float(frequency);
-	const float hyp_factor= 2048.0f / float(frequency);
+	const float fade_factor= -16.0f / float(sample_rate);
+	const float hyp_factor= 2048.0f / float(sample_rate);
 	const float constant_scale= 4.0f;
 	for(uint32_t i= 0; i < total_samples; ++i)
 	{
@@ -127,14 +127,14 @@ SoundData GenShotSound(const uint32_t frequency)
 }
 
 
-SoundData GenPickUpSound(const uint32_t frequency)
+SoundData GenPickUpSound(const uint32_t sample_rate)
 {
-	const uint32_t total_samples= frequency;
+	const uint32_t total_samples= sample_rate;
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
 	const float base_freq= 400.0f;
-	const float scale_f= float(base_freq) * g_two_pi / float(frequency);
+	const float scale_f= float(base_freq) * g_two_pi / float(sample_rate);
 	const float sample_scale= float(g_samle_scale);
 
 	for(uint32_t i= 0; i < total_samples; ++i)

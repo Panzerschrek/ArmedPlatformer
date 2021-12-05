@@ -66,7 +66,7 @@ SoundOut::SoundOut()
 		return;
 	}
 
-	frequency_= uint32_t(obtained_format.freq);
+	sample_rate_= uint32_t(obtained_format.freq);
 
 	mix_buffer_.resize(obtained_format.samples * g_left_and_right);
 

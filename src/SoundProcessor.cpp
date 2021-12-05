@@ -16,7 +16,7 @@ SoundProcessor::SoundProcessor(SoundOut& sound_out)
 	};
 
 	for(size_t i= 0; i < size_t(SoundId::NumSounds); ++i)
-		sounds_[i]= c_gen_funcs[i](sound_out_.GetFrequency());
+		sounds_[i]= c_gen_funcs[i](sound_out_.GetSampleRate());
 }
 
 void SoundProcessor::MakeSound(const SoundId sound_id)
