@@ -7,9 +7,16 @@ namespace Armed
 SoundProcessor::SoundProcessor(SoundOut& sound_out)
 	: sound_out_(sound_out)
 {
+	using GenFunc= SoundData(*)(uint32_t frequency);
+	static constexpr GenFunc c_gen_funcs[size_t(SoundId::NumSounds)]
+	{
+		GenExplosionSound,
+		GenShotSound,
+	};
+
 	for(size_t i= 0; i < size_t(SoundId::NumSounds); ++i)
 	{
-		sounds_[i]= GenShotSound(sound_out_.GetFrequency());
+		sounds_[i]= c_gen_funcs[i](sound_out_.GetFrequency());
 	}
 }
 

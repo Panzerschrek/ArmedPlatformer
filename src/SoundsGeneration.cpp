@@ -105,4 +105,25 @@ SoundData GenShotSound(const uint32_t frequency)
 	return out_data;
 }
 
+SoundData GenExplosionSound(const uint32_t frequency)
+{
+	const uint32_t total_samples= 3 * frequency;
+	SoundData out_data;
+	out_data.samples.resize(total_samples);
+
+	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 4), total_samples);
+
+	const float fade_factor= -3.0f / float(frequency);
+	const float hyp_factor= 512.0f / float(frequency);
+	const float constant_scale= 8.0f;
+	for(uint32_t i= 0; i < total_samples; ++i)
+	{
+		const float hyp_scale= 1.0f - 1.0f / (float(i) * hyp_factor + 1.0f);
+		const float exp_scale= std::exp(float(i) * fade_factor);
+		out_data.samples[i]= ClampSample(int32_t(float(noise[i]) * hyp_scale * exp_scale * constant_scale));
+	}
+
+	return out_data;
+}
+
 } // namespace Armed
