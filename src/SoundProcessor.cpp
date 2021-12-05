@@ -9,7 +9,7 @@ SoundProcessor::SoundProcessor(SoundOut& sound_out)
 {
 	for(size_t i= 0; i < size_t(SoundId::NumSounds); ++i)
 	{
-		sounds_[i]= GetSinWaveSound(sound_out_.GetFrequency(), IntToFixed16(440), 440);
+		sounds_[i]= GenExplosionSound(sound_out_.GetFrequency());
 	}
 }
 
