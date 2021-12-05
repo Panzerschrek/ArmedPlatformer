@@ -479,6 +479,8 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	projectile.vel= {Fixed16Mul(aim_vec[0], vel), Fixed16Mul(aim_vec[1], vel)};
 	projectile.kind= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? Projectile::Kind::Grenade : Projectile::Kind::Bullet;
 	projectiles_.push_back(projectile);
+
+	sound_processor_.MakeSound(SoundId::Explosion);
 }
 
 void World::PickUpPowerUps()

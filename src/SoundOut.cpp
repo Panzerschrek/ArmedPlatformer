@@ -108,42 +108,31 @@ void SoundOut::FillAudioBuffer(SampleType* const buffer, const uint32_t sample_c
 	ARMED_ASSERT(sample_count * g_left_and_right <= mix_buffer_.size());
 
 	// Zero mix buffer.
-	for(uint32_t i= 0u; i < sample_count * g_left_and_right; i++)
+	for(uint32_t i= 0u; i < sample_count * g_left_and_right; ++i)
 		mix_buffer_[i]= 0;
 
-	/*
+	// Perform some shift for volume to allow volume more than 1 and still use only 32bit operations.
+	const int32_t c_volume_shift= 4;
+	const int32_t c_volume_final_shift= g_fixed16_base - c_volume_shift;
+
 	for(Channel& channel : channels_)
 	{
 		if(!(channel.is_active && channel.src_sound_data != nullptr))
 			continue;
 
-		uint32_t channel_dst_samples_processed= 0u;
-		do
+		const int32_t volume[2]{channel.volume[0] >> c_volume_shift, channel.volume[1] >> c_volume_shift};
+		const uint32_t samples_to_fill= std::min(sample_count, uint32_t(channel.src_sound_data->samples.size()) - channel.position_samples);
+		const SampleType* const src= channel.src_sound_data->samples.data() + channel.position_samples;
+		for(uint32_t i= 0; i < samples_to_fill; ++i)
+		for(uint32_t side= 0; side < g_left_and_right; ++side)
 		{
-			const auto max_dst_sample_for_src_sample=
-			[&](const uint32_t i) -> uint32_t
-			{
-				if(i == 0u) return 0u;
-				const uint32_t result= ((i << g_frac_bits) - 1u) / freq_ratio_f;
-				ARMED_ASSERT(((result * freq_ratio_f) >> g_frac_bits) < i);
-				return result + 1u;
-			};
+			const int32_t value= (int32_t(src[i]) * volume[side]) >> c_volume_final_shift;
+			mix_buffer_[i * g_left_and_right + side]+= value;
+		}
 
-			int32_t* const dst= mix_buffer_.data() + channel_dst_samples_processed * g_left_and_right;
-			const uint32_t can_read_src_samples= std::max(int32_t(channel.src_sound_data->sample_count_ - channel.position_samples) - 1, 0);
-			const uint32_t dst_samples_to_write=
-				std::min(
-					sample_count - channel_dst_samples_processed,
-					max_dst_sample_for_src_sample(can_read_src_samples));
-
-
-			channel.position_samples+= ((sample_count - channel_dst_samples_processed) * freq_ratio_f) >> g_frac_bits;
-			channel.position_samples= std::min(channel.position_samples, channel.src_sound_data->sample_count_);
-			channel_dst_samples_processed+= dst_samples_to_write;
-
-			} while(channel_dst_samples_processed < sample_count);
+		channel.position_samples+= samples_to_fill;
+		channel.is_active= channel.position_samples < uint32_t(channel.src_sound_data->samples.size());
 	} // for channels
-	*/
 
 	// Copy mix buffer to result buffer.
 	for(uint32_t i= 0u; i < sample_count * g_left_and_right; i++)

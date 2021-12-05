@@ -10,9 +10,9 @@ namespace Armed
 
 using SampleType= int16_t;
 
-class SoundData
+struct SoundData
 {
-//	uint32_t frequency;
+	std::vector<SampleType> samples;
 };
 
 struct Channel
