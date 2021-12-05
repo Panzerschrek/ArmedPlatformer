@@ -707,6 +707,8 @@ void World::MoveMonster(Monster& monster)
 						projectile.vel= {(dir_to_player[0] > 0 ? (+1) : (-1)) * c_bullet_speed, 0};
 						projectiles_.push_back(projectile);
 						monster.last_attack_tick= current_tick_;
+
+						sound_processor_.MakeSound(SoundId::Shot);
 					}
 				}
 			}
