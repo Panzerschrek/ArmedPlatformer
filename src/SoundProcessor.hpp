@@ -8,7 +8,7 @@ namespace Armed
 enum class SoundId
 {
 	Explosion,
-
+	Shot,
 	NumSounds,
 };
 

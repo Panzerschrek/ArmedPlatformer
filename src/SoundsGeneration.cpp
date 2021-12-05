@@ -11,6 +11,62 @@ namespace
 const int32_t g_samle_scale= int32_t(std::numeric_limits<SampleType>::max());
 const float g_two_pi = 2.0f * 3.1415926535f;
 
+SampleType ClampSample(const int32_t x)
+{
+	return
+		SampleType(
+			std::max(
+				int32_t(std::numeric_limits<SampleType>::min()),
+				std::min(
+					x,
+					int32_t(std::numeric_limits<SampleType>::max()))));
+}
+
+std::vector<int32_t> LinearResample(const std::vector<int32_t>& data, const size_t new_size)
+{
+	std::vector<int32_t> res;
+	res.resize(new_size);
+	const int32_t c_shift= 8;
+	const int32_t c_scale= 1 << c_shift;
+	for(size_t i= 0; i < res.size(); ++i)
+	{
+		const int64_t coord= ((int64_t(i) * int64_t(data.size())) << c_shift) / int64_t(res.size());
+		const size_t coord_int= size_t(coord >> c_shift);
+		const size_t coord_int_plus_one= std::min(res.size() - 1, coord_int + 1);
+		const int32_t noise_fract= coord & (c_scale - 1);
+		const int32_t value= int32_t((int64_t(data[coord_int]) * (int64_t(c_scale) - noise_fract) + int64_t(data[coord_int_plus_one] * noise_fract)) >> c_shift);
+		res[i]= value;
+	}
+
+	return res;
+}
+
+std::vector<int32_t> GenRandomNoise(const size_t size)
+{
+	std::vector<int32_t> noise;
+	noise.resize(size);
+
+	Rand rand;
+	for(size_t i= 0; i < noise.size(); ++i)
+		noise[i]= int32_t(rand.RandValue(0, 65536)) - 32768;
+
+	return noise;
+}
+
+std::vector<int32_t> GenOctaveNoise(const size_t size, const uint32_t octaves)
+{
+	std::vector<int32_t> res;
+	res.resize(size, 0);
+	for(uint32_t octave= 0; octave < octaves; ++octave)
+	{
+		const std::vector<int32_t> noise= LinearResample(GenRandomNoise(size >> octave), size);
+		for(size_t i= 0; i < res.size(); ++i)
+			res[i]+= noise[i] >> (octaves - octave);
+	}
+
+	return res;
+}
+
 } // namespace
 
 SoundData GenSinWaveSound(const uint32_t frequency, const fixed16_t sin_wave_frequency, const uint32_t periods)
@@ -28,27 +84,22 @@ SoundData GenSinWaveSound(const uint32_t frequency, const fixed16_t sin_wave_fre
 	return out_data;
 }
 
-SoundData GenExplosionSound(const uint32_t frequency)
+SoundData GenShotSound(const uint32_t frequency)
 {
-	std::vector<int32_t> noise;
-	noise.resize(2048);
-
-	Rand rand;
-	for(size_t i= 0; i < noise.size(); ++i)
-		noise[i]= int32_t(rand.RandValue(0, 65536));
-
 	const uint32_t total_samples= frequency;
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
+	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 5), total_samples);
+
+	const float fade_factor= -16.0f / float(frequency);
+	const float hyp_factor= 2048.0f / float(frequency);
+	const float constant_scale= 4.0f;
 	for(uint32_t i= 0; i < total_samples; ++i)
 	{
-		const fixed16_t noise_coord= Fixed16MulDiv(IntToFixed16(int32_t(i)), int32_t(noise.size()), int32_t(total_samples));
-		const size_t noise_coord_int= size_t(Fixed16FloorToInt(noise_coord));
-		const fixed16_t noise_fract= noise_coord & (g_fixed16_one - 1);
-
-		const int32_t value = Fixed16VecDot({noise[noise_coord_int], noise[noise_coord_int + 1]}, {g_fixed16_one - noise_fract, noise_fract});
-		out_data.samples[i]= SampleType(value - 32768);
+		const float hyp_scale= 1.0f - 1.0f / (float(i) * hyp_factor + 1.0f);
+		const float exp_scale= std::exp(float(i) * fade_factor);
+		out_data.samples[i]= ClampSample(int32_t(float(noise[i]) * hyp_scale * exp_scale * constant_scale));
 	}
 
 	return out_data;
