@@ -512,6 +512,7 @@ void World::PickUpPowerUps()
 				{
 					player_.Hit(-c_large_health);
 					power_up.picked_up= true;
+					sound_processor_.MakeSound(SoundId::PickUp);
 				}
 				break;
 			case PowerUpId::Health2:
@@ -527,6 +528,7 @@ void World::PickUpPowerUps()
 					{
 						player_.GiveAmmo(index, Player::c_max_ammo[index] / 2);
 						power_up.picked_up= true;
+						sound_processor_.MakeSound(SoundId::PickUp);
 					}
 				}
 				break;
@@ -540,6 +542,7 @@ void World::PickUpPowerUps()
 					{
 						player_.GiveKey(index);
 						power_up.picked_up= true;
+						sound_processor_.MakeSound(SoundId::PickUp);
 					}
 				}
 				break;

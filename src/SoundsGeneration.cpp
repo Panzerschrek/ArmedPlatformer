@@ -84,6 +84,27 @@ SoundData GenSinWaveSound(const uint32_t frequency, const fixed16_t sin_wave_fre
 	return out_data;
 }
 
+SoundData GenExplosionSound(const uint32_t frequency)
+{
+	const uint32_t total_samples= 3 * frequency;
+	SoundData out_data;
+	out_data.samples.resize(total_samples);
+
+	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 4), total_samples);
+
+	const float fade_factor= -3.0f / float(frequency);
+	const float hyp_factor= 512.0f / float(frequency);
+	const float constant_scale= 8.0f;
+	for(uint32_t i= 0; i < total_samples; ++i)
+	{
+		const float hyp_scale= 1.0f - 1.0f / (float(i) * hyp_factor + 1.0f);
+		const float exp_scale= std::exp(float(i) * fade_factor);
+		out_data.samples[i]= ClampSample(int32_t(float(noise[i]) * hyp_scale * exp_scale * constant_scale));
+	}
+
+	return out_data;
+}
+
 SoundData GenShotSound(const uint32_t frequency)
 {
 	const uint32_t total_samples= frequency;
@@ -105,22 +126,34 @@ SoundData GenShotSound(const uint32_t frequency)
 	return out_data;
 }
 
-SoundData GenExplosionSound(const uint32_t frequency)
+
+SoundData GenPickUpSound(const uint32_t frequency)
 {
-	const uint32_t total_samples= 3 * frequency;
+	const uint32_t total_samples= frequency;
 	SoundData out_data;
 	out_data.samples.resize(total_samples);
 
-	const std::vector<int32_t> noise= LinearResample(GenOctaveNoise(8192, 4), total_samples);
+	const float base_freq= 400.0f;
+	const float scale_f= float(base_freq) * g_two_pi / float(frequency);
+	const float sample_scale= float(g_samle_scale);
 
-	const float fade_factor= -3.0f / float(frequency);
-	const float hyp_factor= 512.0f / float(frequency);
-	const float constant_scale= 8.0f;
 	for(uint32_t i= 0; i < total_samples; ++i)
 	{
-		const float hyp_scale= 1.0f - 1.0f / (float(i) * hyp_factor + 1.0f);
-		const float exp_scale= std::exp(float(i) * fade_factor);
-		out_data.samples[i]= ClampSample(int32_t(float(noise[i]) * hyp_scale * exp_scale * constant_scale));
+		float a[4];
+		a[3]= float(total_samples - i) / float(total_samples);
+		a[2]= a[3] * a[3];
+		a[1]= a[2] * a[2];
+		a[0]= a[2] * a[1];
+
+		const float t= float(i) * scale_f;
+
+		float s=
+			 0.5f * a[0] * std::sin(t) +
+			0.25f * a[1] * std::sin(t * 2.0f) +
+			0.25f * a[2] * std::sin(t * 3.0f) +
+			0.25f * a[3] * std::sin(t * 4.0f);
+
+		out_data.samples[i]= SampleType(s * sample_scale);
 	}
 
 	return out_data;

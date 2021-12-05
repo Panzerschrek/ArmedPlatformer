@@ -9,6 +9,7 @@ enum class SoundId
 {
 	Explosion,
 	Shot,
+	PickUp,
 	NumSounds,
 };
 

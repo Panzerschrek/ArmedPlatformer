@@ -12,12 +12,11 @@ SoundProcessor::SoundProcessor(SoundOut& sound_out)
 	{
 		GenExplosionSound,
 		GenShotSound,
+		GenPickUpSound,
 	};
 
 	for(size_t i= 0; i < size_t(SoundId::NumSounds); ++i)
-	{
 		sounds_[i]= c_gen_funcs[i](sound_out_.GetFrequency());
-	}
 }
 
 void SoundProcessor::MakeSound(const SoundId sound_id)
