@@ -6,8 +6,11 @@
 namespace Armed
 {
 
-Host::CurrentWolrdData::CurrentWolrdData(const MapDescription& map_description, SystemWindow& system_window)
-	: world(map_description)
+Host::CurrentWolrdData::CurrentWolrdData(
+	const MapDescription& map_description,
+	SystemWindow& system_window,
+	SoundProcessor& sound_processor)
+	: world(map_description, sound_processor)
 	, camera(world, system_window)
 	, world_view(world, camera, system_window)
 	, hud(world, system_window)
@@ -24,6 +27,8 @@ Host::CurrentWolrdData::CurrentWolrdData(World in_world, SystemWindow& system_wi
 
 Host::Host()
 	: system_window_()
+	, sound_out_()
+	, sound_processor_(sound_out_)
 	, menu_(
 		system_window_,
 		{
@@ -71,7 +76,7 @@ bool Host::Loop()
 			if(current_world_data_->world.ShouldChageMap())
 			{
 				current_map_= (current_map_ + 1) % std::size(Maps::maps_list);
-				current_world_data_.emplace(Maps::maps_list[current_map_], system_window_);
+				current_world_data_.emplace(Maps::maps_list[current_map_], system_window_, sound_processor_);
 				break;
 			}
 		}
@@ -111,7 +116,7 @@ Host::TimePoint Host::GetCurrentTime()
 
 void Host::NewGame()
 {
-	current_world_data_.emplace(Maps::maps_list[0], system_window_);
+	current_world_data_.emplace(Maps::maps_list[0], system_window_, sound_processor_);
 }
 
 void Host::SaveGame(const size_t slot)
@@ -139,7 +144,7 @@ void Host::LoadGame(const size_t slot)
 	stream.Read(current_map_);
 
 	current_world_data_= std::nullopt;
-	current_world_data_.emplace(World::Load(stream), system_window_);
+	current_world_data_.emplace(World::Load(sound_processor_, stream), system_window_);
 }
 
 void Host::Quit()

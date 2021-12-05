@@ -122,8 +122,9 @@ std::optional<fixed16vec2_t> ProcessPlayerCollsion(
 
 } // namespace
 
-World::World(const MapDescription& map_description)
-	: map_(map_description.tiles_map_data)
+World::World(const MapDescription& map_description, SoundProcessor& sound_processor)
+	: sound_processor_(sound_processor)
+	, map_(map_description.tiles_map_data)
 	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
 {
 	const MapObjectsData map_objects= ExtractMapObjects(map_description.tiles_map_data);
@@ -247,7 +248,7 @@ void World::Save(SaveStream& stream)
 	stream.Write(trigger_map_change_);
 }
 
-World World::Load(LoadStream& stream)
+World World::Load(SoundProcessor& sound_processor, LoadStream& stream)
 {
 	uint32_t rand_state;
 	stream.Read(rand_state);
@@ -258,14 +259,14 @@ World World::Load(LoadStream& stream)
 	TilesMap map= TilesMap::Load(stream);
 	Player player= Player::Load(stream);
 
-	World w(std::move(rand), std::move(map), std::move(player));
+	World w(sound_processor, std::move(rand), std::move(map), std::move(player));
 
 	w.LoadImpl(stream);
 	return w;
 }
 
-World::World(Rand rand, TilesMap map, Player player)
-	: rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
+World::World(SoundProcessor& sound_processor, Rand rand, TilesMap map, Player player)
+	: sound_processor_(sound_processor), rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
 {
 }
 
@@ -924,6 +925,8 @@ void World::AddExplosion(const fixed16vec2_t& pos)
 	Explosion explosion;
 	explosion.pos= pos;
 	explosions_.push_back(explosion);
+
+	sound_processor_.MakeSound(SoundId::Explosion);
 }
 
 void World::UpdateExplosions()
