@@ -56,7 +56,7 @@ private:
 	bool on_ground_= false;
 	bool in_liquid_= false;
 	size_t current_weapon_= 0;
-	uint32_t ammo_[4]= {48, 0, 0, 0};
+	uint32_t ammo_[4]= {24, 0, 0, 0};
 	bool keys_[4]= {false, false, false, false};
 	int32_t health_= c_max_health;
 
