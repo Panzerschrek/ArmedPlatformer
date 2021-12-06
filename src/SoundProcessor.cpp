@@ -14,7 +14,8 @@ SoundProcessor::SoundProcessor(SoundOut& sound_out)
 		GenShotSound,
 		GenPickUpSound,
 		GenBiteSound,
-		GenPlayerSpawn,
+		GenMonsterDeathSound,
+		GenPlayerSpawnSound,
 		GenMapEndMelody,
 	};
 

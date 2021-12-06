@@ -11,6 +11,7 @@ enum class SoundId
 	Shot,
 	PickUp,
 	Bite,
+	MonsterDeath,
 	PlayerSpawn,
 	MapEndMelody,
 	NumSounds,

@@ -840,6 +840,10 @@ bool World::MoveProjectile(Projectile& projectile)
 			{
 				monster.health-= GetProjectileDirectDamage(projectile.kind);
 				ProcessProjectileHit(projectile);
+
+				if(monster.health <= 0)
+					sound_processor_.MakeSound(SoundId::MonsterDeath);
+
 				return false;
 			}
 		}
@@ -925,6 +929,9 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
 			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
 			monster.health -= get_damage(monster_bb_min, monster_bb_max);
+
+			if(monster.health <= 0)
+				sound_processor_.MakeSound(SoundId::MonsterDeath);
 		}
 	}
 

@@ -185,7 +185,27 @@ SoundData GenBiteSound(const uint32_t sample_rate)
 	return out_data;
 }
 
-SoundData GenPlayerSpawn(const uint32_t sample_rate)
+SoundData GenMonsterDeathSound(const uint32_t sample_rate)
+{
+	const uint32_t total_samples= sample_rate / 3;
+	SoundData out_data;
+	out_data.samples.resize(total_samples);
+
+	const float c_exp_factor= 10.0f;
+	const float c_base_freq= 800.0f;
+	const float freq_decay= 400.0f * float(sample_rate) / float(total_samples);
+	for(uint32_t i= 0; i < total_samples; ++i)
+	{
+		const float t= float(i) / float(sample_rate);
+		const float freq= c_base_freq - t * freq_decay;
+		float a= 1.5f * std::sin(g_two_pi * t * freq) * std::exp(t * c_exp_factor);
+		out_data.samples[i]= ClampSample(int32_t(a * float(g_sample_scale)));
+	}
+
+	return out_data;
+}
+
+SoundData GenPlayerSpawnSound(const uint32_t sample_rate)
 {
 	const uint32_t total_samples= sample_rate / 2;
 	SoundData out_data;
