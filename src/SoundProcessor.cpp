@@ -34,7 +34,7 @@ void SoundProcessor::MakeSound(const SoundId sound_id)
 
 		channel.is_active= true;
 		channel.position_samples= 0;
-		channel.volume[0]= channel.volume[1]= g_fixed16_one / 3;
+		channel.volume[0]= channel.volume[1]= g_fixed16_one / 4;
 		channel.src_sound_data= &sounds_[size_t(sound_id)];
 		break;
 	}

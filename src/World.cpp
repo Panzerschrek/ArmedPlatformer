@@ -423,8 +423,11 @@ void World::ProcessPlayerPhysics()
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
 				{
 					player_.SetInLiquid(true);
-					if(current_tick_ % 12 == 0)
+					if(current_tick_ % 12 == 0 && player_.GetHealth() >= 0)
+					{
 						player_.Hit(c_lava_damage);
+						sound_processor_.MakeSound(SoundId::Bite);
+					}
 				}
 				break;
 			}
@@ -860,8 +863,11 @@ bool World::MoveProjectile(Projectile& projectile)
 		{} // No collision.
 		else
 		{
-			player_.Hit( GetProjectileDirectDamage(projectile.kind));
+			player_.Hit(GetProjectileDirectDamage(projectile.kind));
 			ProcessProjectileHit(projectile);
+
+			sound_processor_.MakeSound(SoundId::Bite);
+
 			return false;
 		}
 	}
@@ -939,7 +945,12 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 	const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
 	const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
 
-	player_.Hit(get_damage(player_bb_min, player_bb_max));
+	const auto player_damage= get_damage(player_bb_min, player_bb_max);
+	if(player_damage > 0)
+	{
+		player_.Hit(player_damage);
+		sound_processor_.MakeSound(SoundId::Bite);
+	}
 }
 
 void World::AddExplosion(const fixed16vec2_t& pos)
