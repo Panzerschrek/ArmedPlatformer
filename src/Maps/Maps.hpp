@@ -11,14 +11,12 @@ namespace Armed
 namespace Maps
 {
 
-// TODO - provide list of real maps.
 const MapDescription maps_list[]
 {
 	Map00::description,
 	Map01::description,
 	Map02::description,
 	Map03::description,
-	Test::description,
 };
 
 } // namespace Maps
