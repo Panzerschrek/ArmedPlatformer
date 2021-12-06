@@ -176,10 +176,11 @@ void WorldView::Draw()
 		const fixed16vec2_t aim_vec= world_.GetPlayer().GetAimNormal();
 		if(aim_vec[0] != 0)
 		{
-			const int32_t c_aim_length= 128;
+			const int32_t c_aim_vec_length= 4; // In world units.
+			const int32_t aim_length= Fixed16Mul(c_aim_vec_length, mat.scale[0]);
 			const fixed16_t aim_vec_x_abs= Fixed16Abs(aim_vec[0]);
 			for(
-				int32_t i= 0, i_end= Fixed16RoundToInt(c_aim_length * aim_vec_x_abs), x= Fixed16RoundToInt(player_pos[0]), x_step= aim_vec[0] > 0 ? 1 : -1, y= player_pos[1], y_step= Fixed16Div(aim_vec[1], aim_vec_x_abs);
+				int32_t i= 0, i_end= Fixed16RoundToInt(aim_length * aim_vec_x_abs), x= Fixed16RoundToInt(player_pos[0]), x_step= aim_vec[0] > 0 ? 1 : -1, y= player_pos[1], y_step= Fixed16Div(aim_vec[1], aim_vec_x_abs);
 				i < i_end && x >= 0 && x < surface.w;
 				++i, x+= x_step, y+= y_step)
 			{

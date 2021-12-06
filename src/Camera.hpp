@@ -23,6 +23,7 @@ private:
 
 	fixed16vec2_t pos_{};
 	fixed16vec2_t aim_vec_{};
+	fixed16_t scale_= 0;
 };
 
 } // namespace Armed
