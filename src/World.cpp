@@ -483,8 +483,7 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	projectile.kind= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? Projectile::Kind::Grenade : Projectile::Kind::Bullet;
 	projectiles_.push_back(projectile);
 
-	if(shoot_request == Player::ShootRequestKind::Machinegun)
-		sound_processor_.MakeSound(SoundId::Shot);
+	sound_processor_.MakeSound(SoundId::Shot);
 }
 
 void World::PickUpPowerUps()
