@@ -657,6 +657,8 @@ void World::MoveMonster(Monster& monster)
 				const uint32_t damage= rand_.RandValue(c_melee_attack_min_damage, c_melee_attack_max_damage +1);
 				player_.Hit(int32_t(damage));
 				monster.last_attack_tick= current_tick_;
+
+				sound_processor_.MakeSound(SoundId::Bite);
 			}
 		}
 	}

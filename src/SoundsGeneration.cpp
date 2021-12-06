@@ -160,6 +160,31 @@ SoundData GenPickUpSound(const uint32_t sample_rate)
 	return out_data;
 }
 
+SoundData GenBiteSound(const uint32_t sample_rate)
+{
+	const uint32_t total_samples= sample_rate / 3;
+	SoundData out_data;
+	out_data.samples.resize(total_samples);
+
+	std::vector<int32_t> noise= LinearResample(GenOctaveNoise(128, 3), total_samples / 4);
+	for(int32_t& val : noise)
+		val= val > 0 ? (+g_sample_scale) : (-g_sample_scale);
+	std::vector<int32_t> noise_resampled= LinearResample(noise, total_samples);
+
+	const float fade_factor= -24.0f / float(sample_rate);
+	const float hyp_factor= 128.0f / float(sample_rate);
+	const float constant_scale= 4.0f;
+	for(uint32_t i= 0; i < total_samples; ++i)
+	{
+		const float hyp_scale= 1.0f - 1.0f / (float(i) * hyp_factor + 1.0f);
+		const float exp_scale= std::exp(float(i) * fade_factor);
+
+		out_data.samples[i]= ClampSample(int32_t(float(noise_resampled[i]) * hyp_scale * exp_scale * constant_scale));
+	}
+
+	return out_data;
+}
+
 SoundData GenMapEndMelody(const uint32_t sample_rate)
 {
 	const uint32_t c_samples_per_base_wave= 1 << 7;

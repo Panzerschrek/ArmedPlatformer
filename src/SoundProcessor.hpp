@@ -10,6 +10,7 @@ enum class SoundId
 	Explosion,
 	Shot,
 	PickUp,
+	Bite,
 	MapEndMelody,
 	NumSounds,
 };

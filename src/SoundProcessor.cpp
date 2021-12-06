@@ -13,6 +13,7 @@ SoundProcessor::SoundProcessor(SoundOut& sound_out)
 		GenExplosionSound,
 		GenShotSound,
 		GenPickUpSound,
+		GenBiteSound,
 		GenMapEndMelody,
 	};
 
