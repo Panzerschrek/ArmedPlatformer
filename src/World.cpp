@@ -270,7 +270,6 @@ World World::Load(SoundProcessor& sound_processor, LoadStream& stream)
 World::World(SoundProcessor& sound_processor, Rand rand, TilesMap map, Player player)
 	: sound_processor_(sound_processor), rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
 {
-	sound_processor_.MakeSound(SoundId::PlayerSpawn);
 }
 
 void World::LoadImpl(LoadStream& stream)

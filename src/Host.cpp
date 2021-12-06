@@ -75,6 +75,7 @@ bool Host::Loop()
 
 			if(current_world_data_->world.ShouldChageMap())
 			{
+				sound_processor_.StopAllSounds();
 				current_map_= (current_map_ + 1) % std::size(Maps::maps_list);
 				current_world_data_.emplace(Maps::maps_list[current_map_], system_window_, sound_processor_);
 				break;
@@ -116,6 +117,7 @@ Host::TimePoint Host::GetCurrentTime()
 
 void Host::NewGame()
 {
+	sound_processor_.StopAllSounds();
 	current_world_data_.emplace(Maps::maps_list[0], system_window_, sound_processor_);
 }
 
@@ -136,6 +138,8 @@ void Host::SaveGame(const size_t slot)
 
 void Host::LoadGame(const size_t slot)
 {
+	sound_processor_.StopAllSounds();
+
 	SaveLoadBuffer buffer;
 	if (!LoadData(GetSaveFileNameForSlot(slot).c_str(), buffer))
 		return;

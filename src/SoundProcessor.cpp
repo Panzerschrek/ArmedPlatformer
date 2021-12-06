@@ -42,5 +42,15 @@ void SoundProcessor::MakeSound(const SoundId sound_id)
 	sound_out_.UnlockChannels();
 }
 
+void SoundProcessor::StopAllSounds()
+{
+	sound_out_.LockChannels();
+
+	for (Channel& channel : sound_out_.GetChannels())
+		channel.is_active= false;
+
+	sound_out_.UnlockChannels();
+}
+
 } // namespace Armed
 

@@ -23,6 +23,7 @@ public:
 	SoundProcessor(SoundOut& sound_out);
 
 	void MakeSound(SoundId sound_id);
+	void StopAllSounds();
 
 private:
 	SoundOut& sound_out_;
