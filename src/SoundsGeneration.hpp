@@ -9,6 +9,7 @@ SoundData GenExplosionSound(uint32_t sample_rate);
 SoundData GenShotSound(uint32_t sample_rate);
 SoundData GenPickUpSound(uint32_t sample_rate);
 SoundData GenBiteSound(uint32_t sample_rate);
+SoundData GenPlayerSpawn(uint32_t sample_rate);
 SoundData GenMapEndMelody(uint32_t sample_rate);
 
 } // namespace Armed

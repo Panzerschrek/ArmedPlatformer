@@ -173,6 +173,8 @@ World::World(const MapDescription& map_description, SoundProcessor& sound_proces
 		power_up.picked_up= false;
 		power_ups_.push_back(power_up);
 	}
+
+	sound_processor_.MakeSound(SoundId::PlayerSpawn);
 }
 
 void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
@@ -268,6 +270,7 @@ World World::Load(SoundProcessor& sound_processor, LoadStream& stream)
 World::World(SoundProcessor& sound_processor, Rand rand, TilesMap map, Player player)
 	: sound_processor_(sound_processor), rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
 {
+	sound_processor_.MakeSound(SoundId::PlayerSpawn);
 }
 
 void World::LoadImpl(LoadStream& stream)

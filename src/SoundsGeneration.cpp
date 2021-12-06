@@ -185,6 +185,31 @@ SoundData GenBiteSound(const uint32_t sample_rate)
 	return out_data;
 }
 
+SoundData GenPlayerSpawn(const uint32_t sample_rate)
+{
+	const uint32_t total_samples= sample_rate / 2;
+	SoundData out_data;
+	out_data.samples.resize(total_samples);
+
+	const float c_base_freq= 40.0f;
+	const float c_pulsations_freq_divider= 20.0f;
+	const float c_exp_factor= 1.5f;
+	const float c_power_factor= 1.0f / 3.0f;
+
+	for(uint32_t i= 0; i < total_samples; ++i)
+	{
+		const float t= float(i) / float(total_samples);
+		const float freq= c_base_freq * std::exp(t * c_exp_factor);
+
+		const float p= g_two_pi * t;
+		const float a= 1.0f - (std::cos(freq / c_pulsations_freq_divider * p) * 0.5f + 0.5f) * std::pow(t, c_power_factor);
+		const float s= std::sin(p * freq);
+		out_data.samples[i]= ClampSample(int32_t(a * s * float(g_sample_scale)));
+	}
+
+	return out_data;
+}
+
 SoundData GenMapEndMelody(const uint32_t sample_rate)
 {
 	const uint32_t c_samples_per_base_wave= 1 << 7;
