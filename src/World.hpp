@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.hpp"
 #include "Rand.hpp"
+#include "SoundProcessor.hpp"
 #include "TilesMap.hpp"
 #include <optional>
 
@@ -70,7 +71,7 @@ public:
 	};
 
 public:
-	explicit World(const MapDescription& map_description);
+	World(const MapDescription& map_description, SoundProcessor& sound_processor);
 
 	// Update world (single fixed period step).
 	void Tick(const InputState& input_state, const fixed16vec2_t& aim_vec);
@@ -86,10 +87,10 @@ public:
 	bool ShouldChageMap() const { return trigger_map_change_; }
 
 	void Save(SaveStream& stream);
-	static World Load(LoadStream& stream);
+	static World Load(SoundProcessor& sound_processor, LoadStream& stream);
 
 private:
-	World(Rand rand, TilesMap map, Player player);
+	World(SoundProcessor& sound_processor, Rand rand, TilesMap map, Player player);
 
 	void LoadImpl(LoadStream& stream);
 
@@ -108,6 +109,7 @@ private:
 	void UpdateExplosions();
 
 private:
+	SoundProcessor& sound_processor_;
 	Rand rand_; // TODO - initialize it with really-random seed
 	TilesMap map_;
 	Player player_;

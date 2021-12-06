@@ -1,6 +1,7 @@
 #pragma once
 #include "Hud.hpp"
 #include "Menu.hpp"
+#include "SoundProcessor.hpp"
 #include "WorldView.hpp"
 #include <chrono>
 
@@ -29,7 +30,10 @@ private:
 		WorldView world_view;
 		Hud hud;
 
-		CurrentWolrdData(const MapDescription& map_description, SystemWindow& system_window);
+		CurrentWolrdData(
+			const MapDescription& map_description,
+			SystemWindow& system_window,
+			SoundProcessor& sound_processor);
 		CurrentWolrdData(World in_world, SystemWindow& system_window);
 	};
 
@@ -44,6 +48,8 @@ private:
 
 private:
 	SystemWindow system_window_;
+	SoundOut sound_out_;
+	SoundProcessor sound_processor_;
 	std::optional<CurrentWolrdData> current_world_data_;
 	Menu menu_;
 

@@ -61,7 +61,7 @@ inline fixed16_t Fixed16Abs(const fixed16_t x)
 
 // result= x * y / z
 // It is more precise than Fixed16Div(Fixed16Mul(x, y), z).
-inline fixed16_t Fixed16MulDiv(const fixed16_t x, const fixed16_t y, const fixed16_t z)
+inline fixed16_t Fixed16MulDiv(const fixed16_t x, const int32_t y, const int32_t z)
 {
 	return fixed16_t(int64_t(x) * int64_t(y) / int64_t(z));
 }

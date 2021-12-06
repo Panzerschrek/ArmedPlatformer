@@ -122,8 +122,9 @@ std::optional<fixed16vec2_t> ProcessPlayerCollsion(
 
 } // namespace
 
-World::World(const MapDescription& map_description)
-	: map_(map_description.tiles_map_data)
+World::World(const MapDescription& map_description, SoundProcessor& sound_processor)
+	: sound_processor_(sound_processor)
+	, map_(map_description.tiles_map_data)
 	, player_(map_description.player_spawn[0], map_description.player_spawn[1])
 {
 	const MapObjectsData map_objects= ExtractMapObjects(map_description.tiles_map_data);
@@ -172,6 +173,8 @@ World::World(const MapDescription& map_description)
 		power_up.picked_up= false;
 		power_ups_.push_back(power_up);
 	}
+
+	sound_processor_.MakeSound(SoundId::PlayerSpawn);
 }
 
 void World::Tick(const InputState& input_state, const fixed16vec2_t& aim_vec)
@@ -247,7 +250,7 @@ void World::Save(SaveStream& stream)
 	stream.Write(trigger_map_change_);
 }
 
-World World::Load(LoadStream& stream)
+World World::Load(SoundProcessor& sound_processor, LoadStream& stream)
 {
 	uint32_t rand_state;
 	stream.Read(rand_state);
@@ -258,14 +261,14 @@ World World::Load(LoadStream& stream)
 	TilesMap map= TilesMap::Load(stream);
 	Player player= Player::Load(stream);
 
-	World w(std::move(rand), std::move(map), std::move(player));
+	World w(sound_processor, std::move(rand), std::move(map), std::move(player));
 
 	w.LoadImpl(stream);
 	return w;
 }
 
-World::World(Rand rand, TilesMap map, Player player)
-	: rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
+World::World(SoundProcessor& sound_processor, Rand rand, TilesMap map, Player player)
+	: sound_processor_(sound_processor), rand_(std::move(rand)), map_(std::move(map)), player_(std::move(player))
 {
 }
 
@@ -370,7 +373,10 @@ void World::ProcessPlayerPhysics()
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
 				{
 					if(map_end_reach_time_ == std::nullopt)
+					{
 						map_end_reach_time_= current_tick_;
+						sound_processor_.MakeSound(SoundId::MapEndMelody);
+					}
 				}
 				break;
 			case TileId::BasicWall:
@@ -416,8 +422,11 @@ void World::ProcessPlayerPhysics()
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
 				{
 					player_.SetInLiquid(true);
-					if(current_tick_ % 12 == 0)
+					if(current_tick_ % 12 == 0 && player_.GetHealth() >= 0)
+					{
 						player_.Hit(c_lava_damage);
+						sound_processor_.MakeSound(SoundId::Bite);
+					}
 				}
 				break;
 			}
@@ -478,6 +487,8 @@ void World::ProcessShootRequest(const Player::ShootRequestKind shoot_request)
 	projectile.vel= {Fixed16Mul(aim_vec[0], vel), Fixed16Mul(aim_vec[1], vel)};
 	projectile.kind= shoot_request == Player::ShootRequestKind::GrenadeLauncher ? Projectile::Kind::Grenade : Projectile::Kind::Bullet;
 	projectiles_.push_back(projectile);
+
+	sound_processor_.MakeSound(SoundId::Shot);
 }
 
 void World::PickUpPowerUps()
@@ -508,6 +519,7 @@ void World::PickUpPowerUps()
 				{
 					player_.Hit(-c_large_health);
 					power_up.picked_up= true;
+					sound_processor_.MakeSound(SoundId::PickUp);
 				}
 				break;
 			case PowerUpId::Health2:
@@ -523,6 +535,7 @@ void World::PickUpPowerUps()
 					{
 						player_.GiveAmmo(index, Player::c_max_ammo[index] / 2);
 						power_up.picked_up= true;
+						sound_processor_.MakeSound(SoundId::PickUp);
 					}
 				}
 				break;
@@ -536,6 +549,7 @@ void World::PickUpPowerUps()
 					{
 						player_.GiveKey(index);
 						power_up.picked_up= true;
+						sound_processor_.MakeSound(SoundId::PickUp);
 					}
 				}
 				break;
@@ -648,6 +662,8 @@ void World::MoveMonster(Monster& monster)
 				const uint32_t damage= rand_.RandValue(c_melee_attack_min_damage, c_melee_attack_max_damage +1);
 				player_.Hit(int32_t(damage));
 				monster.last_attack_tick= current_tick_;
+
+				sound_processor_.MakeSound(SoundId::Bite);
 			}
 		}
 	}
@@ -700,6 +716,8 @@ void World::MoveMonster(Monster& monster)
 						projectile.vel= {(dir_to_player[0] > 0 ? (+1) : (-1)) * c_bullet_speed, 0};
 						projectiles_.push_back(projectile);
 						monster.last_attack_tick= current_tick_;
+
+						sound_processor_.MakeSound(SoundId::Shot);
 					}
 				}
 			}
@@ -824,6 +842,10 @@ bool World::MoveProjectile(Projectile& projectile)
 			{
 				monster.health-= GetProjectileDirectDamage(projectile.kind);
 				ProcessProjectileHit(projectile);
+
+				if(monster.health <= 0)
+					sound_processor_.MakeSound(SoundId::MonsterDeath);
+
 				return false;
 			}
 		}
@@ -840,8 +862,11 @@ bool World::MoveProjectile(Projectile& projectile)
 		{} // No collision.
 		else
 		{
-			player_.Hit( GetProjectileDirectDamage(projectile.kind));
+			player_.Hit(GetProjectileDirectDamage(projectile.kind));
 			ProcessProjectileHit(projectile);
+
+			sound_processor_.MakeSound(SoundId::Bite);
+
 			return false;
 		}
 	}
@@ -909,6 +934,9 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 			const fixed16vec2_t monster_bb_min{monster.pos[0] - monster_size[0] / 2, monster.pos[1] - monster_size[1] / 2};
 			const fixed16vec2_t monster_bb_max{monster.pos[0] + monster_size[0] / 2, monster.pos[1] + monster_size[1] / 2};
 			monster.health -= get_damage(monster_bb_min, monster_bb_max);
+
+			if(monster.health <= 0)
+				sound_processor_.MakeSound(SoundId::MonsterDeath);
 		}
 	}
 
@@ -916,7 +944,12 @@ void World::ApplySplashDamage(const Projectile::OwnerKind owner_kind, const fixe
 	const fixed16vec2_t player_bb_min{ -c_player_width / 2 + player_.GetPos()[0], -c_player_heigth / 2 + player_.GetPos()[1] };
 	const fixed16vec2_t player_bb_max{ +c_player_width / 2 + player_.GetPos()[0], +c_player_heigth / 2 + player_.GetPos()[1] };
 
-	player_.Hit(get_damage(player_bb_min, player_bb_max));
+	const auto player_damage= get_damage(player_bb_min, player_bb_max);
+	if(player_damage > 0)
+	{
+		player_.Hit(player_damage);
+		sound_processor_.MakeSound(SoundId::Bite);
+	}
 }
 
 void World::AddExplosion(const fixed16vec2_t& pos)
@@ -924,6 +957,8 @@ void World::AddExplosion(const fixed16vec2_t& pos)
 	Explosion explosion;
 	explosion.pos= pos;
 	explosions_.push_back(explosion);
+
+	sound_processor_.MakeSound(SoundId::Explosion);
 }
 
 void World::UpdateExplosions()
