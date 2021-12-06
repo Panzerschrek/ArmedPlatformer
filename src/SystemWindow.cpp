@@ -102,10 +102,12 @@ SystemWindow::SystemWindow()
 	// TODO - check errors.
 	SDL_Init(SDL_INIT_VIDEO);
 
-	const Uint32 window_flags= SDL_WINDOW_SHOWN;
+	const Uint32 window_flags= SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 
 	const int width = 1024;
 	const int height= 768;
+	const int min_width = 640;
+	const int min_height= 480;
 
 	window_=
 		SDL_CreateWindow(
@@ -117,11 +119,9 @@ SystemWindow::SystemWindow()
 	if(window_ == nullptr)
 		Log::FatalError("Could not create window");
 
-	surface_= SDL_GetWindowSurface(window_);
-	if(surface_ == nullptr)
-		Log::FatalError("Could not get window surface");
-
 	Log::Info("Window created with size ", width, "x", height);
+
+	SDL_SetWindowMinimumSize(window_, min_width, min_height);
 }
 
 SystemWindow::~SystemWindow()
@@ -227,11 +227,14 @@ InputState SystemWindow::GetInputState()
 
 const SDL_Surface& SystemWindow::GetSurface() const
 {
+	ARMED_ASSERT(surface_ != nullptr);
 	return *surface_;
 }
 
 void SystemWindow::BeginFrame()
 {
+	surface_= SDL_GetWindowSurface(window_);
+
 	if(SDL_MUSTLOCK(surface_))
 		SDL_LockSurface(surface_);
 
@@ -244,6 +247,7 @@ void SystemWindow::EndFrame()
 		SDL_UnlockSurface(surface_);
 
 	SDL_UpdateWindowSurface(window_);
+	surface_= nullptr;
 }
 
 } // namespace Armed

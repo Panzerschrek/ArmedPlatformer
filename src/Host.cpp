@@ -57,6 +57,9 @@ bool Host::Loop()
 
 	menu_.ProcessInput(system_events);
 
+	// Begin frame to make window surface available for view matrix calculation.
+	system_window_.BeginFrame();
+
 	if(current_world_data_ != std::nullopt && !menu_.IsActive())
 	{
 		// Perform some ticks. Possible 0, 1 or many. But do not perform more than 5 ticks once.
@@ -83,7 +86,6 @@ bool Host::Loop()
 		}
 	}
 
-	system_window_.BeginFrame();
 	if(current_world_data_ != std::nullopt)
 	{
 		current_world_data_->world_view.Draw();
