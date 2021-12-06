@@ -21,7 +21,7 @@ const char map_data[]=
 "aaaaaaaab                        cac                     aa\n"
 "aaaaaaaaab                        A                      aa\n"
 "aaaaaaaaaab                       A              m     % aa\n"
-"abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaa\n"
+"aaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbabbbbbbbbbbbbbbbbbbbbbbaa\n"
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n"
 ;
 
