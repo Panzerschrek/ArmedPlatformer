@@ -22,7 +22,7 @@ struct Channel
 	static constexpr uint32_t c_right_channel_number= 1u;
 
 	bool is_active= false;
-	fixed16_t volume[2]{0, 0}; // right/left volume
+	fixed16_t volume= 0;
 
 	uint32_t position_samples= 0;
 

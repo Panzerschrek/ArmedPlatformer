@@ -11,7 +11,6 @@ namespace
 {
 
 const SDL_AudioDeviceID g_first_valid_device_id= 2u;
-const uint32_t g_left_and_right= 2u;
 
 int32_t NearestPowerOfTwoFloor(const int32_t x)
 {
@@ -29,7 +28,7 @@ SoundOut::SoundOut()
 	SDL_AudioSpec requested_format;
 	SDL_AudioSpec obtained_format;
 
-	requested_format.channels= g_left_and_right;
+	requested_format.channels= 1;
 	requested_format.freq= 22050;
 	requested_format.format= AUDIO_S16;
 	requested_format.callback= AudioCallback;
@@ -68,7 +67,7 @@ SoundOut::SoundOut()
 
 	sample_rate_= uint32_t(obtained_format.freq);
 
-	mix_buffer_.resize(obtained_format.samples * g_left_and_right);
+	mix_buffer_.resize(obtained_format.samples);
 
 	// Run
 	SDL_PauseAudioDevice(device_id_ , 0);
@@ -100,15 +99,15 @@ void SDLCALL SoundOut::AudioCallback(void* const userdata, Uint8* const stream, 
 
 	self->FillAudioBuffer(
 		reinterpret_cast<SampleType*>(stream),
-		uint32_t(len_bytes) / (sizeof(SampleType) * g_left_and_right));
+		uint32_t(len_bytes) / sizeof(SampleType));
 }
 
 void SoundOut::FillAudioBuffer(SampleType* const buffer, const uint32_t sample_count)
 {
-	ARMED_ASSERT(sample_count * g_left_and_right <= mix_buffer_.size());
+	ARMED_ASSERT(sample_count <= mix_buffer_.size());
 
 	// Zero mix buffer.
-	for(uint32_t i= 0u; i < sample_count * g_left_and_right; ++i)
+	for(uint32_t i= 0u; i < sample_count; ++i)
 		mix_buffer_[i]= 0;
 
 	// Perform some shift for volume to allow volume more than 1 and still use only 32bit operations.
@@ -120,14 +119,13 @@ void SoundOut::FillAudioBuffer(SampleType* const buffer, const uint32_t sample_c
 		if(!(channel.is_active && channel.src_sound_data != nullptr))
 			continue;
 
-		const int32_t volume[2]{channel.volume[0] >> c_volume_shift, channel.volume[1] >> c_volume_shift};
+		const int32_t volume= channel.volume >> c_volume_shift;
 		const uint32_t samples_to_fill= std::min(sample_count, uint32_t(channel.src_sound_data->samples.size()) - channel.position_samples);
 		const SampleType* const src= channel.src_sound_data->samples.data() + channel.position_samples;
 		for(uint32_t i= 0; i < samples_to_fill; ++i)
-		for(uint32_t side= 0; side < g_left_and_right; ++side)
 		{
-			const int32_t value= (int32_t(src[i]) * volume[side]) >> c_volume_final_shift;
-			mix_buffer_[i * g_left_and_right + side]+= value;
+			const int32_t value= (int32_t(src[i]) * volume) >> c_volume_final_shift;
+			mix_buffer_[i]+= value;
 		}
 
 		channel.position_samples+= samples_to_fill;
@@ -135,7 +133,7 @@ void SoundOut::FillAudioBuffer(SampleType* const buffer, const uint32_t sample_c
 	} // for channels
 
 	// Copy mix buffer to result buffer.
-	for(uint32_t i= 0u; i < sample_count * g_left_and_right; i++)
+	for(uint32_t i= 0u; i < sample_count; i++)
 		buffer[i]=
 			SampleType(
 				std::max(
