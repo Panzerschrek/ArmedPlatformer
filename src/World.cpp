@@ -512,6 +512,7 @@ void World::PickUpPowerUps()
 				{
 					player_.Hit(-c_small_health);
 					power_up.picked_up= true;
+					sound_processor_.MakeSound(SoundId::PickUp);
 				}
 				break;
 			case PowerUpId::LargeHealth:
