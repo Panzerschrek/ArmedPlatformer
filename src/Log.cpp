@@ -5,7 +5,7 @@ namespace Armed
 {
 
 Log::LogCallback Log::log_callback_;
-std::ofstream Log::log_file_{ "ArmedPlatformer_log.log" };
+std::ofstream Log::log_file_{ "ArmedPlatformer.log" };
 
 void Log::SetLogCallback(LogCallback callback)
 {
