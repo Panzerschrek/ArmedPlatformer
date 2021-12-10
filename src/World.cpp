@@ -59,7 +59,7 @@ int32_t GetMonsterHealth(const MonsterId monster_id)
 	case MonsterId::Biter: return 20;
 	case MonsterId::Gunner: return 20;
 	case MonsterId::Bomber: return 20;
-	case MonsterId::Boss: return 1300;
+	case MonsterId::Boss: return World::c_boss_health;
 	};
 	ARMED_ASSERT(false);
 	return 0;

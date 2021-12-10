@@ -24,6 +24,7 @@ class World
 {
 public:
 	static constexpr const uint32_t c_update_frequency= 120;
+	static constexpr const int32_t c_boss_health= 1300;
 
 	using TickT= uint32_t;
 
