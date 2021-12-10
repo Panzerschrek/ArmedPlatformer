@@ -107,6 +107,7 @@ private:
 	void ApplySplashDamage(Projectile::OwnerKind owner_kind, const fixed16vec2_t& pos, fixed16_t radius, int32_t base_damage);
 	void AddExplosion(const fixed16vec2_t& pos);
 	void UpdateExplosions();
+	void TriggerMapEnd();
 
 private:
 	SoundProcessor& sound_processor_;

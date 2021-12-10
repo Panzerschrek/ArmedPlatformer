@@ -384,13 +384,7 @@ void World::ProcessPlayerPhysics()
 			case TileId::MapEnd:
 				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
-				{
-					if(map_end_reach_time_ == std::nullopt)
-					{
-						map_end_reach_time_= current_tick_;
-						sound_processor_.MakeSound(SoundId::MapEndMelody);
-					}
-				}
+					TriggerMapEnd();
 				break;
 			case TileId::BasicWall:
 			case TileId::Dirt:
@@ -882,7 +876,12 @@ bool World::MoveProjectile(Projectile& projectile)
 				ProcessProjectileHit(projectile);
 
 				if(monster.health <= 0)
+				{
+					if(monster.id == MonsterId::Boss)
+						TriggerMapEnd();
+
 					sound_processor_.MakeSound(SoundId::MonsterDeath);
+				}
 
 				return false;
 			}
@@ -1012,6 +1011,15 @@ void World::UpdateExplosions()
 		}
 		else
 			++i;
+	}
+}
+
+void World::TriggerMapEnd()
+{
+	if(map_end_reach_time_ == std::nullopt)
+	{
+		map_end_reach_time_= current_tick_;
+		sound_processor_.MakeSound(SoundId::MapEndMelody);
 	}
 }
 
