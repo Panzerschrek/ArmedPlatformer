@@ -734,6 +734,30 @@ void World::MoveMonster(Monster& monster)
 						sound_processor_.MakeSound(SoundId::Shot);
 					}
 				}
+				else if(monster.id == MonsterId::Boss)
+				{
+					if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
+					{
+						const fixed16_t vel= c_grenade_speed;
+
+						fixed16vec2_t aim_vec{
+							(dir_to_player[0] > 0 ? (+1) : (-1)) * g_fixed16_one,
+							-fixed16_t(rand_.RandValue(Rand::RandResultType(0), Rand::RandResultType(g_fixed16_one)))};
+						const auto aim_vec_len= Fixed16VecLen(aim_vec);
+						for(size_t i= 0; i < 2; ++i)
+							aim_vec[i]= Fixed16Div(aim_vec[i], aim_vec_len);
+
+						Projectile projectile;
+						projectile.owner_kind= Projectile::OwnerKind::Monster;
+						projectile.pos= monster.pos;
+						projectile.vel= {Fixed16Mul(aim_vec[0], vel), Fixed16Mul(aim_vec[1], vel)};
+						projectile.kind= Projectile::Kind::Grenade;
+						projectiles_.push_back(projectile);
+						monster.last_attack_tick= current_tick_;
+
+						sound_processor_.MakeSound(SoundId::Shot);
+					}
+				}
 			}
 		}
 	}
