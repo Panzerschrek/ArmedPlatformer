@@ -196,21 +196,21 @@ const Model monster_boss
 	{
 		{
 			{ -g_fixed16_one * 3 / 2, { -g_fixed16_one / 2, g_fixed16_one / 2 } },
-			{ g_fixed16_one / 2, { -g_fixed16_one * 3 / 2, g_fixed16_one / 2 + g_fixed16_one * 2 / 3 } },
+			{ g_fixed16_one / 2, { -g_fixed16_one / 2 - g_fixed16_one * 2 / 3, g_fixed16_one * 3 / 2 } },
 		},
 		ColorRGB(119, 163, 89),
 	},
 	{
 		{
-			{ g_fixed16_one / 2, { -g_fixed16_one * 3 / 2, g_fixed16_one / 2 + g_fixed16_one * 2 / 3 } },
-			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 3 / 2 - g_fixed16_one / 8, g_fixed16_one * 5 / 4 } },
+			{ g_fixed16_one / 2, { -g_fixed16_one / 2 - g_fixed16_one * 2 / 3, g_fixed16_one * 3 / 2 } },
+			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 5 / 4, +g_fixed16_one * 3 / 2 + g_fixed16_one / 8 } },
 		},
 		ColorRGB(119, 163, 89),
 	},
 	// Body lower part
 	{
 		{
-			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 3 / 2 - g_fixed16_one / 8, g_fixed16_one * 5 / 4 } },
+			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 5 / 4, +g_fixed16_one * 3 / 2 + g_fixed16_one / 8 } },
 			{ g_fixed16_one * 3 / 2, { -g_fixed16_one, g_fixed16_one } },
 		},
 		ColorRGB(101, 138, 77),
@@ -226,15 +226,15 @@ const Model monster_boss
 	// gun
 	{
 		{
-			{ -g_fixed16_one * 5 / 4, { -g_fixed16_one * 5 / 4, -g_fixed16_one * 5 / 4 } },
-			{ -g_fixed16_one, { -g_fixed16_one * 9 / 8, -g_fixed16_one * 3 / 4 } },
+			{ -g_fixed16_one, { g_fixed16_one * 5 / 4, g_fixed16_one * 5 / 4 } },
+			{ -g_fixed16_one * 3 / 4, { g_fixed16_one * 7 / 8, g_fixed16_one * 29 / 24 } },
 		},
 		ColorRGB(220, 120, 64),
 	},
 	{
 		{
-			{ -g_fixed16_one, { -g_fixed16_one * 9 / 8, -g_fixed16_one * 3 / 4 } },
-			{ -g_fixed16_one / 2, { -g_fixed16_one, -g_fixed16_one } },
+			{ -g_fixed16_one * 3 / 4, { g_fixed16_one * 7 / 8, g_fixed16_one * 29 / 24 } },
+			{ -g_fixed16_one / 4, { g_fixed16_one * 9 / 8, g_fixed16_one * 9 / 8 } },
 		},
 		ColorRGB(220, 120, 64),
 	},
