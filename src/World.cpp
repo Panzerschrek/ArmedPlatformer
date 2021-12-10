@@ -22,7 +22,6 @@ const fixed16_t c_bomber_attack_distance= g_fixed16_one * 5;
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
-const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
 const int32_t c_large_health= 50;
 
@@ -51,6 +50,19 @@ fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 	};
 	ARMED_ASSERT(false);
 	return {0, 0};
+}
+
+int32_t GetMonsterHealth(const MonsterId monster_id)
+{
+	switch(monster_id)
+	{
+	case MonsterId::Biter: return 20;
+	case MonsterId::Gunner: return 20;
+	case MonsterId::Bomber: return 20;
+	case MonsterId::Boss: return 500;
+	};
+	ARMED_ASSERT(false);
+	return 0;
 }
 
 int32_t GetProjectileDirectDamage(const World::Projectile::Kind kind)
@@ -156,7 +168,7 @@ World::World(const MapDescription& map_description, SoundProcessor& sound_proces
 	{
 		Monster monster;
 		monster.id= monster_info.id;
-		monster.health= c_monster_health;
+		monster.health= GetMonsterHealth(monster_info.id);
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
 		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + g_fixed16_one / 2;
