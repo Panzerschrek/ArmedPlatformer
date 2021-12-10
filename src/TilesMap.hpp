@@ -70,6 +70,7 @@ enum class MonsterId
 	Biter,
 	Gunner,
 	Bomber,
+	Boss,
 };
 
 enum class PowerUpId

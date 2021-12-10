@@ -18,8 +18,10 @@ void Hud::Draw()
 	const int32_t c_health_circle_inner_radius= 10;
 	const int32_t c_health_circle_outer_radius= 24;
 	const int32_t c_health_circle_outer_extra_radius= 25;
+	const int32_t c_boss_health_circle_offset_y= 48;
 	const color_t c_health_circle_color= ColorRGB(220, 32, 32);
 	const color_t c_health_circle_extra_color= ColorRGB(180, 180, 180);
+	const color_t c_boss_health_circle_color= ColorRGB(119, 163, 89);
 
 	const SDL_Surface& surface= system_window_.GetSurface();
 	const int32_t surface_width= surface.w;
@@ -86,6 +88,28 @@ void Hud::Draw()
 				for(int32_t x= start_x; x < end_x; ++x)
 					dst[x]= c_ammo_colors[i];
 			}
+		}
+	}
+
+	for(const World::Monster& monster : world_.GetMonsters())
+	{
+		if(monster.id == MonsterId::Boss)
+		{
+			DrawRoundIndicator(
+				surface,
+				surface.w / 2,
+				c_boss_health_circle_offset_y,
+				c_health_circle_inner_radius, c_health_circle_outer_radius,
+				c_boss_health_circle_color,
+				IntToFixed16(monster.health) / World::c_boss_health);
+
+			DrawRoundIndicator(
+				surface,
+				surface.w / 2,
+				c_boss_health_circle_offset_y,
+				c_health_circle_outer_radius, c_health_circle_outer_extra_radius,
+				c_health_circle_extra_color,
+				g_fixed16_one);
 		}
 	}
 }

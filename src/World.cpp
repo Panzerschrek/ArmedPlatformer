@@ -22,7 +22,6 @@ const fixed16_t c_bomber_attack_distance= g_fixed16_one * 5;
 const World::TickT c_attack_frequency= World::c_update_frequency / 1;
 const uint32_t c_melee_attack_min_damage= 20;
 const uint32_t c_melee_attack_max_damage= 30;
-const int32_t c_monster_health= 20;
 const int32_t c_small_health= 25;
 const int32_t c_large_health= 50;
 
@@ -47,9 +46,23 @@ fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 	case MonsterId::Biter: return {g_fixed16_one * 3 / 2, g_fixed16_one * 7 / 4};
 	case MonsterId::Gunner: return {g_fixed16_one * 7 / 4, g_fixed16_one * 7 / 4};
 	case MonsterId::Bomber: return {g_fixed16_one * 2, g_fixed16_one * 5 / 4};
+	case MonsterId::Boss: return {g_fixed16_one * 3, g_fixed16_one * 3};
 	};
 	ARMED_ASSERT(false);
 	return {0, 0};
+}
+
+int32_t GetMonsterHealth(const MonsterId monster_id)
+{
+	switch(monster_id)
+	{
+	case MonsterId::Biter: return 20;
+	case MonsterId::Gunner: return 20;
+	case MonsterId::Bomber: return 20;
+	case MonsterId::Boss: return World::c_boss_health;
+	};
+	ARMED_ASSERT(false);
+	return 0;
 }
 
 int32_t GetProjectileDirectDamage(const World::Projectile::Kind kind)
@@ -155,7 +168,7 @@ World::World(const MapDescription& map_description, SoundProcessor& sound_proces
 	{
 		Monster monster;
 		monster.id= monster_info.id;
-		monster.health= c_monster_health;
+		monster.health= GetMonsterHealth(monster_info.id);
 		monster.spawn_tile_pos[0]= monster_info.pos[0];
 		monster.spawn_tile_pos[1]= monster_info.pos[1];
 		monster.pos[0]= IntToFixed16(int32_t(monster_info.pos[0])) + g_fixed16_one / 2;
@@ -371,13 +384,7 @@ void World::ProcessPlayerPhysics()
 			case TileId::MapEnd:
 				if( player_pos[0] >= tile_bb_min[0] && player_pos[0] < tile_bb_max[0] &&
 					player_pos[1] >= tile_bb_min[1] && player_pos[1] < tile_bb_max[1])
-				{
-					if(map_end_reach_time_ == std::nullopt)
-					{
-						map_end_reach_time_= current_tick_;
-						sound_processor_.MakeSound(SoundId::MapEndMelody);
-					}
-				}
+					TriggerMapEnd();
 				break;
 			case TileId::BasicWall:
 			case TileId::Dirt:
@@ -721,6 +728,30 @@ void World::MoveMonster(Monster& monster)
 						sound_processor_.MakeSound(SoundId::Shot);
 					}
 				}
+				else if(monster.id == MonsterId::Boss)
+				{
+					if(current_tick_ - monster.last_attack_tick >= c_attack_frequency)
+					{
+						const fixed16_t vel= c_grenade_speed;
+
+						fixed16vec2_t aim_vec{
+							(dir_to_player[0] > 0 ? (+1) : (-1)) * g_fixed16_one,
+							-fixed16_t(rand_.RandValue(Rand::RandResultType(0), Rand::RandResultType(g_fixed16_one)))};
+						const auto aim_vec_len= Fixed16VecLen(aim_vec);
+						for(size_t i= 0; i < 2; ++i)
+							aim_vec[i]= Fixed16Div(aim_vec[i], aim_vec_len);
+
+						Projectile projectile;
+						projectile.owner_kind= Projectile::OwnerKind::Monster;
+						projectile.pos= monster.pos;
+						projectile.vel= {Fixed16Mul(aim_vec[0], vel), Fixed16Mul(aim_vec[1], vel)};
+						projectile.kind= Projectile::Kind::Grenade;
+						projectiles_.push_back(projectile);
+						monster.last_attack_tick= current_tick_;
+
+						sound_processor_.MakeSound(SoundId::Shot);
+					}
+				}
 			}
 		}
 	}
@@ -845,7 +876,12 @@ bool World::MoveProjectile(Projectile& projectile)
 				ProcessProjectileHit(projectile);
 
 				if(monster.health <= 0)
+				{
+					if(monster.id == MonsterId::Boss)
+						TriggerMapEnd();
+
 					sound_processor_.MakeSound(SoundId::MonsterDeath);
+				}
 
 				return false;
 			}
@@ -975,6 +1011,15 @@ void World::UpdateExplosions()
 		}
 		else
 			++i;
+	}
+}
+
+void World::TriggerMapEnd()
+{
+	if(map_end_reach_time_ == std::nullopt)
+	{
+		map_end_reach_time_= current_tick_;
+		sound_processor_.MakeSound(SoundId::MapEndMelody);
 	}
 }
 

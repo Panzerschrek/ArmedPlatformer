@@ -24,6 +24,7 @@ class World
 {
 public:
 	static constexpr const uint32_t c_update_frequency= 120;
+	static constexpr const int32_t c_boss_health= 1300;
 
 	using TickT= uint32_t;
 
@@ -107,6 +108,7 @@ private:
 	void ApplySplashDamage(Projectile::OwnerKind owner_kind, const fixed16vec2_t& pos, fixed16_t radius, int32_t base_damage);
 	void AddExplosion(const fixed16vec2_t& pos);
 	void UpdateExplosions();
+	void TriggerMapEnd();
 
 private:
 	SoundProcessor& sound_processor_;
