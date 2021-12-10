@@ -120,7 +120,7 @@ Host::TimePoint Host::GetCurrentTime()
 void Host::NewGame()
 {
 	sound_processor_.StopAllSounds();
-	current_world_data_.emplace(Maps::maps_list[4], system_window_, sound_processor_);
+	current_world_data_.emplace(Maps::maps_list[0], system_window_, sound_processor_);
 }
 
 void Host::SaveGame(const size_t slot)
