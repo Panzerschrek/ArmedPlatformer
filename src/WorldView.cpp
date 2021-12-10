@@ -15,6 +15,7 @@ const Model& GetModelForMonster(const MonsterId id)
 	case MonsterId::Biter: return Models::monster_biter;
 	case MonsterId::Gunner: return Models::monster_gunner;
 	case MonsterId::Bomber: return Models::monster_bomber;
+	case MonsterId::Boss: return Models::monster_boss;
 	};
 
 	ARMED_ASSERT(false);

@@ -47,6 +47,7 @@ fixed16vec2_t GetMonsterSize(const MonsterId monster_id)
 	case MonsterId::Biter: return {g_fixed16_one * 3 / 2, g_fixed16_one * 7 / 4};
 	case MonsterId::Gunner: return {g_fixed16_one * 7 / 4, g_fixed16_one * 7 / 4};
 	case MonsterId::Bomber: return {g_fixed16_one * 2, g_fixed16_one * 5 / 4};
+	case MonsterId::Boss: return {g_fixed16_one * 3, g_fixed16_one * 3};
 	};
 	ARMED_ASSERT(false);
 	return {0, 0};

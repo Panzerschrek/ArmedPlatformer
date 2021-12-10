@@ -190,6 +190,56 @@ const Model monster_bomber
 };
 #undef MONSTER_SCALE
 
+const Model monster_boss
+{
+	// Body upper part
+	{
+		{
+			{ -g_fixed16_one * 3 / 2, { -g_fixed16_one / 2, g_fixed16_one / 2 } },
+			{ g_fixed16_one / 2, { -g_fixed16_one * 3 / 2, g_fixed16_one / 2 + g_fixed16_one * 2 / 3 } },
+		},
+		ColorRGB(119, 163, 89),
+	},
+	{
+		{
+			{ g_fixed16_one / 2, { -g_fixed16_one * 3 / 2, g_fixed16_one / 2 + g_fixed16_one * 2 / 3 } },
+			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 3 / 2 - g_fixed16_one / 8, g_fixed16_one * 5 / 4 } },
+		},
+		ColorRGB(119, 163, 89),
+	},
+	// Body lower part
+	{
+		{
+			{ g_fixed16_one / 2 + g_fixed16_one / 4, { -g_fixed16_one * 3 / 2 - g_fixed16_one / 8, g_fixed16_one * 5 / 4 } },
+			{ g_fixed16_one * 3 / 2, { -g_fixed16_one, g_fixed16_one } },
+		},
+		ColorRGB(101, 138, 77),
+	},
+	// Cup
+	{
+		{
+			{ -g_fixed16_one * 13 / 8, { -g_fixed16_one / 4, g_fixed16_one / 4 } },
+			{ -g_fixed16_one * 6 / 4, { -g_fixed16_one / 4, g_fixed16_one / 4 } },
+		},
+		ColorRGB(32, 32, 80),
+	},
+	// gun
+	{
+		{
+			{ -g_fixed16_one * 5 / 4, { -g_fixed16_one * 5 / 4, -g_fixed16_one * 5 / 4 } },
+			{ -g_fixed16_one, { -g_fixed16_one * 9 / 8, -g_fixed16_one * 3 / 4 } },
+		},
+		ColorRGB(220, 120, 64),
+	},
+	{
+		{
+			{ -g_fixed16_one, { -g_fixed16_one * 9 / 8, -g_fixed16_one * 3 / 4 } },
+			{ -g_fixed16_one / 2, { -g_fixed16_one, -g_fixed16_one } },
+		},
+		ColorRGB(220, 120, 64),
+	},
+};
+
 const Model small_health
 {
 	{
