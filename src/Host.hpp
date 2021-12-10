@@ -39,7 +39,7 @@ private:
 
 private:
 	TimePoint GetCurrentTime();
-	void NewGame();
+	void NewGame(size_t map_index= 0);
 	void SaveGame(size_t slot);
 	void LoadGame(size_t slot);
 	void Quit();

@@ -53,6 +53,16 @@ bool Host::Loop()
 	{
 		if(std::get_if<SystemEventTypes::QuitEvent>(&system_event) != nullptr)
 			return true;
+
+		if(const auto key_event= std::get_if<SystemEventTypes::KeyEvent>(&system_event))
+		{
+			if(key_event->pressed &&
+				key_event->key_code >= SystemEventTypes::KeyCode::F1 &&
+				size_t(key_event->key_code) <= size_t(SystemEventTypes::KeyCode::F1) + std::size(Maps::maps_list) - 1)
+			{
+				NewGame(size_t(key_event->key_code) - size_t(SystemEventTypes::KeyCode::F1));
+			}
+		}
 	}
 
 	menu_.ProcessInput(system_events);
@@ -117,10 +127,10 @@ Host::TimePoint Host::GetCurrentTime()
 	return TimePoint(std::chrono::duration_cast<ChronoDuration>(dt).count());
 }
 
-void Host::NewGame()
+void Host::NewGame(const size_t map_index)
 {
 	sound_processor_.StopAllSounds();
-	current_world_data_.emplace(Maps::maps_list[0], system_window_, sound_processor_);
+	current_world_data_.emplace(Maps::maps_list[map_index], system_window_, sound_processor_);
 }
 
 void Host::SaveGame(const size_t slot)
