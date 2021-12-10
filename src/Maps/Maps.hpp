@@ -5,6 +5,7 @@
 #include "02.hpp"
 #include "03.hpp"
 #include "04.hpp"
+#include "05.hpp"
 
 namespace Armed
 {
@@ -19,6 +20,7 @@ const MapDescription maps_list[]
 	Map02::description,
 	Map03::description,
 	Map04::description,
+	Map05::description,
 };
 
 } // namespace Maps
