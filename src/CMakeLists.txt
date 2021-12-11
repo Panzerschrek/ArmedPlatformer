@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.15")
+	cmake_policy(SET CMP0091 NEW)
+endif()
 project(ArmedPlatformer)
 
 # Setup language options.
@@ -14,6 +17,14 @@ if(MSVC)
 		-DNOMINMAX
 		-D_CRT_SECURE_NO_WARNINGS)
 	add_compile_options(/GR-)
+
+	# Link compiler runtime statically to minimize dependencies.
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+	else()
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+	endif()
+
 else()
 	add_compile_options(-Werror -Wall -Wextra -Wconversion)
 	add_compile_options(-fno-exceptions -fno-rtti)
